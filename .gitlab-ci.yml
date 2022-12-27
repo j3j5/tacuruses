@@ -1,0 +1,61 @@
+image: eu.gcr.io/tnw-automation/php:8.1-fpm
+
+stages: # List of stages for jobs, and their order of execution
+  - dependencies
+  - test
+
+Composer:
+  stage: dependencies
+  before_script:
+    - php -v
+    - composer -V
+    - composer check-platform-reqs
+  script:
+    - composer install --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader
+    # Just to make sure they work
+    - php artisan config:cache
+    - php artisan route:cache
+  artifacts:
+    paths:
+      - vendor
+    expire_in: 1 days
+    when: always
+  needs: []
+
+PHP-CS-Fixer:
+  stage: test
+  before_script:
+    - php -v
+    - php vendor/bin/php-cs-fixer -V
+  script:
+    - vendor/bin/php-cs-fixer fix --dry-run -vv
+  dependencies:
+    - Composer
+  needs: ["Composer"]
+
+Larastan:
+  stage: test
+  before_script:
+    - php -v
+    - ./vendor/bin/phpstan -V
+  script:
+    - ./vendor/bin/phpstan analyse
+    - ./vendor/bin/phpstan analyse --error-format gitlab > phpstan.json
+  artifacts:
+    when: always
+    reports:
+      codequality: phpstan.json
+    expire_in: 1 days
+  dependencies:
+    - Composer
+  needs: ["Composer"]
+
+Security Check:
+  stage: test
+  before_script:
+    - composer -V
+  script:
+    - composer update --dry-run roave/security-advisories
+  dependencies:
+    - Composer
+  needs: ["Composer"]

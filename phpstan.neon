@@ -1,0 +1,18 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+parameters:
+    universalObjectCratesClasses:
+
+    paths:
+        - app
+
+    excludePaths:
+
+    level: 8
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    reportUnmatchedIgnoredErrors: true
+
+    ignoreErrors:

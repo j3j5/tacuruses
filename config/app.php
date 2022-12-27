@@ -71,6 +71,8 @@ return [
 
     'timezone' => 'UTC',
 
+    'scheduling_timezone' => env('SCHEDULING_TIMEZONE', 'UTC'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -82,7 +84,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +110,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'es_UY',
 
     /*
     |--------------------------------------------------------------------------
@@ -189,10 +191,12 @@ return [
         /*
          * Application Service Providers...
          */
+        App\Providers\ActivityPubProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\MacroServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],

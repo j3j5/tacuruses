@@ -10,8 +10,10 @@ class Like extends Action
 {
     public const TYPE = 'Like';
 
-    protected string $actor;
-    protected string $object;
+    public readonly string $id;
+    public readonly string $type;
+    public readonly string $actor;
+    public readonly string $target;
 
     protected array $rules = [
         '@context' => ['required', 'string', 'in:https://www.w3.org/ns/activitystreams'],
@@ -34,6 +36,6 @@ class Like extends Action
         $this->id - $validated['id'];
         $this->type = self::TYPE;
         $this->actor = $validated['actor'];
-        $this->object = $validated['object'];
+        $this->target = $validated['object'];
     }
 }

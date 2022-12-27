@@ -1,5 +1,4 @@
 <?php
-// vim: set ft=php:
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude('storage')
@@ -40,7 +39,7 @@ return $config
         'no_leading_import_slash' => true,
         'echo_tag_syntax' => ['format' => 'long'],
         'no_singleline_whitespace_before_semicolons' => true,
-        'no_trailing_comma_in_singleline' => true,
+        'no_trailing_comma_in_singleline_array' => true,
         'no_unused_imports' => true,
         'no_whitespace_in_blank_line' => true,
         'object_operator_without_whitespace' => true,

@@ -10,6 +10,8 @@ use App\Models\ActivityPub\LocalActor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+use function Safe\preg_match;
+
 class WebfingerController extends Controller
 {
     public function __invoke(Request $request) : JsonResponse

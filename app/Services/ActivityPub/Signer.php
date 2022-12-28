@@ -3,6 +3,11 @@
 namespace App\Services\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
+use RuntimeException;
+
+use function Safe\openssl_pkey_get_private;
+use function Safe\openssl_sign;
+use function Safe\parse_url;
 
 class Signer
 {
@@ -31,8 +36,13 @@ class Signer
 
     private function headersToSign(string $url, ?string $digest = null) : array
     {
+        $path = parse_url($url, PHP_URL_PATH);
+        if (!is_string($path)) {
+            throw new RuntimeException('URL does not have a valid path: ' . $url);
+        }
+
         $headers = [
-            '(request-target)' => 'post ' . parse_url($url, PHP_URL_PATH),
+            '(request-target)' => 'post ' . $path,
             'Date' => now('UTC')->format('D, d M Y H:i:s \G\M\T'),
             'Host' => parse_url($url, PHP_URL_HOST),
             'Content-Type' => 'application/activity+json',

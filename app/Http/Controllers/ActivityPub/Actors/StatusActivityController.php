@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
 
 class StatusActivityController extends Controller
 {
+    /**
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\ActivityPub\LocalActor $user
+     * @param string $status
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function __invoke(Request $request, LocalActor $user, string $status)
     {
         $apModel = $user->model::findOrFail($status);

@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Log;
 
 class InboxController extends Controller
 {
+    /**
+     *
+     * @param \Illuminate\Http\Request $request
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function __invoke(Request $request)
     {
         info(__CLASS__, ['request' => $request]);
@@ -75,8 +84,10 @@ class InboxController extends Controller
             default:
                 Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
                 abort(422, 'Unknow type of action');
-                break;
+                // break;
         }
+
+        return response()->activityJson();
 
         // Follow, replies... come in here
     }

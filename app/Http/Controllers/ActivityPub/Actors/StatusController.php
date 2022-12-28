@@ -17,6 +17,14 @@ class StatusController extends Controller
     protected string $username;
     protected APCompatible $status;
 
+    /**
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\ActivityPub\LocalActor $user
+     * @param string $status
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View
+     */
     public function __invoke(Request $request, LocalActor $user, string $status)
     {
         $this->status = $user->model::findOrFail($status);

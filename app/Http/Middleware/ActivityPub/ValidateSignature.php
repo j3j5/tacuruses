@@ -6,6 +6,9 @@ use App\Jobs\ActivityPub\GetPublicKeyForActor;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use function Safe\base64_decode;
+use function Safe\openssl_verify;
+use function Safe\preg_match;
 
 class ValidateSignature
 {
@@ -28,6 +31,14 @@ class ValidateSignature
 
         // See https://docs.joinmastodon.org/spec/security/#http-verify
         $signature = $request->header('Signature');
+        if (!is_string($signature)) {
+            $errorMsg = 'Multiple signatures found';
+            Log::debug($errorMsg, [
+                'headers' => $request->headers,
+                'signature' => $signature,
+            ]);
+            abort(401, $errorMsg);
+        }
 
         // 1. Split Signature: into its separate parameters.
         $parts = explode(',', $signature);

@@ -2,8 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\DTO\ActivityPub\Follow;
-use App\DTO\ActivityPub\Like;
+use App\Domain\ActivityPub\Like;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -34,7 +33,7 @@ class ProcessLikeAction implements ShouldQueue
         // First or create the actor
         $actor = FindActorInfo::dispatchSync($this->action->actor);
 
-        // Store the follow
+        // Store the like
 
         // Send the accept back
     }

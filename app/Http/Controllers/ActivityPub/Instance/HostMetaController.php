@@ -9,6 +9,12 @@ use Illuminate\Http\Request;
 
 class HostMetaController extends Controller
 {
+    /**
+     *
+     * @param \Illuminate\Http\Request $request
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\Response
+     */
     public function __invoke(Request $request)
     {
         $xml = <<<XML

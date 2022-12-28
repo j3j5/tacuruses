@@ -33,7 +33,7 @@ class Like extends Action
         // Retrieve the validated input...
         $validated = $validator->validated();
 
-        $this->id - $validated['id'];
+        $this->id = $validated['id'];
         $this->type = self::TYPE;
         $this->actor = $validated['actor'];
         $this->target = $validated['object'];

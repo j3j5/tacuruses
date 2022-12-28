@@ -61,7 +61,7 @@ class RemoteActor extends Model
 
     /**
      * Create an Actor model from the data returned from an instance
-     * @param array<string, string|array<string, string> $data
+     * @param array<string, string|array<string, string>> $data
      */
     public function updateFromInstanceData(array $data) : self
     {

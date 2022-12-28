@@ -16,7 +16,6 @@ class NoCookies
      */
     public function handle(Request $request, Closure $next)
     {
-        /** @var \Illuminate\Http\JsonResponse $response */
         $response = $next($request);
 
         $response->headers->remove('set-cookie');

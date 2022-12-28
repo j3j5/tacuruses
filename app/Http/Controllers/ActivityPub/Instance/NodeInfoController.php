@@ -8,6 +8,13 @@ use App\Http\Controllers\Controller;
 
 class NodeInfoController extends Controller
 {
+    /**
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @return \Illuminate\Http\JsonResponse
+     */
     public static function get()
     {
         return response()->json([
@@ -44,6 +51,11 @@ class NodeInfoController extends Controller
         ]);
     }
 
+    /**
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function wellKnown()
     {
         return response()->json([

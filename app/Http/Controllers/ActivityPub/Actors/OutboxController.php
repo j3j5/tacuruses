@@ -12,9 +12,17 @@ use Illuminate\Http\Request;
 
 class OutboxController extends Controller
 {
+    /**
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\ActivityPub\LocalActor $user
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \App\Http\Resources\OutboxCollection
+     */
     public function __invoke(Request $request, LocalActor $user)
     {
         $perPage = 20;
+        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator */
         $statuses = $user->getStatuses();
 
         if ($request->missing(['page']) && $statuses->total() > $perPage) {

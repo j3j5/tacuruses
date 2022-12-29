@@ -18,3 +18,5 @@ yarn-error.log
 /.vscode
 resources/activitypub/examples
 .php-cs-fixer.cache
+docker-compose.yml
+Makefile

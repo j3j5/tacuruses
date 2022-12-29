@@ -2,6 +2,7 @@
 
 namespace App\Models\ActivityPub;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,8 +22,8 @@ use Illuminate\Support\Facades\Storage;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $name
  * @property string $username
- * @property string|null $avatar
- * @property string|null $header
+ * @property string $avatar
+ * @property string $header
  * @property string|null $bio
  * @property string|null $alsoKnownAs
  * @property string $publicKey
@@ -41,16 +42,25 @@ use Illuminate\Support\Facades\Storage;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
  * @property string $model
+ * @property-read string $activityId
+ * @property-read string $keyId
+ * @property-read string $privateKey
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereModel($value)
+ * @property-read string $followers_url
+ * @property-read string $followersUrl
+ * @property-read string $following_url
+ * @property-read string $followingUrl
+ * @property-read string $inbox_url
+ * @property-read string $inboxUrl
+ * @property-read string $outbox_url
+ * @property-read string $outboxUrl
+ * @property-read string $profile_url
+ * @property-read string $profileUrl
+ * @property-read string $public_key
+ * @property-read string $publicKey
  * @property-read string $activity_id
  * @property-read string $key_id
  * @property-read string $private_key
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereModel($value)
- * @property-read string $followers_url
- * @property-read string $following_url
- * @property-read string $inbox_url
- * @property-read string $outbox_url
- * @property-read string $profile_url
- * @property-read string $public_key
  */
 class LocalActor extends Model
 {
@@ -73,6 +83,20 @@ class LocalActor extends Model
         return 'username';
     }
 
+    public function avatar() : Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) : string => $value ?: 'img/default_avatar.svg',
+        );
+    }
+
+    public function header() : Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) : string => $value ?: 'img/default_avatar.svg',
+        );
+    }
+
     public function activityId() : Attribute
     {
         return Attribute::make(
@@ -90,14 +114,14 @@ class LocalActor extends Model
     public function publicKey() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => Storage::disk('local')->get("keys/local/{$this->id}/public.pem"),
+            get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/public.pem"),
         );
     }
 
     public function privateKey() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => Storage::disk('local')->get("keys/local/{$this->id}/private.pem"),
+            get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/private.pem"),
         );
     }
 
@@ -170,7 +194,6 @@ class LocalActor extends Model
             'attachment' => Arr::wrap($this->properties),
             'discoverable' => true,
             // When the bot joined the fediverse (or it was created)
-            'published' => $this->created_at->toAtomString(),
             // Crypto to sign messages
             'publicKey' => [
                 'id' => $this->keyId,
@@ -178,6 +201,9 @@ class LocalActor extends Model
                 'publicKeyPem' => $this->publicKey,
             ],
         ];
+        if ($this->created_at instanceof Carbon) {
+            $metadata['published'] = $this->created_at->toAtomString();
+        }
 
         $links = [
             'inbox' => $this->inboxUrl,

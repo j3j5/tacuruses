@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use phpseclib3\Crypt\RSA;
 
 class AddAccount extends Command
 {
@@ -47,10 +49,15 @@ class AddAccount extends Command
         $bot->bio = $this->ask('What about the bio?');
         $bot->avatar = $this->ask('Is the avatar already on the repo?');
         $bot->header = $this->ask('What about the header? Is it also on the repo?');
-        $bot->publicKey = $this->ask("Now I'm going to need to you paste th public key");
-        $bot->privateKeyPath = $this->ask('Last but not least, the path to the private key');
+        $bot->model = $this->ask('Now I need the full class name of the model this actor will use');
 
         $bot->save();
+
+        $this->info('I\'m going to generate the private/public keys now');
+
+        $privateKey = RSA::createKey(2048);
+        Storage::disk('local')->put("keys/local/{$bot->id}/private.pem", $privateKey->toString('PKCS1'));
+        Storage::disk('local')->put("keys/local/{$bot->id}/public.pem", $privateKey->getPublicKey()->toString('PKCS1'));
 
         $this->info('Success!! Enjoy your new bot');
 

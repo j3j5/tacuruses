@@ -22,14 +22,13 @@ class OutboxResource extends JsonResource
      */
     public function toArray($request)
     {
-        // TODO: fix this
         $actor = $this->getActor();
 
         return [
             'id' => $this->getActivityUrl(),
             'type' => 'Create',
             'actor' => $actor->profileUrl,
-            'published' => $this->tweeted_at, // TODO: replace
+            'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
@@ -41,7 +40,7 @@ class OutboxResource extends JsonResource
                 'type' => 'Note',
                 'summary' => null,
                 'inReplyTo' => null,
-                'published' => $this->tweeted_at->toIso8601ZuluString(),
+                'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
                 'url' => $this->getStatusUrl(),
                 'attributedTo' => $actor->profileUrl,
                 'to' => [
@@ -53,7 +52,6 @@ class OutboxResource extends JsonResource
                 'sensitive' => false,
 
             ],
-            // 'conversation' => 'tag:mastodon.social,2022-11-10:objectId=329483008:objectType=Conversation',
             'content' => $this->getStatus(),
             'contentMap' => [
                 'es' => $this->getStatus(),

@@ -22,17 +22,28 @@ class ProfileController extends Controller
     {
         info('wants json => ' . $request->wantsJson());
         if ($request->wantsJson()) {
-            return $this->activityProfile($request, $user);
+            return $this->activityProfile($user);
         }
-        return $this->profile($request, $user);
+        return $this->profile($user);
     }
 
-    public function profile(Request $request, LocalActor $user)
+    /**
+     *
+     * @param \App\Models\ActivityPub\LocalActor $user
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
+    private function profile(LocalActor $user)
     {
         return view('bots.profile', compact(['user']));
     }
 
-    public function activityProfile(Request $request, LocalActor $user)
+    /**
+     *
+     * @param \App\Models\ActivityPub\LocalActor $user
+     * @return \App\Http\Resources\ProfileResource
+     */
+    private function activityProfile(LocalActor $user)
     {
         return new ProfileResource($user);
     }

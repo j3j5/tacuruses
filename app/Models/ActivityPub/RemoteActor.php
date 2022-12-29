@@ -50,6 +50,8 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
+ *
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  */
 class RemoteActor extends Model
 {
@@ -61,7 +63,7 @@ class RemoteActor extends Model
 
     /**
      * Create an Actor model from the data returned from an instance
-     * @param array<string, string|array<string, string>> $data
+     * @param InstanceUser $data
      */
     public function updateFromInstanceData(array $data) : self
     {

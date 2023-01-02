@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ActivityPub\Actors;
 
-use App\Contracts\APCompatible;
+use App\Domain\ActivityPub\Contracts\Actor;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class StatusController extends Controller
 {
     protected string $username;
-    protected APCompatible $status;
+    protected Actor $status;
 
     /**
      *

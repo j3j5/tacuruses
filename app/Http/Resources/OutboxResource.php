@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  *
- * @mixin \App\Contracts\APCompatible
+ * @mixin \App\Contracts\Actor
  */
 class OutboxResource extends JsonResource
 {

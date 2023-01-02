@@ -10,7 +10,6 @@
         "guzzlehttp/guzzle": "^7.2",
         "landrok/activitypub": "^0.5.8",
         "laravel/framework": "^9.19",
-        "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "phpseclib/phpseclib": "^3.0",
         "roave/security-advisories": "dev-latest",

@@ -32,7 +32,9 @@ class GetPublicKeyForActor
         } catch (ModelNotFoundException) {
         }
 
-        $publicKeyData = Http::acceptJson()->get($this->keyId)->throw()->json('publicKey');
+        /** @var \Illuminate\Http\Client\Response $response */
+        $response = Http::acceptJson()->get($this->keyId);
+        $publicKeyData = $response->throw()->json('publicKey');
 
         if (!isset($publicKeyData['id']) || $publicKeyData['id'] !== $this->keyId) {
             // TODO: user own exception

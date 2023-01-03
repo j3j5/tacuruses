@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\ActivityPub\Contracts\Actor;
+use App\Models\ActivityPub\LocalActor;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -22,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
             $record['extra']['correlation'] = config('correlation', '');
             return $record;
         });
+
+        $this->app->bind(Actor::class, LocalActor::class);
     }
 
     public function addLogId(string $id) : void

@@ -69,6 +69,7 @@ class SendAcceptToActor implements ShouldQueue
                     'User-Agent' => config('activitypub.user-agent'),
                 ]
             );
+        /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::withHeaders($headers)->post($this->actor->inbox, $accept);
         if ($response->failed()) {
             Log::warning('response', [$response]);

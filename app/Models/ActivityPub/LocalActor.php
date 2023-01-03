@@ -2,6 +2,8 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Domain\ActivityPub\Contracts\Actor;
+use App\Domain\ActivityPub\Contracts\Note;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -61,8 +63,9 @@ use Illuminate\Support\Facades\Storage;
  * @property-read string $activity_id
  * @property-read string $key_id
  * @property-read string $private_key
+ * @property-read string $get_public_key
  */
-class LocalActor extends Model
+class LocalActor extends Model implements Actor
 {
     use HasFactory;
 
@@ -111,7 +114,7 @@ class LocalActor extends Model
         );
     }
 
-    public function publicKey() : Attribute
+    public function getPublicKey() : Attribute
     {
         return Attribute::make(
             get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/public.pem"),
@@ -125,11 +128,9 @@ class LocalActor extends Model
         );
     }
 
-    public function profileUrl() : Attribute
+    public function getProfileUrl() : string
     {
-        return Attribute::make(
-            get: fn () : string => route('user.show', [$this]),
-        );
+        return route('user.show', [$this]);
     }
 
     public function inboxUrl() : Attribute
@@ -146,21 +147,32 @@ class LocalActor extends Model
         );
     }
 
-    public function followingUrl() : Attribute
+    public function getFollowingUrl() : string
     {
-        return Attribute::make(
-            get: fn () : string => route('user.following', [$this]),
-        );
+        return  route('user.following', [$this]);
     }
 
-    public function followersUrl() : Attribute
+    public function getFollowersUrl() : string
     {
-        return Attribute::make(
-            get: fn () : string => route('user.followers', [$this]),
-        );
+        return route('user.followers', [$this]);
     }
 
-    public function getStatuses() : Paginator
+    public function getAvatarURL(): string
+    {
+        return asset($this->avatar);
+    }
+
+    public function getHeaderURL(): string
+    {
+        return asset($this->header);
+    }
+
+    public function getNote(string $statusId): Note
+    {
+        return $this->model::findOrFail($statusId);
+    }
+
+    public function getNotes() : Paginator
     {
         return $this->model::getStatuses();
     }
@@ -179,13 +191,13 @@ class LocalActor extends Model
             'icon' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => asset($this->avatar),
+                'url' => $this->getAvatarURL(),
             ],
             // Header
             'image' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => asset($this->header),
+                'url' => $this->getHeaderURL(),
             ],
         ];
 
@@ -198,7 +210,7 @@ class LocalActor extends Model
             'publicKey' => [
                 'id' => $this->keyId,
                 'owner' => $this->activityId,
-                'publicKeyPem' => $this->publicKey,
+                'publicKeyPem' => $this->getPublicKey(),
             ],
         ];
         if ($this->created_at instanceof Carbon) {
@@ -208,8 +220,8 @@ class LocalActor extends Model
         $links = [
             'inbox' => $this->inboxUrl,
             'outbox' => $this->outboxUrl,
-            'following' => $this->followingUrl,
-            'followers' => $this->followersUrl,
+            'following' => $this->getFollowingUrl(),
+            'followers' => $this->getFollowersUrl(),
             'manuallyApprovesFollowers' => false,
             'endpoints' => [
                 'sharedInbox' => route('shared-inbox'),

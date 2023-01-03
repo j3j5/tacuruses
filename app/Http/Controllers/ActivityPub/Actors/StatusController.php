@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Domain\ActivityPub\Contracts\Actor;
+use App\Domain\ActivityPub\Contracts\Note;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -14,28 +14,27 @@ use Illuminate\Http\Request;
 
 class StatusController extends Controller
 {
-    protected string $username;
-    protected Actor $status;
+    public Actor $actor;
 
     /**
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\ActivityPub\LocalActor $user
+     * @param \App\Domain\ActivityPub\Contracts\Actor $actor
      * @param string $status
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View
      */
-    public function __invoke(Request $request, LocalActor $user, string $status)
+    public function __invoke(Request $request, Actor $actor, string $status)
     {
-        $this->status = $user->model::findOrFail($status);
-
+        $this->actor = $actor;
+        $note = $this->actor->getNote($status);
         if ($request->wantsJson()) {
-            return $this->activityStatus($request);
+            return $this->activityStatus($note);
         }
-        return $this->status($request);
+        return $this->status($note);
     }
 
-    private function activityStatus(Request $request) : JsonResponse
+    private function activityStatus(Note $note) : JsonResponse
     {
         $context = [
             '@context' => [
@@ -58,13 +57,14 @@ class StatusController extends Controller
             ],
         ];
 
-        $note = $this->status->getNote();
-        return response()->activityJson(array_merge($context, $note->toArray()));
+        return response()->activityJson(
+            array_merge($context, $note->getAPNote()->toArray())
+        );
     }
 
-    private function status(Request $request) : View
+    private function status(Note $note) : View
     {
-        $data = ['status' => $this->status];
+        $data = ['status' => $note];
         return view('bots.status', $data);
     }
 }

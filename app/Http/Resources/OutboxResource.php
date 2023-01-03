@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  *
- * @mixin \App\Contracts\Actor
+ * @mixin \App\Domain\ActivityPub\Contracts\Note
  */
 class OutboxResource extends JsonResource
 {
@@ -23,41 +23,40 @@ class OutboxResource extends JsonResource
     public function toArray($request)
     {
         $actor = $this->getActor();
-
         return [
             'id' => $this->getActivityUrl(),
             'type' => 'Create',
-            'actor' => $actor->profileUrl,
+            'actor' => $actor->getProfileUrl(),
             'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
             'cc' => [
-                $actor->followersUrl,
+                $actor->getFollowersUrl(),
             ],
             'object' => [
-                'id' => $this->getStatusUrl(),
+                'id' => $this->getNoteUrl(),
                 'type' => 'Note',
                 'summary' => null,
                 'inReplyTo' => null,
                 'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
-                'url' => $this->getStatusUrl(),
-                'attributedTo' => $actor->profileUrl,
+                'url' => $this->getNoteUrl(),
+                'attributedTo' => $actor->getProfileUrl(),
                 'to' => [
                     Context::ACTIVITY_STREAMS_PUBLIC,
                 ],
                 'cc' => [
-                    $actor->followersUrl,
+                    $actor->getFollowersUrl(),
                 ],
-                'sensitive' => false,
+                'sensitive' => $this->isSensitive(),
 
             ],
-            'content' => $this->getStatus(),
+            'content' => $this->getText(),
             'contentMap' => [
-                'es' => $this->getStatus(),
+                $this->getLanguage() => $this->getText(),
             ],
-            'attachment' => [],
-            'tag' => [],
+            'attachment' => $this->getAttachment(),
+            'tag' => $this->getTags(),
         ];
     }
 }

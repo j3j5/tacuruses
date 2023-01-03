@@ -50,7 +50,6 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
- *
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  */
 class RemoteActor extends Model

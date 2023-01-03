@@ -7,14 +7,23 @@ use Carbon\Carbon;
 
 interface Note
 {
-
     public function getAPNote() : ObjectNote;
 
     public function getText() : string;
 
+    public function getLanguage() : string;
+
     public function getPublishedStatusAt() : Carbon;
 
-    public function getStatusUrl() : string;
+    public function getNoteUrl() : string;
 
     public function getActivityUrl() : string;
+
+    public function getActor() : Actor;
+
+    public function getAttachment() : array;
+
+    public function getTags() : array;
+
+    public function isSensitive() : bool;
 }

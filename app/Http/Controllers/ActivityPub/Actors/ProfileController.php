@@ -16,7 +16,7 @@ class ProfileController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\ActivityPub\LocalActor $user
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\Resources\Json\JsonResource|\Illuminate\Contracts\View\View
      */
     public function __invoke(Request $request, LocalActor $user)
     {
@@ -31,7 +31,7 @@ class ProfileController extends Controller
      *
      * @param \App\Models\ActivityPub\LocalActor $user
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\Contracts\View\View
      */
     private function profile(LocalActor $user)
     {

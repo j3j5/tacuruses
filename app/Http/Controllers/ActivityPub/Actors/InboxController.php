@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ActivityPub\Actors;
 
-use App\Domain\ActivityPub\Contracts\Follow;
-use App\Domain\ActivityPub\Contracts\Like;
+use App\Domain\ActivityPub\Follow;
+use App\Domain\ActivityPub\Like;
 use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use Illuminate\Http\Request;

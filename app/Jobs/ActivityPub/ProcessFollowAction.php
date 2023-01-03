@@ -2,7 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Follow as FollowAction;
+use App\Domain\ActivityPub\Follow as FollowAction;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Bus\Queueable;

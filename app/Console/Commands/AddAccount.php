@@ -55,7 +55,8 @@ class AddAccount extends Command
 
         $this->info('I\'m going to generate the private/public keys now');
 
-        $privateKey = RSA::createKey(2048);
+        $keyLength = 2048;
+        $privateKey = RSA::createKey($keyLength);
         Storage::disk('local')->put("keys/local/{$bot->id}/private.pem", $privateKey->toString('PKCS1'));
         Storage::disk('local')->put("keys/local/{$bot->id}/public.pem", $privateKey->getPublicKey()->toString('PKCS1'));
 

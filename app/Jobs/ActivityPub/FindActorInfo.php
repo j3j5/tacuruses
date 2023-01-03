@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ *
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
+ */
 class FindActorInfo
 {
     use Dispatchable, SerializesModels;
@@ -36,7 +40,9 @@ class FindActorInfo
         }
 
         // Retrieve actor info from instance and store it on the DB
-        $actorData = Http::acceptJson()->get($this->actorId)->throw()->json();
+        /** @var \Illuminate\Http\Client\Response $response */
+        $response = Http::acceptJson()->get($this->actorId);
+        $actorData = $response->throw()->json();
         info('actorData', [$actorData]);
         $validator = Validator::make($actorData, [
             'id' => ['required', 'string'],
@@ -53,6 +59,7 @@ class FindActorInfo
             'publicKey.publicKeyPem' => ['required', 'string'],
         ]);
 
+        /** @var InstanceUser $data */
         $data = $validator->validate();
 
         $actor = RemoteActor::firstOrNew(['activityId' => $data['id']]);

@@ -16,6 +16,7 @@ class WebfingerController extends Controller
 {
     public function __invoke(Request $request) : JsonResponse
     {
+
         $resource = $request->input('resource');
 
         if (0 === preg_match('/^acct:(.+)/i', $resource, $match)) {
@@ -34,12 +35,12 @@ class WebfingerController extends Controller
         }
 
         $preferredUsername = $handleParts[0];
-
         $user = LocalActor::where('username', $preferredUsername)->firstOrFail();
 
         $webfinger = new WebFinger([
             'subject' => $resource,
             'aliases' => [
+                // 'https://' . request()->getHost() . '/' . $user->username
                 // 'https://' . request()->getHost() . '/@' . $user->username,
                 // TODO: Add support for aliases on said user object
                 // $user->getAliases(),
@@ -48,20 +49,20 @@ class WebfingerController extends Controller
                 [
                     'rel' => 'http://webfinger.net/rel/profile-page',
                     'type' => 'text/html',
-                    'href' => route('user.show', [$user]),
+                    'href' => "https://bots.remote-dev.j3j5.uy/@{$user->username}",
                 ],
                 [
                     'rel' => 'self',
                     'type' => 'application/activity+json',
                     'href' => route('user.show', [$user]),
                 ],
-                // [
-                //     "rel" => "http://ostatus.org/schema/1.0/subscribe",
-                //     "template" => "https://$hostname/authorize_interaction?uri={uri}",
-                // ]
+                [
+                    "rel" => "http://ostatus.org/schema/1.0/subscribe",
+                    "template" => "https://$hostname/authorize_interaction?uri={uri}",
+                ]
             ],
         ]);
 
-        return response()->json($webfinger->toArray());
+        return response()->jrdJson($webfinger->toArray());
     }
 }

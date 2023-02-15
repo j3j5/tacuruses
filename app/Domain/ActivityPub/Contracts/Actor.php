@@ -13,7 +13,7 @@ interface Actor
     public function getAvatarURL() : string;
     public function getHeaderURL() : string;
 
-    public function getNote(string $statusId) : Note;
+    public function getNote(string $noteId) : Note;
 
     public function getNotes() : Paginator;
 }

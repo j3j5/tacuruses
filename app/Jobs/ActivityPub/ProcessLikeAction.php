@@ -2,7 +2,9 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Like;
+use App\Domain\ActivityPub\Like as LikeAction;
+use App\Models\ActivityPub\Like;
+use App\Models\ActivityPub\LocalActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +20,7 @@ class ProcessLikeAction implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(private readonly Like $action)
+    public function __construct(private readonly LikeAction $action)
     {
         //
     }
@@ -33,8 +35,33 @@ class ProcessLikeAction implements ShouldQueue
         // First or create the actor
         $actor = FindActorInfo::dispatchSync($this->action->actor);
 
+        $path = ltrim(parse_url($this->action->target, PHP_URL_PATH), '/');
+        [$actorId, $statusId] = explode('/', $path);
+
+        /** @var \App\Models\ActivityPub\LocalActor $localActor */
+        $localActor = LocalActor::where('slug', $actorId)->firstOrFail();
+
+        /** @var \App\Domain\ActivityPub\Contracts\Note $target */
+        $target = $localActor->getNote($statusId);
+
         // Store the like
+        $follow = Like::updateOrCreate(
+            ['actor_id' => $actor->id, 'target_id' => $target->id],
+            ['remote_id' => $this->action->id]
+        );
 
         // Send the accept back
+        SendAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
+    }
+
+    /**
+     *
+     * @param \App\Domain\ActivityPub\Like $action
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return void
+     */
+    protected function findLocalActor(LikeAction $action)
+    {
+        //
     }
 }

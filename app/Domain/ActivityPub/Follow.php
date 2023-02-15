@@ -25,11 +25,7 @@ class Follow extends Action
 
     public function __construct(array $activityObject)
     {
-        $rules = $this->rules;
-        $validator = Validator::make($activityObject, $rules);
-
-        $validator->validate();
-
+        $validator = $this->validate($activityObject);
         // Retrieve the validated input...
         $validated = $validator->validated();
 

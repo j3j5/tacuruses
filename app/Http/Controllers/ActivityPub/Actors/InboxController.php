@@ -6,8 +6,11 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Domain\ActivityPub\Follow;
 use App\Domain\ActivityPub\Like;
+use App\Domain\ActivityPub\Undo;
 use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessFollowAction;
+use App\Jobs\ActivityPub\ProcessLikeAction;
+use App\Jobs\ActivityPub\ProcessUndoAction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -31,43 +34,42 @@ class InboxController extends Controller
         $type = $action->get('type');
         // Log::warning("verb: $type", ['class' => __CLASS__, 'payload' => $action]);
         switch($type) {
-            // case 'Add':
-            // 	break;
-
-            // case 'Create':
-            // 	break;
-
             case 'Follow':
                 ProcessFollowAction::dispatch(new Follow($action->all()));
                 break;
+
+            case 'Like':
+                ProcessLikeAction::dispatch(new Like($action->all()));
+                break;
+
+            case 'Undo':
+                ProcessUndoAction::dispatch(new Undo($action->all()));
+                // $this->handleUndoActivity();
+                break;
+
+                // case 'View':
+                // $this->handleViewActivity();
+                // break;
+
+                // case 'Reject':
+                // $this->handleRejectActivity();
+                // break;
+
+                // case 'Delete':
+                // $this->handleDeleteActivity();
+                // break;
+
+                // case 'Add':
+                // 	break;
+
+                // case 'Create':
+                // 	break;
 
                 // case 'Announce':
                 // 	break;
 
                 // case 'Accept':
                 // 	break;
-
-            case 'Delete':
-                // $this->handleDeleteActivity();
-                break;
-
-            case 'Like':
-                // ProcessLikeAction::dispatch(new Like($action->all()));
-                // if(LikeValidator::validate($this->payload) == false) { return; }
-                // $this->handleLikeActivity();
-                break;
-
-            case 'Reject':
-                // $this->handleRejectActivity();
-                break;
-
-            case 'Undo':
-                // $this->handleUndoActivity();
-                break;
-
-            case 'View':
-                // $this->handleViewActivity();
-                break;
 
                 // case 'Story:Reaction':
                 // 	// $this->handleStoryReactionActivity();

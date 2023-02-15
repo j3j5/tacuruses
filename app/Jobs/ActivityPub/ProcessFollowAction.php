@@ -48,6 +48,6 @@ class ProcessFollowAction implements ShouldQueue
             ['remote_id' => $this->action->id]
         );
 
-        SendAcceptToActor::dispatch($actor, $target, $follow);
+        SendAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
     }
 }

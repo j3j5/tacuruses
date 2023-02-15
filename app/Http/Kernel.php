@@ -46,6 +46,7 @@ class Kernel extends HttpKernel
         'federation' => [
             'no.cookies',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // 'debug',
         ],
     ];
 
@@ -62,6 +63,7 @@ class Kernel extends HttpKernel
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'debug' => \App\Http\Middleware\Debug::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'no.cookies' => \App\Http\Middleware\NoCookies::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

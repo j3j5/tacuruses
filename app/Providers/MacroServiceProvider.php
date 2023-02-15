@@ -28,6 +28,18 @@ class MacroServiceProvider extends ServiceProvider
             );
         });
 
+        /**
+         * @example: return response()->activityJson($data)
+         */
+        Response::macro('jrdJson', function (array $data = []) {
+            return response()->json(
+                $data,
+                HttpResponse::HTTP_OK,
+                ['Content-Type' => 'application/jrd+json; charset=utf-8'],
+                JSON_HEX_TAG | JSON_UNESCAPED_SLASHES
+            );
+        });
+
         Collection::macro('smoother', function (int $step, string $method = 'avg') {
             /** @var \Illuminate\Support\Collection $this */
             return $this->chunk($step)->mapWithKeys(

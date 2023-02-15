@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ActivityPub\LocalActor;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -32,6 +33,8 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('federation')
                 ->group(base_path('routes/federation.php'));
         });
+
+        Route::model('user', LocalActor::class);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Domain\ActivityPub\Contracts\Actor;
 use App\Models\ActivityPub\LocalActor;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -44,6 +45,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        JsonResource::withoutWrapping();
     }
 }

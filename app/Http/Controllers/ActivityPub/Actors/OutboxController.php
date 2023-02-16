@@ -38,7 +38,7 @@ class OutboxController extends Controller
             ]);
         }
         $collection = new OutboxCollection($statuses);
-        $collection->user = $actor;
+        $collection->actor = $actor;
         return $collection;
     }
 }

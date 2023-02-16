@@ -25,7 +25,7 @@ class OutboxCollection extends ResourceCollection
      */
     public static $wrap = null;
 
-    public LocalActor $user;
+    public LocalActor $actor;
 
     /**
      * Transform the resource collection into an array.
@@ -63,7 +63,7 @@ class OutboxCollection extends ResourceCollection
               'type' => 'OrderedCollectionPage',
               'next' => $this->resource->nextPageUrl(),
               'prev' => $this->resource->previousPageUrl(),
-              'partOf' => route('user.outbox', [$this->user]),
+              'partOf' => route('user.outbox', [$this->actor]),
               'orderedItems' => $this->collection,
             //   "orderedItems" => $this->resource->items()
         ];

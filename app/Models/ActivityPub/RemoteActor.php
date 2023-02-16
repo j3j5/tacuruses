@@ -81,19 +81,4 @@ class RemoteActor extends Actor
         $this->save();
         return $this;
     }
-
-    public function follows() : HasMany
-    {
-        return $this->hasMany(Follow::class);
-    }
-
-    public function likes() : HasMany
-    {
-        return $this->hasMany(Like::class);
-    }
-
-    public function shares() : HasMany
-    {
-        return $this->hasMany(Share::class);
-    }
 }

@@ -5,6 +5,7 @@ namespace App\Models\ActivityPub;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -33,8 +34,17 @@ class Follow extends Model
     use HasFactory;
 
     protected $connection = 'mysql';
-
     protected $fillable = ['actor_id', 'target_id',  'remote_id'];
+
+    public function actor() : BelongsTo
+    {
+        return $this->belongsTo(Actor::class);
+    }
+
+    public function target() : BelongsTo
+    {
+        return $this->belongsTo(Actor::class, 'target_id');
+    }
 
     public function slug() : Attribute
     {

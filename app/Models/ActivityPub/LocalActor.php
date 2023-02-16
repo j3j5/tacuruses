@@ -13,57 +13,40 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * App\Models\ActivityPub\User
+ * App\Models\ActivityPub\LocalActor
  *
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $model
  * @property string $name
  * @property string $username
  * @property string $avatar
  * @property string $header
  * @property string|null $bio
- * @property string|null $alsoKnownAs
- * @property string $publicKey
- * @property string $privateKeyPath
- * @property string|null $properties
+ * @property array|null $alsoKnownAs
+ * @property array|null $properties
+ * @property-read string $activity_id
+ * @property-read string $inbox_url
+ * @property-read string $key_id
+ * @property-read string $outbox_url
+ * @property-read string $private_key
+ * @property-read string $public_key
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor query()
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereAlsoKnownAs($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePrivateKeyPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereProperties($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
- * @property string $model
- * @property-read string $activityId
- * @property-read string $keyId
- * @property-read string $privateKey
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereModel($value)
- * @property-read string $followers_url
- * @property-read string $followersUrl
- * @property-read string $following_url
- * @property-read string $followingUrl
- * @property-read string $inbox_url
- * @property-read string $inboxUrl
- * @property-read string $outbox_url
- * @property-read string $outboxUrl
- * @property-read string $profile_url
- * @property-read string $profileUrl
- * @property-read string $public_key
- * @property-read string $publicKey
- * @property-read string $activity_id
- * @property-read string $key_id
- * @property-read string $private_key
- * @property-read string $get_public_key
+ * @mixin \Eloquent
  */
 class LocalActor extends Model implements Actor
 {
@@ -114,7 +97,7 @@ class LocalActor extends Model implements Actor
         );
     }
 
-    public function getPublicKey() : Attribute
+    public function publicKey() : Attribute
     {
         return Attribute::make(
             get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/public.pem"),
@@ -167,9 +150,15 @@ class LocalActor extends Model implements Actor
         return asset($this->header);
     }
 
-    public function getNote(string $statusId): Note
+    /**
+     *
+     * @param string $noteId
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return \App\Domain\ActivityPub\Contracts\Note
+     */
+    public function getNote(string $noteId): Note
     {
-        return $this->model::findOrFail($statusId);
+        return $this->model::findOrFail($noteId);
     }
 
     public function getNotes() : Paginator
@@ -210,7 +199,7 @@ class LocalActor extends Model implements Actor
             'publicKey' => [
                 'id' => $this->keyId,
                 'owner' => $this->activityId,
-                'publicKeyPem' => $this->getPublicKey(),
+                'publicKeyPem' => $this->publicKey,
             ],
         ];
         if ($this->created_at instanceof Carbon) {

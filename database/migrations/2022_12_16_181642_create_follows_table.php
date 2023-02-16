@@ -20,8 +20,8 @@ return new class() extends Migration {
 
             $table->timestamps();
 
-            $table->foreign('actor_id')->references('id')->on('remote_actors');
-            $table->foreign('target_id')->references('id')->on('local_actors');
+            $table->foreign('actor_id')->references('id')->on('actors');
+            $table->foreign('target_id')->references('id')->on('actors');
         });
     }
 

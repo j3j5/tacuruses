@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql')->create('local_actors', function (Blueprint $table) {
+        Schema::create('actors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            // Local Project
-            $table->string('model');
+
+            // Local Actor
+            $table->string('model')->nullable();
             // ActivityPub
             $table->string('name');
             $table->string('username');
@@ -27,7 +28,22 @@ return new class extends Migration
             $table->json('alsoKnownAs')->nullable();
             $table->json('properties')->nullable();
 
+
+            // RemoteActor
+            $table->string('activityId')->nullable();
+            $table->string('type')->nullable();
+            $table->text('url')->nullable();
+
+            $table->string('inbox')->nullable();
+            $table->text('sharedInbox')->nullable();
+
+            $table->string('publicKeyId')->nullable();
+            $table->text('publicKey')->nullable();
+
+            $table->index('activityId');
             $table->index('username');
+
+            $table->string('actor_type')->nullable();
         });
     }
 
@@ -38,6 +54,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::connection('mysql')->dropIfExists('local_actors');
+        Schema::dropIfExists('actors');
     }
 };

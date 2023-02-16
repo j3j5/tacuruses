@@ -2,15 +2,15 @@
 
 namespace App\Models\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Actor;
+use App\Domain\ActivityPub\Contracts\Actor as ContractsActor;
 use App\Domain\ActivityPub\Contracts\Note;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Parental\HasParent;
 
 /**
  * App\Models\ActivityPub\LocalActor
@@ -48,9 +48,10 @@ use Illuminate\Support\Facades\Storage;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
  * @mixin \Eloquent
  */
-class LocalActor extends Model implements Actor
+class LocalActor extends Actor implements ContractsActor
 {
     use HasFactory;
+    use HasParent;
 
     protected $connection = 'mysql';
 

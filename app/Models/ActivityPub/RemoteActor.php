@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Parental\HasParent;
 
 /**
  * App\Models\ActivityPub\RemoteActor
@@ -52,13 +53,12 @@ use Illuminate\Support\Arr;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  */
-class RemoteActor extends Model
+class RemoteActor extends Actor
 {
     use HasFactory;
+    use HasParent;
 
-    protected $connection = 'mysql';
-
-    protected $fillable = ['activityId'];
+    protected $fillable = ['activityId', 'type'];
 
     /**
      * Create an Actor model from the data returned from an instance

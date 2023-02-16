@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FollowCollection;
+use App\Models\ActivityPub\LocalActor;
+use App\Services\ActivityPub\Context;
 use Illuminate\Http\Request;
 
 class FollowersController extends Controller
@@ -17,9 +20,26 @@ class FollowersController extends Controller
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @return never
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, LocalActor $actor)
     {
         info(__CLASS__, ['request' => $request]);
-        abort(418);
+        $perPage = 20;
+        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator */
+        $followers = $actor->followers()->paginate($perPage);
+
+        if ($request->missing(['page']) && $followers->total() > $perPage) {
+            return response()->activityJson([
+                "@context" => Context::ACTIVITY_STREAMS,
+                "id" => $actor->getFollowersUrl(),
+                "type" => "OrderedCollection",
+                "totalItems" => $followers->total(),
+                'first' => $followers->url(0),
+                // First items, order by desc (the last item on this collection is the first ever published)
+                'last' => $followers->url($followers->lastPage()),
+            ]);
+        }
+        $collection = new FollowCollection($followers);
+        $collection->user = $actor;
+        return $collection;
     }
 }

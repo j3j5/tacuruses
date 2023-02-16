@@ -64,7 +64,7 @@ class StatusController extends Controller
 
     private function status(Note $note) : View
     {
-        $data = ['status' => $note];
+        $data = ['note' => $note];
         return view('bots.status', $data);
     }
 }

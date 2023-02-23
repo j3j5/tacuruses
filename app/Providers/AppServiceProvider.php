@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Domain\ActivityPub\Contracts\Actor;
+use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\LocalActor;
+use App\Services\ActivityPub\Signer as ActivityPubSigner;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -27,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(Actor::class, LocalActor::class);
+
+        $this->app->bind(Signer::class, ActivityPubSigner::class);
     }
 
     public function addLogId(string $id) : void

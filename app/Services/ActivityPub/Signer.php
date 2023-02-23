@@ -2,16 +2,17 @@
 
 namespace App\Services\ActivityPub;
 
-use App\Models\ActivityPub\LocalActor;
+use App\Domain\ActivityPub\Contracts\Actor;
+use App\Domain\ActivityPub\Contracts\Signer as ContractsSigner;
 use RuntimeException;
 
 use function Safe\openssl_pkey_get_private;
 use function Safe\openssl_sign;
 use function Safe\parse_url;
 
-class Signer
+class Signer implements ContractsSigner
 {
-    public function sign(LocalActor $user, string $url, ?string $body = null, array $extraHeaders = []) : array
+    public function sign(Actor $user, string $url, ?string $body = null, array $extraHeaders = []) : array
     {
         $digest = null;
         if ($body !== null) {

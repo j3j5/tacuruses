@@ -11,6 +11,10 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
+use App\Models\ActivityPub\Action;
+use App\Models\ActivityPub\Actor;
+use App\Models\ActivityPub\LocalActor;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -32,7 +36,38 @@ class InboxController extends Controller
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
         $type = $action->get('type');
-        // Log::warning("verb: $type", ['class' => __CLASS__, 'payload' => $action]);
+
+        $actorActivityId = $action->get('actor');
+        $targetActivityId = $action->get('object');
+        // For UNDO actions, the target_id is on object.object
+        if (!is_string($targetActivityId)) {
+            $targetActivityId = data_get($targetActivityId, 'object', '');
+        }
+        try {
+            $actor = Actor::where('activityId', $actorActivityId)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            Log::debug('Unknown actor', ['id' => $actorActivityId]);
+        }
+
+        try {
+            $target = LocalActor::where('activityId', $targetActivityId)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            Log::debug("Unknown target, can't save the action", ['id' => $targetActivityId]);
+            return;
+        }
+
+        // store the action
+        $actionModel = new Action([
+            'activityId' => $action->get('id'),
+            'type' => $type,
+            'object' => $action->all(),
+        ]);
+        $actionModel->object_type = $action->get('object.type', '');
+        $actionModel->actor_id = $actor->id;
+        $actionModel->target_id = $target->id;
+        $actionModel->save();
+
+
         switch($type) {
             case 'Follow':
                 ProcessFollowAction::dispatch(new Follow($action->all()));

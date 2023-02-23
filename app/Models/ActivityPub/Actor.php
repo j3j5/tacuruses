@@ -73,12 +73,13 @@ class Actor extends Model
     // protected $guarded = ['id'];
     protected $fillable = ['type'];
 
-    protected $childTypes = [
+    /** @var array<string, class-string> */
+    protected array $childTypes = [
         'local' => LocalActor::class,
         'remote' => RemoteActor::class,
     ];
 
-    protected $childColumn = 'actor_type';
+    protected string $childColumn = 'actor_type';
 
     public function following() : HasMany
     {

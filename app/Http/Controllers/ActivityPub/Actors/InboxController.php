@@ -43,17 +43,12 @@ class InboxController extends Controller
         if (!is_string($targetActivityId)) {
             $targetActivityId = data_get($targetActivityId, 'object', '');
         }
-        try {
-            $actor = Actor::where('activityId', $actorActivityId)->firstOrFail();
-        } catch (ModelNotFoundException) {
-            Log::debug('Unknown actor', ['id' => $actorActivityId]);
-        }
 
         try {
             $target = LocalActor::where('activityId', $targetActivityId)->firstOrFail();
         } catch (ModelNotFoundException) {
             Log::debug("Unknown target, can't save the action", ['id' => $targetActivityId]);
-            return;
+            abort(404, 'Unknown target');
         }
 
         // store the action
@@ -63,8 +58,14 @@ class InboxController extends Controller
             'object' => $action->all(),
         ]);
         $actionModel->object_type = $action->get('object.type', '');
-        $actionModel->actor_id = $actor->id;
         $actionModel->target_id = $target->id;
+        // Try to find the actor to store it
+        try {
+            $actor = Actor::where('activityId', $actorActivityId)->firstOrFail();
+            $actionModel->actor_id = $actor->id;
+        } catch (ModelNotFoundException) {
+            Log::debug('Unknown actor', ['id' => $actorActivityId]);
+        }
         $actionModel->save();
 
         switch($type) {

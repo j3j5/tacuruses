@@ -25,10 +25,10 @@ class Signer implements ContractsSigner
             ' ',
             array_map('strtolower', array_keys($headers))
         );
-        $key = openssl_pkey_get_private($user->privateKey);
+        $key = openssl_pkey_get_private($user->getPrivateKey());
         openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
         $signature = base64_encode($signature);
-        $signatureHeader = 'keyId="' . $user->keyId . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
+        $signatureHeader = 'keyId="' . $user->getKeyId() . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
 

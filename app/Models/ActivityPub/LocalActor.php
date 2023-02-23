@@ -32,6 +32,7 @@ use Parental\HasParent;
  * @property-read string $outbox_url
  * @property-read string $private_key
  * @property-read string $public_key
+ * @property-read string $profile_url
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor query()
@@ -149,6 +150,16 @@ class LocalActor extends Actor implements ContractsActor
         );
     }
 
+    public function getKeyId(): string
+    {
+        return $this->key_id;
+    }
+
+    public function getPrivateKey(): string
+    {
+        return $this->private_key;
+    }
+
     public function getProfileUrl() : string
     {
         return route('user.show', [$this]);
@@ -235,7 +246,7 @@ class LocalActor extends Actor implements ContractsActor
             // When the bot joined the fediverse (or it was created)
             // Crypto to sign messages
             'publicKey' => [
-                'id' => $this->keyId,
+                'id' => $this->key_id,
                 'owner' => $this->activityId,
                 'publicKeyPem' => $this->publicKey,
             ],
@@ -245,8 +256,8 @@ class LocalActor extends Actor implements ContractsActor
         }
 
         $links = [
-            'inbox' => $this->inboxUrl,
-            'outbox' => $this->outboxUrl,
+            'inbox' => $this->inbox_url,
+            'outbox' => $this->outbox_url,
             'following' => $this->getFollowingUrl(),
             'followers' => $this->getFollowersUrl(),
             'manuallyApprovesFollowers' => false,

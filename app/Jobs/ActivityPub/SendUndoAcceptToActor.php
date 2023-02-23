@@ -5,7 +5,7 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\Action;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\RemoteActor as Actor;
+use App\Models\ActivityPub\Actor;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

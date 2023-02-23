@@ -48,7 +48,6 @@ class ProcessUndoAction implements ShouldQueue
             Log::info('Target not found among local actors', ['action' => $this->action]);
             return;
         }
-        /** @var \App\Models\ActivityPub\Actor $actor */
         $this->actor = FindActorInfo::dispatchSync($this->action->actor);
 
         // Find the action on DB
@@ -76,7 +75,7 @@ class ProcessUndoAction implements ShouldQueue
         SendUndoAcceptToActor::dispatchAfterResponse($this->actor, $this->target, $action);
     }
 
-    private function processUndoFollow()
+    private function processUndoFollow() : void
     {
         Log::debug($this->actor->following()->where('target_id', $this->target->id)->where('activityId', $this->action->objectToUndo['id'])->toSql());
         Log::debug($this->actor->following()->where('target_id', $this->target->id)->where('activityId', $this->action->objectToUndo['id'])->getBindings());

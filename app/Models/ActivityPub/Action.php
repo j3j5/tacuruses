@@ -2,8 +2,10 @@
 
 namespace App\Models\ActivityPub;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * App\Models\ActivityPub\Action
@@ -30,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Action whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Action whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Action whereUpdatedAt($value)
+ * @property-read string $slug
  */
 class Action extends Model
 {
@@ -37,9 +40,14 @@ class Action extends Model
 
     protected $fillable = ['activityId', 'type', 'object'];
 
-    protected $childColumn = 'actor_type';
-
     protected $casts = [
         'object' => 'array',
     ];
+
+    public function slug() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => Hashids::encode($this->id)
+        );
+    }
 }

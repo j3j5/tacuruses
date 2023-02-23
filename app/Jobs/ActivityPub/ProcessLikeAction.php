@@ -11,6 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+use function Safe\parse_url;
+
 class ProcessLikeAction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -45,13 +47,13 @@ class ProcessLikeAction implements ShouldQueue
         $target = $localActor->getNote($statusId);
 
         // Store the like
-        $follow = Like::updateOrCreate(
+        $like = Like::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
             ['activityId' => $this->action->id]
         );
 
         // Send the accept back
-        SendFollowAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
+        // SendLikeAcceptToActor::dispatchAfterResponse($actor, $target, $like);
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ActivityPub;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 class Undo extends Action
@@ -13,6 +14,7 @@ class Undo extends Action
     public readonly string $id;
     public readonly string $type;
     public readonly string $actor;
+    public readonly string $target;
     /**
      *
      * @var array{id: string, type: string, actor: string, object:string}
@@ -40,6 +42,7 @@ class Undo extends Action
         $this->id = $validated['id'];
         $this->type = self::TYPE;
         $this->actor = $validated['actor'];
+        $this->target = Arr::get($validated, 'object.object', '');
         $this->objectToUndo = $validated['object'];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
+use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,7 +24,7 @@ class FindActorInfo
      *
      * @return void
      */
-    public function __construct(private readonly string $actorId)
+    public function __construct(private readonly string $actorId, private readonly bool $tryLocal = true)
     {
         //
     }
@@ -31,12 +32,14 @@ class FindActorInfo
     /**
      * Execute the job.
      */
-    public function handle() : RemoteActor
+    public function handle() : Actor
     {
-        info('finding actor');
-        try {
-            return RemoteActor::where(['activityId' => $this->actorId])->firstOrFail();
-        } catch (ModelNotFoundException) {
+        Log::debug('finding actor');
+        if ($this->tryLocal) {
+            try {
+                return Actor::where(['activityId' => $this->actorId])->firstOrFail();
+            } catch (ModelNotFoundException) {
+            }
         }
 
         // Retrieve actor info from instance and store it on the DB
@@ -62,6 +65,7 @@ class FindActorInfo
         /** @var InstanceUser $data */
         $data = $validator->validate();
 
+        /** @var \App\Models\ActivityPub\RemoteActor $actor */
         $actor = RemoteActor::firstOrNew(['activityId' => $data['id']]);
         $actor->updateFromInstanceData($data);
         Log::debug('actor updated');

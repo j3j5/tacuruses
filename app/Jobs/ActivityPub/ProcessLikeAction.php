@@ -47,11 +47,11 @@ class ProcessLikeAction implements ShouldQueue
         // Store the like
         $follow = Like::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
-            ['remote_id' => $this->action->id]
+            ['activityId' => $this->action->id]
         );
 
         // Send the accept back
-        SendAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
+        SendFollowAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
     }
 
     /**

@@ -2,22 +2,21 @@
 
 namespace App\Jobs\ActivityPub;
 
+use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
-use App\Services\ActivityPub\Context;
-use App\Services\ActivityPub\Signer;
+use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
-class SendAcceptToActor implements ShouldQueue
+class SendFollowAcceptToActor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use SendsSignedRequests;
 
     private readonly RemoteActor $actor;
     private readonly LocalActor $target;
@@ -40,7 +39,7 @@ class SendAcceptToActor implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(Signer $signer)
     {
         $accept = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
@@ -48,31 +47,12 @@ class SendAcceptToActor implements ShouldQueue
             'type' => 'Accept',
             'actor' => $this->target->activityId,
             'object' => [
-                'id' => $this->follow->remote_id,
+                'id' => $this->follow->activityId,
                 'actor' => $this->actor->activityId,
                 'type' => 'Follow',
                 'object' => $this->target->activityId,
             ],
         ];
-
-        $body = json_encode($accept, JSON_THROW_ON_ERROR);
-        // Make HTTP post back to the server of the actor
-        /** @var \App\Services\ActivityPub\Signer $signer */
-        $signer = app(Signer::class);
-        $headers = $signer
-            ->sign(
-                $this->target,
-                $this->actor->inbox,
-                $body,
-                [
-                    'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
-                    'User-Agent' => config('activitypub.user-agent'),
-                ]
-            );
-        /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::withHeaders($headers)->post($this->actor->inbox, $accept);
-        if ($response->failed()) {
-            Log::warning('response', [$response]);
-        }
+        $this->sendSignedRequest($signer, $accept);
     }
 }

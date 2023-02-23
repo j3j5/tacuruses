@@ -45,9 +45,9 @@ class ProcessFollowAction implements ShouldQueue
         $target = LocalActor::where('username', $matches['username'])->firstOrFail();
         $follow = Follow::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
-            ['remote_id' => $this->action->id]
+            ['activityId' => $this->action->id]
         );
 
-        SendAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
+        SendFollowAcceptToActor::dispatchAfterResponse($actor, $target, $follow);
     }
 }

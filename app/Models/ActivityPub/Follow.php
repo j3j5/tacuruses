@@ -8,33 +8,36 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vinkla\Hashids\Facades\Hashids;
 
+
 /**
- * App\Models\ActivityPub\Follower
+ * App\Models\ActivityPub\Follow
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Follow newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Follow newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Follow query()
- * @mixin \Eloquent
  * @property int $id
  * @property int $actor_id
  * @property int $target_id
- * @property string $remote_id
+ * @property string $activityId
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read string $slug
+ * @property-read \App\Models\ActivityPub\Actor $target
+ * @method static \Illuminate\Database\Eloquent\Builder|Follow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follow query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Follow whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereActorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereRemoteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereUpdatedAt($value)
- * @property-read string $slug
+ * @mixin \Eloquent
  */
 class Follow extends Model
 {
     use HasFactory;
 
     protected $connection = 'mysql';
-    protected $fillable = ['actor_id', 'target_id',  'remote_id'];
+    protected $fillable = ['actor_id', 'target_id',  'activityId'];
 
     public function actor() : BelongsTo
     {

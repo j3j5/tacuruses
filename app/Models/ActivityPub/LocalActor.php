@@ -48,6 +48,34 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
  * @mixin \Eloquent
+ * @property string|null $activityId
+ * @property string|null $type
+ * @property string|null $url
+ * @property string|null $inbox
+ * @property string|null $sharedInbox
+ * @property string|null $publicKeyId
+ * @property string|null $publicKey
+ * @property string|null $actor_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $followers
+ * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $following
+ * @property-read int|null $following_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $liked
+ * @property-read int|null $liked_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $likes
+ * @property-read int|null $likes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shared
+ * @property-read int|null $shared_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shares
+ * @property-read int|null $shares_count
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereActorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKeyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereSharedInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  */
 class LocalActor extends Actor implements ContractsActor
 {
@@ -60,6 +88,15 @@ class LocalActor extends Actor implements ContractsActor
         'alsoKnownAs' => 'array',
         'properties' => 'array',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function (self $actor) {
+            $actor->activityId = $actor->activityId;
+        });
+    }
 
     /**
      * Get the route key for the model.

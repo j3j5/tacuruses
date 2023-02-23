@@ -52,6 +52,22 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
+ * @property string|null $model
+ * @property string|null $alsoKnownAs
+ * @property string|null $properties
+ * @property string|null $actor_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $followers
+ * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $following
+ * @property-read int|null $following_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $liked
+ * @property-read int|null $liked_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shared
+ * @property-read int|null $shared_count
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
  */
 class RemoteActor extends Actor
 {

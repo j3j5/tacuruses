@@ -8,26 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vinkla\Hashids\Facades\Hashids;
 
+
 /**
  * App\Models\ActivityPub\Like
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Like newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Like newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Like query()
- * @mixin \Eloquent
  * @property int $id
  * @property int $actor_id
  * @property int $target_id
- * @property string $remote_id
+ * @property string $activityId
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read string $slug
+ * @property-read \App\Models\ActivityPub\Actor $target
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereActorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Like whereRemoteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereUpdatedAt($value)
- * @property-read string $slug
+ * @mixin \Eloquent
  */
 class Like extends Model
 {

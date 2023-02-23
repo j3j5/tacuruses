@@ -16,7 +16,7 @@ return new class() extends Migration {
             $table->id();
             $table->unsignedBigInteger('actor_id');
             $table->unsignedBigInteger('target_id');    // It's a status
-            $table->text('remote_id');
+            $table->text('activityId');
 
             $table->timestamps();
 

@@ -41,6 +41,7 @@ return new class extends Migration
             $table->text('publicKey')->nullable();
 
             $table->index('activityId');
+            $table->index('publicKeyId');
             $table->index('username');
 
             $table->string('actor_type')->nullable();

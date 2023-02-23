@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware\ActivityPub;
 
-use App\Jobs\ActivityPub\GetPublicKeyForActor;
+use App\Jobs\ActivityPub\GetActorByKeyId;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use function Safe\base64_decode;
 use function Safe\openssl_verify;
@@ -40,10 +42,21 @@ class ValidateSignature
             abort(401, $errorMsg);
         }
 
+        if (!$request->hasHeader('Date')) {
+            Log::warning('No date present on header while validating signature. Aborting in prod.');
+            abort_if(app()->environment('production'), 403, 'Missing date');
+        }
+
+        $date = $request->header('Date');
+        if (Carbon::parse($date)->diffInHours() > 2) {
+            Log::warning('Given date differs with current date too much. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
+            abort_if(app()->environment('production'), 403, 'Missing date');
+        }
+
         // 1. Split Signature: into its separate parameters.
         $parts = explode(',', $signature);
         if (!is_array($parts)) {
-            Log::notice('The signature is not well formed', ['signature' => $signature]);
+            Log::warning('The signature is not well formed. Aborting in prod.', ['signature' => $signature]);
             abort_if(app()->environment('production'), 403, 'Wrong Signature');
         }
         $sigParameters = [];
@@ -55,7 +68,7 @@ class ValidateSignature
         }
 
         if (!isset($sigParameters['keyId'], $sigParameters['headers'], $sigParameters['signature'])) {
-            Log::notice('The signature seems to be missing parts', ['sigParameters' => $sigParameters]);
+            Log::warning('The signature seems to be missing parts', ['sigParameters' => $sigParameters]);
             abort_if(app()->environment('production'), 403, 'Wrong Signature');
         }
 
@@ -72,7 +85,7 @@ class ValidateSignature
                     $digest = 'SHA-256=' . base64_encode(hash('sha256', $request->getContent(), true));
                     $headerDigest = $request->header('digest');
                     if ($digest !== $headerDigest) {
-                        Log::notice('Digest does not match', ['given' => $headerDigest, 'calculated' => $digest]);
+                        Log::notice('Digest does not match. Aborting in prod.', ['given' => $headerDigest, 'calculated' => $digest]);
                         abort_if(app()->environment('production'), 403, 'Digest does not match');
                     }
                     $headers[$header] = $digest;
@@ -88,7 +101,18 @@ class ValidateSignature
             ->implode("\n");
 
         // 3. Fetch the keyId and resolve to an actor’s publicKey.
-        $publicKey = GetPublicKeyForActor::dispatchSync($sigParameters['keyId']);
+        $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
+        $publicKey = $actor->publicKey;
+
+        // Verify the actor's public key is the same than the action's actor
+        if (Arr::get($request->toArray(), 'actor') !== $actor->activityId) {
+            Log::warning('Actor\'s key and actor on action do not match. Aborting in prod', [
+                'actor' => $actor,
+                'request' => $request->toArray(),
+            ]);
+            abort_if(app()->environment('production'), 403, 'Actors do not match');
+        }
+
         Log::debug('Algorithm is ' . $sigParameters['algorithm']);
         $algo = match ($sigParameters['algorithm']) {
             // @see https://www.php.net/manual/en/openssl.signature-algos.php

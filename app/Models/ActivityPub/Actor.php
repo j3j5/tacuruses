@@ -2,7 +2,6 @@
 
 namespace App\Models\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Actor as ContractsActor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

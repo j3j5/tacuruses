@@ -17,5 +17,4 @@ class FollowResource extends JsonResource
     {
         return $this->resource->actor->activityId;
     }
-
 }

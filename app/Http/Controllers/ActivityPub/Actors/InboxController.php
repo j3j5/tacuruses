@@ -67,7 +67,6 @@ class InboxController extends Controller
         $actionModel->target_id = $target->id;
         $actionModel->save();
 
-
         switch($type) {
             case 'Follow':
                 ProcessFollowAction::dispatch(new Follow($action->all()));

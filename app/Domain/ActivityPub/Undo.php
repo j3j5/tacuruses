@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\ActivityPub;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
 
 class Undo extends Action
 {

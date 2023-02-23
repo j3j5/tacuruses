@@ -45,7 +45,7 @@ class ProcessUndoAction implements ShouldQueue
         try {
             $this->target = LocalActor::where('activityId', $this->action->target)->firstOrFail();
         } catch (ModelNotFoundException) {
-            Log::info("Target not found among local actors", ["action" => $this->action]);
+            Log::info('Target not found among local actors', ['action' => $this->action]);
             return;
         }
         /** @var \App\Models\ActivityPub\Actor $actor */
@@ -55,7 +55,7 @@ class ProcessUndoAction implements ShouldQueue
         try {
             $action = Action::where('activityId', $this->action->id)->firstOrFail();
         } catch (ModelNotFoundException) {
-            Log::info("Original action to undo not found on the db, ignoring", ["action" => $this->action]);
+            Log::info('Original action to undo not found on the db, ignoring', ['action' => $this->action]);
             return;
         }
         $action->object_type = $this->action->objectToUndo['type'];
@@ -74,7 +74,6 @@ class ProcessUndoAction implements ShouldQueue
 
         // Send the accept back
         SendUndoAcceptToActor::dispatchAfterResponse($this->actor, $this->target, $action);
-
     }
 
     private function processUndoFollow()

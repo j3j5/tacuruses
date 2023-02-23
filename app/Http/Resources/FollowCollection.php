@@ -36,7 +36,6 @@ class FollowCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-
         $prev = $this->resource->previousPageUrl();
         $next = $this->resource->nextPageUrl();
         return [
@@ -48,7 +47,7 @@ class FollowCollection extends ResourceCollection
             'prev' => $this->when(!empty($prev), $prev),
             'partOf' => route('user.followers', [$this->user]),
             'orderedItems' => $this->collection->map(
-                fn(FollowResource $follow) => $follow->getId()
+                fn (FollowResource $follow) => $follow->getId()
             ),
         ];
     }

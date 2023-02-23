@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\ActivityPub;
 
-use Illuminate\Support\Facades\Validator;
-
 class Like extends Action
 {
     public const TYPE = 'Like';

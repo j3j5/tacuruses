@@ -29,10 +29,10 @@ class FollowersController extends Controller
 
         if ($request->missing(['page']) && $followers->total() > $perPage) {
             return response()->activityJson([
-                "@context" => Context::ACTIVITY_STREAMS,
-                "id" => $actor->getFollowersUrl(),
-                "type" => "OrderedCollection",
-                "totalItems" => $followers->total(),
+                '@context' => Context::ACTIVITY_STREAMS,
+                'id' => $actor->getFollowersUrl(),
+                'type' => 'OrderedCollection',
+                'totalItems' => $followers->total(),
                 'first' => $followers->url(0),
                 // First items, order by desc (the last item on this collection is the first ever published)
                 'last' => $followers->url($followers->lastPage()),

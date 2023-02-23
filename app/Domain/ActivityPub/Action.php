@@ -15,8 +15,8 @@ abstract class Action
     /**
      *
      * @param array $activityObject
-     * @return \Illuminate\Contracts\Validation\Validator
      * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validate(array $activityObject) : Validator
     {

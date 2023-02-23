@@ -16,7 +16,6 @@ class WebfingerController extends Controller
 {
     public function __invoke(Request $request) : JsonResponse
     {
-
         $resource = $request->input('resource');
 
         if (0 === preg_match('/^acct:(.+)/i', $resource, $match)) {
@@ -57,9 +56,9 @@ class WebfingerController extends Controller
                     'href' => route('user.show', [$user]),
                 ],
                 [
-                    "rel" => "http://ostatus.org/schema/1.0/subscribe",
-                    "template" => "https://$hostname/authorize_interaction?uri={uri}",
-                ]
+                    'rel' => 'http://ostatus.org/schema/1.0/subscribe',
+                    'template' => "https://$hostname/authorize_interaction?uri={uri}",
+                ],
             ],
         ]);
 

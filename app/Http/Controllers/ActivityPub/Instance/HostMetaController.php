@@ -17,10 +17,11 @@ class HostMetaController extends Controller
      */
     public function __invoke(Request $request)
     {
+        $host = $request->getHost();
         $xml = <<<XML
         <xml version="1.0" encoding="UTF-8"?>
         <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
-            <Link rel="lrdd" template="https://bots.remote-dev.j3j5.uy/.well-known/webfinger?resource={uri}" type="application/xrd+xml" />
+            <Link rel="lrdd" template="https://$host/.well-known/webfinger?resource={uri}" type="application/xrd+xml" />
         </XRD>
 XML;
         return response($xml);

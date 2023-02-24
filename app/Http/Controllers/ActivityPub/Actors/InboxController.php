@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
-use App\Models\ActivityPub\Action;
+use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -52,7 +52,7 @@ class InboxController extends Controller
         }
 
         // store the action
-        $actionModel = new Action([
+        $actionModel = new Activity([
             'activityId' => $action->get('id'),
             'type' => $type,
             'object' => $action->all(),

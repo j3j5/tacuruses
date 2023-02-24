@@ -3,7 +3,7 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Contracts\Signer;
-use App\Models\ActivityPub\Action;
+use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Actor;
 use App\Traits\SendsSignedRequests;
@@ -20,14 +20,14 @@ class SendUndoAcceptToActor implements ShouldQueue
 
     private readonly Actor $actor;
     private readonly LocalActor $target;
-    private readonly Action $undo;
+    private readonly Activity $undo;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Actor $actor, LocalActor $target, Action $undo)
+    public function __construct(Actor $actor, LocalActor $target, Activity $undo)
     {
         $this->actor = $actor;
         $this->target = $target;

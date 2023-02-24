@@ -3,7 +3,7 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Undo;
-use App\Models\ActivityPub\Action;
+use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Bus\Queueable;
@@ -52,7 +52,7 @@ class ProcessUndoAction implements ShouldQueue
 
         // Find the action on DB
         try {
-            $action = Action::where('activityId', $this->action->id)->firstOrFail();
+            $action = Activity::where('activityId', $this->action->id)->firstOrFail();
         } catch (ModelNotFoundException) {
             Log::info('Original action to undo not found on the db, ignoring', ['action' => $this->action]);
             return;

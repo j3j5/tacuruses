@@ -25,5 +25,7 @@ interface Note
 
     public function getTags() : array;
 
+    public function getReplies() : array;
+
     public function isSensitive() : bool;
 }

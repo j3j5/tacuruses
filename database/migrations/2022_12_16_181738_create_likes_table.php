@@ -21,7 +21,7 @@ return new class() extends Migration {
             $table->timestamps();
 
             $table->foreign('actor_id')->references('id')->on('actors');
-            $table->foreign('target_id')->references('id')->on('actors');
+            $table->foreign('target_id')->references('id')->on('notes');
         });
     }
 

@@ -7,9 +7,9 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use App\Domain\ActivityPub\Contracts\Actor;
 use App\Domain\ActivityPub\Contracts\Note;
 use App\Http\Controllers\Controller;
-use App\Services\ActivityPub\Context;
+use App\Http\Resources\NoteResource;
+use App\Models\ActivityPub\Note as ActivityPubNote;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StatusController extends Controller
@@ -26,40 +26,19 @@ class StatusController extends Controller
      */
     public function __invoke(Request $request, Actor $actor, string $status)
     {
-        $this->actor = $actor;
-        $note = $this->actor->getNote($status);
+        // $this->actor = $actor;
+        // $note = $this->actor->getNote($status);
+
+        $note = ActivityPubNote::where('actor_id', $actor->id)->where('id', $status)->firstOrFail();
         if ($request->wantsJson()) {
             return $this->activityStatus($note);
         }
         return $this->status($note);
     }
 
-    private function activityStatus(Note $note) : JsonResponse
+    private function activityStatus(Note $note) : NoteResource
     {
-        $context = [
-            '@context' => [
-                Context::ACTIVITY_STREAMS,
-                [
-                    'ostatus' => 'http://ostatus.org#',
-                    'atomUri' => 'ostatus:atomUri',
-                    'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-                    'conversation' => 'ostatus:conversation',
-                    'sensitive' => 'as:sensitive',
-                    'toot' => 'http://joinmastodon.org/ns#',
-                    'votersCount' => 'toot:votersCount',
-                    'Hashtag' => 'as:Hashtag',
-                    'blurhash' => 'toot:blurhash',
-                    'focalPoint' => [
-                        '@container' => '@list',
-                        '@id' => 'toot:focalPoint',
-                    ],
-                ],
-            ],
-        ];
-
-        return response()->activityJson(
-            array_merge($context, $note->getAPNote()->toArray())
-        );
+        return new NoteResource($note);
     }
 
     private function status(Note $note) : View

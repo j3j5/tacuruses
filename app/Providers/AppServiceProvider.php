@@ -7,8 +7,8 @@ use App\Domain\ActivityPub\Contracts\Actor;
 use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Signer as ActivityPubSigner;
-use Godruoyi\Snowflake\Snowflake;
 use Godruoyi\Snowflake\LaravelSequenceResolver;
+use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 ->setSequenceResolver(new LaravelSequenceResolver($app->get('cache.store')));
         });
 
-        $this->app->bind(ContractsSnowflake::class, fn($app) => $app->make('snowflake'));
+        $this->app->bind(ContractsSnowflake::class, fn ($app) => $app->make('snowflake'));
     }
 
     public function addLogId(string $id) : void

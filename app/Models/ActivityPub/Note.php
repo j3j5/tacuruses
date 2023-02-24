@@ -59,7 +59,7 @@ class Note extends Model implements ContractsNote
     public function replies() : Attribute
     {
         return Attribute::make(
-            get: fn () : array =>  []
+            get: fn () : array => []
         );
     }
 

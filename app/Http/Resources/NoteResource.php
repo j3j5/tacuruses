@@ -34,7 +34,7 @@ class NoteResource extends JsonResource
                     'toot' => 'http://joinmastodon.org/ns#',
                     'votersCount' => 'toot:votersCount',
                     'Hashtag' => 'as:Hashtag',
-                    "Emoji" => "toot:Emoji",
+                    'Emoji' => 'toot:Emoji',
                     // 'blurhash' => 'toot:blurhash',
                     'focalPoint' => [
                         '@container' => '@list',

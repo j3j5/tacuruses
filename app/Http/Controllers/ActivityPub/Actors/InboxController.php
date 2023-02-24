@@ -122,8 +122,7 @@ class InboxController extends Controller
 
     private function tryToFindTarget(ParameterBag $action)
     {
-
-        $targetActivityId = match($action->get('type')) {
+        $targetActivityId = match ($action->get('type')) {
             'Follow' => $action->get('object'),
         };
 

@@ -51,6 +51,8 @@ class OutboxResource extends JsonResource
                 'sensitive' => $this->isSensitive(),
 
             ],
+            // 'inReplyToAtomUri' => null,
+            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
             'content' => $this->getText(),
             'contentMap' => [
                 $this->getLanguage() => $this->getText(),

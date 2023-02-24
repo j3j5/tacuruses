@@ -4,8 +4,8 @@ namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\Activity;
-use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Actor;
+use App\Models\ActivityPub\LocalActor;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -24,6 +24,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique('activityId');
+            $table->foreign('actor_id')->references('id')->on('actors');
+            // target_id is not a foreign key because it can point to actors or notes
+            // depending on the type
         });
     }
 

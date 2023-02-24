@@ -2,13 +2,18 @@
 
 namespace App\Providers;
 
+use App\Contracts\Snowflake as ContractsSnowflake;
 use App\Domain\ActivityPub\Contracts\Actor;
 use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Signer as ActivityPubSigner;
+use Godruoyi\Snowflake\Snowflake;
+use Godruoyi\Snowflake\LaravelSequenceResolver;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+
+use function Safe\strtotime;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +36,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Actor::class, LocalActor::class);
 
         $this->app->bind(Signer::class, ActivityPubSigner::class);
+
+        $this->app->singleton('snowflake', function ($app) {
+            return (new Snowflake($app->config->get('snowflake.datacenter_id'), $app->config->get('snowflake.worker_id')))
+                ->setStartTimeStamp(strtotime($app->config->get('snowflake.epoch')) * 1000)
+                ->setSequenceResolver(new LaravelSequenceResolver($app->get('cache.store')));
+        });
+
+        $this->app->bind(ContractsSnowflake::class, fn($app) => $app->make('snowflake'));
     }
 
     public function addLogId(string $id) : void

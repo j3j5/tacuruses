@@ -17,6 +17,7 @@ use App\Models\ActivityPub\LocalActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InboxController extends Controller
 {
@@ -38,18 +39,8 @@ class InboxController extends Controller
         $type = $action->get('type');
 
         $actorActivityId = $action->get('actor');
-        $targetActivityId = $action->get('object');
-        // For UNDO actions, the target_id is on object.object
-        if (!is_string($targetActivityId)) {
-            $targetActivityId = data_get($targetActivityId, 'object', '');
-        }
 
-        try {
-            $target = LocalActor::where('activityId', $targetActivityId)->firstOrFail();
-        } catch (ModelNotFoundException) {
-            Log::debug("Unknown target, can't save the action", ['id' => $targetActivityId]);
-            abort(404, 'Unknown target');
-        }
+        $target = $this->tryToFindTarget($action);
 
         // store the action
         $actionModel = new Activity([
@@ -127,5 +118,25 @@ class InboxController extends Controller
         return response()->activityJson();
 
         // Follow, replies... come in here
+    }
+
+    private function tryToFindTarget(ParameterBag $action)
+    {
+
+        $targetActivityId = match($action->get('type')) {
+            'Follow' => $action->get('object'),
+        };
+
+        // For UNDO actions, the target_id is on object.object
+        if (!is_string($targetActivityId)) {
+            $targetActivityId = data_get($targetActivityId, 'object', '');
+        }
+
+        try {
+            return LocalActor::where('activityId', $targetActivityId)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            Log::debug("Unknown target, can't save the action", ['id' => $targetActivityId]);
+            abort(404, 'Unknown target');
+        }
     }
 }

@@ -71,8 +71,6 @@ return [
 
     'timezone' => 'UTC',
 
-    'scheduling_timezone' => env('SCHEDULING_TIMEZONE', 'UTC'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -84,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'es',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +108,7 @@ return [
     |
     */
 
-    'faker_locale' => 'es_UY',
+    'faker_locale' => env('FAKER_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------

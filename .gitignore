@@ -21,3 +21,6 @@ resources/activitypub/examples
 .php-cs-fixer.cache
 docker-compose.yml
 Makefile
+_ide_helper.php
+config/debugbar.php
+*.diff

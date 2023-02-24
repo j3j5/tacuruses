@@ -111,14 +111,14 @@ class LocalActor extends Actor implements ContractsActor
     public function avatar() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: 'img/default_avatar.svg',
+            get: fn ($value) : string => $value ?: '/img/default_avatar.svg',
         );
     }
 
     public function header() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: 'img/default_avatar.svg',
+            get: fn ($value) : string => $value ?: '/img/default_avatar.svg',
         );
     }
 

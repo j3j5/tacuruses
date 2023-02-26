@@ -36,7 +36,7 @@ class Share extends Model
     use HasFactory;
 
     protected $connection = 'mysql';
-    protected $fillable = ['actor_id', 'target_id'];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function actor() : BelongsTo
     {

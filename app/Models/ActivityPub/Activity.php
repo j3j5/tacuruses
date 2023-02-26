@@ -47,6 +47,10 @@ class Activity extends Model
     protected $guarded = ['id', 'created_at', 'updated_at', 'accepted'];
     protected string $childColumn = 'type';
 
+    protected $casts = [
+        'object' => 'array',
+    ];
+
     /** @var array<string, class-string> */
     protected array $childTypes = [
         'Follow' => ActivityFollow::class,

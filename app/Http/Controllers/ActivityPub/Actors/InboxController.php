@@ -17,7 +17,6 @@ use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\ParameterBag;
 

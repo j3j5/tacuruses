@@ -10,20 +10,24 @@ use Parental\HasChildren;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
- * App\Models\ActivityPub\Action
+ * App\Models\ActivityPub\Activity
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Activity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Activity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Activity query()
  * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $activityId
  * @property string $type
- * @property int|null $actor_id
+ * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
  * @property array $object
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $accepted
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereAccepted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereActorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereCreatedAt($value)
@@ -33,10 +37,6 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
- * @property-read string $slug
- * @property int $accepted
- * @property-read \App\Models\ActivityPub\Actor|null $actor
- * @method static \Illuminate\Database\Eloquent\Builder|Activity whereAccepted($value)
  * @mixin \Eloquent
  */
 class Activity extends Model
@@ -48,6 +48,7 @@ class Activity extends Model
     protected string $childColumn = 'type';
 
     protected $casts = [
+        'accepted' => 'boolean',
         'object' => 'array',
     ];
 

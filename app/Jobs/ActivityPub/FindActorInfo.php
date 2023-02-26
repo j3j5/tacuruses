@@ -46,7 +46,6 @@ class FindActorInfo
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::acceptJson()->get($this->actorId);
         $actorData = $response->throw()->json();
-        info('actorData', [$actorData]);
         $validator = Validator::make($actorData, [
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],

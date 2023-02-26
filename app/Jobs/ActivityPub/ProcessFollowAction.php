@@ -5,11 +5,14 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Follow as FollowAction;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\Follow;
+use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use RuntimeException;
 
 class ProcessFollowAction implements ShouldQueue
 {
@@ -36,6 +39,9 @@ class ProcessFollowAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
+        if (!$target instanceof LocalActor) {
+            throw new RuntimeException('The ActivityFollow does not seem to have a valid target');
+        }
 
         // Store the follow
         $follow = Follow::updateOrCreate(
@@ -43,6 +49,8 @@ class ProcessFollowAction implements ShouldQueue
             ['activityId' => $this->action->id]
         );
 
-        SendFollowAcceptToActor::dispatch($actor, $target, $this->activity);
+        if ($actor instanceof RemoteActor) {
+            SendFollowAcceptToActor::dispatch($actor, $target, $this->activity);
+        }
     }
 }

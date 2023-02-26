@@ -10,16 +10,16 @@ use Parental\HasParent;
  * App\Models\ActivityPub\ActivityFollow
  *
  * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $activityId
  * @property string $type
- * @property int|null $actor_id
+ * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
  * @property array $object
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $accepted
- * @property-read \App\Models\ActivityPub\Actor|null $actor
+ * @property bool $accepted
+ * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\LocalActor|null $target
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow newModelQuery()

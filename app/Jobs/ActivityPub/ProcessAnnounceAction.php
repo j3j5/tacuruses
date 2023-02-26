@@ -4,12 +4,15 @@ namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Announce;
 use App\Models\ActivityPub\ActivityAnnounce;
+use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\Share;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use RuntimeException;
 
 class ProcessAnnounceAction implements ShouldQueue
 {
@@ -34,17 +37,21 @@ class ProcessAnnounceAction implements ShouldQueue
      */
     public function handle()
     {
-        info(__FILE__ . '.' . __LINE__);
         $actor = $this->activity->actor;
-        /** @var \App\Models\ActivityPub\Note $target */
         $target = $this->activity->target;
+        if (!$target instanceof Note) {
+            throw new RuntimeException('The ActivityAnnounce does not seem to have a valid target');
+        }
+
         // Store the like
-        $share = Share::updateOrCreate(
+        Share::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
             ['activityId' => $this->action->id]
         );
 
-        // Send the accept back
-        SendAnnounceAcceptToActor::dispatch($actor, $target, $this->activity);
+        if ($actor instanceof RemoteActor) {
+            // Send the accept back
+            SendAnnounceAcceptToActor::dispatch($actor, $target, $this->activity);
+        }
     }
 }

@@ -4,6 +4,9 @@ namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Undo;
 use App\Models\ActivityPub\ActivityUndo;
+use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,12 +38,19 @@ class ProcessUndoAction implements ShouldQueue
      */
     public function handle()
     {
-        info(__FILE__ . ':' . __LINE__, );
+        $actor = $this->activity->actor;
+        $target = $this->activity->target;
         switch($this->activity->object_type) {
             case 'Follow':
+                if (!$target instanceof LocalActor) {
+                    throw new RuntimeException('The ActivityUndo does not seem to have a valid actor target');
+                }
                 $this->processUndoFollow();
                 break;
             case 'Like':
+                if (!$target instanceof Note) {
+                    throw new RuntimeException('The ActivityUndo do not seem to have a valid note target');
+                }
                 $this->processUndoLike();
                 break;
             default:
@@ -48,12 +58,14 @@ class ProcessUndoAction implements ShouldQueue
                 throw new RuntimeException('Unknown action');
         }
 
-        // Send the accept back
-        SendUndoAcceptToActor::dispatch(
-            $this->activity->actor,
-            $this->activity->target,
-            $this->activity->withoutRelations()
-        );
+        if ($actor instanceof RemoteActor) {
+            // Send the accept back
+            SendUndoAcceptToActor::dispatch(
+                $actor,
+                $target,
+                $this->activity->withoutRelations()
+            );
+        }
     }
 
     private function processUndoFollow() : void
@@ -61,6 +73,7 @@ class ProcessUndoAction implements ShouldQueue
         $actor = $this->activity->actor;
         /** @var \App\Models\ActivityPub\LocalActor $target */
         $target = $this->activity->target;
+
         // Delete the follow relationship
         $actor->following()
             ->where('target_id', $target->id)
@@ -73,6 +86,7 @@ class ProcessUndoAction implements ShouldQueue
         $actor = $this->activity->actor;
         /** @var \App\Models\ActivityPub\Note $target */
         $target = $this->activity->target;
+
         $target->likes()
             ->where('actor_id', $actor->id)
             ->where('activityId', $this->action->objectToUndo['id'])

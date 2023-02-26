@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('activityId');
             $table->string('type');
-            $table->unsignedBigInteger('actor_id')->nullable();
+            $table->unsignedBigInteger('actor_id');
             $table->unsignedBigInteger('target_id');
             $table->string('object_type')->nullable();
             $table->json('object');

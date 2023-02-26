@@ -18,6 +18,7 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InboxController extends Controller
@@ -33,7 +34,6 @@ class InboxController extends Controller
      */
     public function __invoke(Request $request)
     {
-        info(__FILE__ . ':' . __LINE__, );
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
 
@@ -63,15 +63,19 @@ class InboxController extends Controller
         // Go ahead, process it
         switch ($type) {
             case Follow::TYPE:
+                /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
                 ProcessFollowAction::dispatch(new Follow($action->all()), $activityModel);
                 break;
             case Like::TYPE:
+                /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
                 ProcessLikeAction::dispatch(new Like($action->all()), $activityModel);
                 break;
             case Announce::TYPE:
+                /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
                 ProcessAnnounceAction::dispatch(new Announce($action->all()), $activityModel);
                 break;
             case Undo::TYPE:
+                /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
                 ProcessUndoAction::dispatch(new Undo($action->all()), $activityModel);
                 break;
 
@@ -109,8 +113,8 @@ class InboxController extends Controller
                 // 	break;
 
             default:
-                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]) && abort(422, 'Unknow type of action');
-                break;
+                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
+                abort(422, 'Unknow type of action');
         }
 
         return response()->activityJson();
@@ -123,7 +127,7 @@ class InboxController extends Controller
             Announce::TYPE => $this->tryToFindNoteTarget($action->get('object')),
             Like::TYPE => $this->tryToFindNoteTarget($action->get('object')),
             Undo::TYPE => $this->tryToFindUndoTarget($action->get('object')),
-            // default => $this->unknownTarget($action),
+            default => throw new RuntimeException("Type '" . $action->get('type') . "' is not implemented yet!"),
         };
     }
 
@@ -133,6 +137,7 @@ class InboxController extends Controller
             Follow::TYPE => $this->tryToFindActorTarget($object['object']),
             Announce::TYPE => $this->tryToFindNoteTarget($object['object']),
             Like::TYPE => $this->tryToFindNoteTarget($object['object']),
+            default => throw new RuntimeException("Undo Type '" . $object['type'] . "' is not implemented yet!"),
         };
     }
 

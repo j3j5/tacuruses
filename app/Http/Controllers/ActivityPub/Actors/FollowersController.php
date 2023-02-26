@@ -23,7 +23,6 @@ class FollowersController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|FollowCollection
     {
-        info(__CLASS__, ['request' => $request]);
         $perPage = 20;
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator */
         $followers = $actor->followers()->paginate($perPage);

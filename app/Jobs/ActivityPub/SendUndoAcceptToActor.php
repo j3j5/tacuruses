@@ -22,7 +22,7 @@ class SendUndoAcceptToActor implements ShouldQueue
 
     private readonly Actor $actor;
     private readonly LocalActor|Note $target;
-    private readonly LocalActor|Note $targetActor;
+    private readonly LocalActor $targetActor;
     private readonly ActivityUndo $undo;
 
     /**
@@ -35,12 +35,9 @@ class SendUndoAcceptToActor implements ShouldQueue
         $this->actor = $actor;
         $this->target = $target;
         $this->undo = $undo;
-
-        if ($target instanceof Note) {
-            $this->targetActor = $target->actor;
-        } else {
-            $this->targetActor = $target;
-        }
+        $this->targetActor = $target instanceof Note ?
+            $target->actor :
+            $target;
     }
 
     /**
@@ -50,7 +47,6 @@ class SendUndoAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
-        info(__FILE__ . ':' . __LINE__, );
         $accept = [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/undo/' . $this->undo->slug,

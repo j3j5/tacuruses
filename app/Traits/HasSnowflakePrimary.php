@@ -6,7 +6,7 @@ use App\Contracts\Snowflake;
 
 trait HasSnowflakePrimary
 {
-    public static function bootHasSnowflakePrimary()
+    public static function bootHasSnowflakePrimary() : void
     {
         static::saving(function ($model) {
             if (is_null($model->getKey())) {

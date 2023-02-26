@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use RuntimeException;
 
 use function Safe\json_decode;
+use function Safe\json_encode;
 use function Safe\preg_match;
 
 /**
@@ -35,6 +36,7 @@ use function Safe\preg_match;
  * @property array $attachments
  * @property array $tags
  * @property-read string $activity_id
+ * @property-read string $activityId
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
  * @property-read array $replies
@@ -54,6 +56,16 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereTags($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read int|null $likes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read int|null $shares_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @mixin \Eloquent
  */
 class Note extends Model implements ContractsNote
@@ -62,6 +74,14 @@ class Note extends Model implements ContractsNote
     use HasSnowflakePrimary;
 
     public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
+
+    /** @var array<string, string> */
+    protected $casts = [
+        'sensitive' => 'boolean',
+        // Implemented manually to force array return
+        // 'attachments' => 'array',
+        // 'tags' => 'array',
+    ];
 
     public function actor() : BelongsTo
     {
@@ -124,13 +144,14 @@ class Note extends Model implements ContractsNote
 
     public function getAPNote() : ObjectNote
     {
-        return Type::create('Note', [
+        /** @var \ActivityPhp\Type\Extended\Object\Note $note */
+        $note = Type::create('Note', [
             'id' => $this->getNoteUrl(),
             'summary' => null,
             'inReplyTo' => null,
             'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
             'url' => $this->getNoteUrl(),
-            'attributedTo' => self::getActor()->profileUrl,
+            'attributedTo' => self::getActor()->activityId,
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
@@ -146,6 +167,8 @@ class Note extends Model implements ContractsNote
             'tag' => $this->getTags(),
             'replies' => $this->getReplies(),
         ]);
+
+        return $note;
     }
 
     public function getText() : string
@@ -160,6 +183,7 @@ class Note extends Model implements ContractsNote
 
     public function getPublishedStatusAt() : Carbon
     {
+        /** @phpstan-ignore-next-line */
         return $this->created_at;
     }
 
@@ -195,7 +219,7 @@ class Note extends Model implements ContractsNote
 
     public function isSensitive() : bool
     {
-        return $this->sensitive;
+        return (bool) $this->sensitive;
     }
 
     public function scopeByActivityId(Builder $query, string $activityId) : void

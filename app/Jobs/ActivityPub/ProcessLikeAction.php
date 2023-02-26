@@ -5,11 +5,14 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Like as LikeAction;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Like;
+use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use RuntimeException;
 
 class ProcessLikeAction implements ShouldQueue
 {
@@ -36,8 +39,10 @@ class ProcessLikeAction implements ShouldQueue
     {
         // First or create the actor
         $actor = $this->activity->actor;
-        /** @var \App\Models\ActivityPub\Note $target */
         $target = $this->activity->target;
+        if (!$target instanceof Note) {
+            throw new RuntimeException('The ActivityLike does not seem to have a valid target');
+        }
 
         // Store the like
         $like = Like::updateOrCreate(
@@ -45,8 +50,10 @@ class ProcessLikeAction implements ShouldQueue
             ['activityId' => $this->action->id]
         );
 
-        // Send the accept back
-        SendLikeAcceptToActor::dispatch($actor, $target, $this->activity);
+        if ($actor instanceof RemoteActor) {
+            // Send the accept back
+            SendLikeAcceptToActor::dispatch($actor, $target, $this->activity);
+        }
     }
 
     /**

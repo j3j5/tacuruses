@@ -45,7 +45,6 @@ class SendFollowAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
-        info(__FILE__ . ':' . __LINE__, );
         $accept = [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/follows/' . $this->follow->slug,

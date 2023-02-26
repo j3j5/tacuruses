@@ -20,7 +20,6 @@ class ProfileController extends Controller
      */
     public function __invoke(Request $request, LocalActor $user)
     {
-        info('wants json => ' . $request->wantsJson());
         if ($request->wantsJson()) {
             return $this->activityProfile($user);
         }

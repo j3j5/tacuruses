@@ -15,17 +15,17 @@ use RuntimeException;
  * App\Models\ActivityPub\ActivityUndo
  *
  * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $activityId
  * @property string $type
- * @property int|null $actor_id
+ * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
  * @property array $object
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $accepted
- * @property-read \App\Models\ActivityPub\Actor|null $actor
- * @property-read \App\Models\ActivityPub\Note|\App\Models\ActivityPub\LocalActor|null $target
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read \App\Models\ActivityPub\LocalActor|\App\Models\ActivityPub\Note|null $target
  * @property-read string $slug
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newQuery()
@@ -33,7 +33,6 @@ use RuntimeException;
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereAccepted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereObject($value)

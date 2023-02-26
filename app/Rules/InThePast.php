@@ -19,7 +19,12 @@ class InThePast implements InvokableRule
      */
     public function __invoke($attribute, $value, $fail)
     {
-        if (Carbon::createFromFormat(self::DATE_FORMAT, $value)->isFuture()) {
+        $date = Carbon::createFromFormat(self::DATE_FORMAT, $value);
+        if (!$date instanceof Carbon) {
+            $fail('Invalid datetime format, it does not match ISO8601-ZULU: ' . self::DATE_FORMAT);
+            return;
+        }
+        if ($date->isFuture()) {
             $fail('Time travel alert! The ' . $attribute . ' is in the future.');
         }
     }

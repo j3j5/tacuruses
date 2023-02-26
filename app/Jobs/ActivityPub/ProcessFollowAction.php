@@ -22,7 +22,7 @@ class ProcessFollowAction implements ShouldQueue
      */
     public function __construct(
         private readonly FollowAction $action,
-        private ActivityFollow $activity
+        private readonly ActivityFollow $activity
     ) {
         //
     }

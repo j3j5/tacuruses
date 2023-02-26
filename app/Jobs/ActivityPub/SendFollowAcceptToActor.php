@@ -23,7 +23,7 @@ class SendFollowAcceptToActor implements ShouldQueue
     private readonly RemoteActor $actor;
     private readonly LocalActor $target;
     private readonly LocalActor $targetActor;
-    private ActivityFollow $follow;
+    private readonly ActivityFollow $follow;
 
     /**
      * Create a new job instance.

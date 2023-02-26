@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\ActivityPub;
 
-class Follow extends Action
+use App\Services\ActivityPub\Context;
+use Illuminate\Validation\Rule;
+
+class Follow extends Activity
 {
     public const TYPE = 'Follow';
 
@@ -13,16 +16,18 @@ class Follow extends Action
     public readonly string $actor;
     public readonly string $target;
 
-    protected array $rules = [
-        '@context' => ['required', 'string', 'in:https://www.w3.org/ns/activitystreams'],
-        'id' => ['required', 'string'],
-        'type' => ['required', 'string'],
-        'actor' => ['required', 'string'],
-        'object' => ['required', 'string'],
-    ];
+    protected array $rules;
 
     public function __construct(array $activityObject)
     {
+        $this->rules = [
+            '@context' => ['required', 'string', Rule::in([Context::ACTIVITY_STREAMS])],
+            'id' => ['required', 'string'],
+            'type' => ['required', 'string'],
+            'actor' => ['required', 'string'],
+            'object' => ['required', 'string'],
+        ];
+
         $validator = $this->validate($activityObject);
         // Retrieve the validated input...
         $validated = $validator->validated();

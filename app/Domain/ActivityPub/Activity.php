@@ -7,7 +7,7 @@ namespace App\Domain\ActivityPub;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
 
-abstract class Action
+abstract class Activity
 {
     protected Validator $validator;
     protected array $rules = [];

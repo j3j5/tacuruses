@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\ActivityPub;
 
+use App\Services\ActivityPub\Context;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
-class Undo extends Action
+class Undo extends Activity
 {
     public const TYPE = 'Undo';
 
@@ -20,20 +22,22 @@ class Undo extends Action
      */
     public readonly array $objectToUndo;
 
-    protected array $rules = [
-        '@context' => ['required', 'string', 'in:https://www.w3.org/ns/activitystreams'],
-        'id' => ['required', 'string'],
-        'type' => ['required', 'string'],
-        'actor' => ['required', 'string'],
-        'object' => ['required', 'array'],
-        'object.id' => ['required', 'string'],
-        'object.type' => ['required', 'string'],
-        'object.actor' => ['required', 'string'],
-        'object.object' => ['required', 'string'],
-    ];
+    protected array $rules;
 
     public function __construct(array $activityObject)
     {
+        $this->rules = [
+            '@context' => ['required', 'string', Rule::in([Context::ACTIVITY_STREAMS])],
+            'id' => ['required', 'string'],
+            'type' => ['required', 'string'],
+            'actor' => ['required', 'string'],
+            'object' => ['required', 'array'],
+            'object.id' => ['required', 'string'],
+            'object.type' => ['required', 'string'],
+            'object.actor' => ['required', 'string'],
+            'object.object' => ['required', 'string'],
+        ];
+
         $validator = $this->validate($activityObject);
         // Retrieve the validated input...
         $validated = $validator->validated();

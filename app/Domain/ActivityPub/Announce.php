@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Domain\ActivityPub;
 
 use App\Services\ActivityPub\Context;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
-class Like extends Activity
+class Announce extends Activity
 {
-    public const TYPE = 'Like';
+    public const TYPE = 'Announce';
 
     public readonly string $id;
     public readonly string $type;
     public readonly string $actor;
-    public readonly string $target;
+    public readonly Carbon $published;
+    public readonly array $to;
+    public readonly array $cc;
+    public readonly string $object;
 
     protected array $rules;
 
@@ -25,6 +29,13 @@ class Like extends Activity
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],
             'actor' => ['required', 'string'],
+            'published' => ['required', 'string', 'date_format:Y-m-d\TH:i:s\Z', function ($attribute, $value, $fail) {
+                if (Carbon::createFromFormat('Y-m-d\TH:i:s\Z', $value)->isFuture()) {
+                    $fail('Time travel alert! The ' . $attribute . ' is in the future.');
+                }
+            }],
+            'to' => ['required', 'array'],
+            'cc' => ['required', 'array'],
             'object' => ['required', 'string'],
         ];
 
@@ -36,6 +47,9 @@ class Like extends Activity
         $this->id = $validated['id'];
         $this->type = self::TYPE;
         $this->actor = $validated['actor'];
-        $this->target = $validated['object'];
+        $this->published = Carbon::parse($validated['published']);
+        $this->to = $validated['to'];
+        $this->cc = $validated['cc'];
+        $this->object = $validated['object'];
     }
 }

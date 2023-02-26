@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\ActivityPub\LocalActor;
+use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -37,7 +38,7 @@ class OutboxCollection extends ResourceCollection
     {
         $context = [
             '@context' => [
-                'https://www.w3.org/ns/activitystreams', [
+                Context::ACTIVITY_STREAMS, [
                     'ostatus' => 'http://ostatus.org#',
                     'atomUri' => 'ostatus:atomUri',
                     'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',

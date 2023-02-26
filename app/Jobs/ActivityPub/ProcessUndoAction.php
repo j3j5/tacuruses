@@ -23,7 +23,7 @@ class ProcessUndoAction implements ShouldQueue
      */
     public function __construct(
         private readonly Undo $action,
-        private ActivityUndo $activity
+        private readonly ActivityUndo $activity
     ) {
         //
     }
@@ -36,7 +36,6 @@ class ProcessUndoAction implements ShouldQueue
     public function handle()
     {
         info(__FILE__ . ':' . __LINE__, );
-        info($this->activity->object_type);
         switch($this->activity->object_type) {
             case 'Follow':
                 $this->processUndoFollow();

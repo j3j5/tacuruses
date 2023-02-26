@@ -127,10 +127,12 @@ class ValidateSignature
             $algo
         );
 
-        if (!$verified) {
+        if ($verified !== 1) {
             Log::warning('Unable to verify given signature');
             abort_if(app()->environment('production'), 403, 'Unable to verify given signature');
         }
+
+        Log::debug('Signature is VERIFIED!');
 
         $request->merge(['actorModel' => $actor]);
 

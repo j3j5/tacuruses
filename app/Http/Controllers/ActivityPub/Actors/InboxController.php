@@ -55,6 +55,12 @@ class InboxController extends Controller
             'actor_id' => $actor->id,
         ]);
 
+        // Make sure it hasn't been already processed
+        if ($activityModel->accepted) {
+            Log::info('Model already processed and accepted, ignoring');
+            return response()->activityJson();
+        }
+        // Go ahead, process it
         switch ($type) {
             case Follow::TYPE:
                 ProcessFollowAction::dispatch(new Follow($action->all()), $activityModel);
@@ -108,8 +114,6 @@ class InboxController extends Controller
         }
 
         return response()->activityJson();
-
-        // Follow, replies... come in here
     }
 
     private function tryToFindTarget(ParameterBag $action) : LocalActor|Note

@@ -13,7 +13,6 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -67,6 +66,7 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
+ * @mixin \Eloquent
  */
 class RemoteActor extends Actor
 {

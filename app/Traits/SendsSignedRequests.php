@@ -21,7 +21,7 @@ trait SendsSignedRequests
         // Make HTTP post back to the server of the actor
 
         $headers = $signer->sign(
-            $this->target,
+            $this->targetActor,
             $this->actor->inbox,
             $body,
             [
@@ -34,6 +34,7 @@ trait SendsSignedRequests
         $response = Http::withHeaders($headers)->post($this->actor->inbox, $request);
         if ($response->failed()) {
             Log::warning('Request failed. Response:', [$response]);
+            $response->throw();
         }
 
         return $response;

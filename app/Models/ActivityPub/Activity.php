@@ -5,6 +5,8 @@ namespace App\Models\ActivityPub;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Parental\HasChildren;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -13,7 +15,6 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Activity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Activity query()
- * @mixin \Eloquent
  * @property int $id
  * @property string $activityId
  * @property string $type
@@ -33,15 +34,24 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @property-read string $slug
+ * @property-read \App\Models\ActivityPub\Actor|null $actor
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereAccepted($value)
+ * @mixin \Eloquent
  */
 class Activity extends Model
 {
     use HasFactory;
+    use HasChildren;
 
     protected $fillable = ['activityId', 'type', 'object'];
+    protected string $childColumn = 'type';
 
-    protected $casts = [
-        'object' => 'array',
+    /** @var array<string, class-string> */
+    protected array $childTypes = [
+        'Follow' => ActivityFollow::class,
+        'Like' => ActivityLike::class,
+        'Undo' => ActivityUndo::class,
+        'Announce' => ActivityAnnounce::class,
     ];
 
     public function slug() : Attribute
@@ -49,5 +59,10 @@ class Activity extends Model
         return Attribute::make(
             get: fn () : string => Hashids::encode($this->id)
         );
+    }
+
+    public function actor() : BelongsTo
+    {
+        return $this->belongsTo(Actor::class, 'actor_id');
     }
 }

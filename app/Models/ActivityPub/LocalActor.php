@@ -5,12 +5,18 @@ namespace App\Models\ActivityPub;
 use App\Domain\ActivityPub\Contracts\Actor as ContractsActor;
 use App\Domain\ActivityPub\Contracts\Note;
 use Carbon\Carbon;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Parental\HasParent;
+use RuntimeException;
+
+use function Safe\preg_match;
 
 /**
  * App\Models\ActivityPub\LocalActor
@@ -47,7 +53,6 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
- * @mixin \Eloquent
  * @property string|null $activityId
  * @property string|null $type
  * @property string|null $url
@@ -76,11 +81,15 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereSharedInbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor byActivityId(string $activityId)
+ * @mixin \Eloquent
  */
 class LocalActor extends Actor implements ContractsActor
 {
     use HasFactory;
     use HasParent;
+
+    public const USER_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)$#';
 
     protected $connection = 'mysql';
 
@@ -88,15 +97,6 @@ class LocalActor extends Actor implements ContractsActor
         'alsoKnownAs' => 'array',
         'properties' => 'array',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function (self $actor) {
-            $actor->activityId = $actor->activityId;
-        });
-    }
 
     /**
      * Get the route key for the model.
@@ -106,6 +106,21 @@ class LocalActor extends Actor implements ContractsActor
     public function getRouteKeyName()
     {
         return 'username';
+    }
+
+    public function followers() : HasMany
+    {
+        return $this->hasMany(Follow::class, 'target_id');
+    }
+
+    public function likes() : HasManyThrough
+    {
+        return $this->hasManyThrough(Like::class, Note::class, 'target_id');
+    }
+
+    public function shares() : HasManyThrough
+    {
+        return $this->hasManyThrough(Share::class, Note::class, 'target_id');
     }
 
     public function avatar() : Attribute
@@ -267,5 +282,14 @@ class LocalActor extends Actor implements ContractsActor
         ];
 
         return array_merge($person, $metadata, $links);
+    }
+
+    public function scopeByActivityId(Builder $query, string $activityId) : void
+    {
+        $matches = [];
+        if (preg_match(self::USER_REGEX, $activityId, $matches) === 0) {
+            throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
+        }
+        $query->where('username', $matches['user']);
     }
 }

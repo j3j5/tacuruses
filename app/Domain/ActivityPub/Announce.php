@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ActivityPub;
 
+use App\Rules\InThePast;
 use App\Services\ActivityPub\Context;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -29,11 +30,7 @@ class Announce extends Activity
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],
             'actor' => ['required', 'string'],
-            'published' => ['required', 'string', 'date_format:Y-m-d\TH:i:s\Z', function ($attribute, $value, $fail) {
-                if (Carbon::createFromFormat('Y-m-d\TH:i:s\Z', $value)->isFuture()) {
-                    $fail('Time travel alert! The ' . $attribute . ' is in the future.');
-                }
-            }],
+            'published' => ['required', 'string', 'date_format:Y-m-d\TH:i:s\Z', new InThePast()],
             'to' => ['required', 'array'],
             'cc' => ['required', 'array'],
             'object' => ['required', 'string'],

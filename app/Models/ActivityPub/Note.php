@@ -9,21 +9,73 @@ use App\Domain\ActivityPub\Contracts\Note as ContractsNote;
 use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
 use Carbon\Carbon;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use RuntimeException;
 
 use function Safe\json_decode;
+use function Safe\preg_match;
 
+/**
+ * App\Models\ActivityPub\Note
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $actor_id
+ * @property int $sensitive
+ * @property string $text
+ * @property string|null $summary
+ * @property string|null $inReplyTo activityId of the status is replying to
+ * @property string $language
+ * @property array $attachments
+ * @property array $tags
+ * @property-read string $activity_id
+ * @property-read string $activity_url
+ * @property-read \App\Models\ActivityPub\LocalActor $actor
+ * @property-read array $replies
+ * @property-read string $url
+ * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereInReplyTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Note extends Model implements ContractsNote
 {
     use HasFactory;
     use HasSnowflakePrimary;
 
+    public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
+
     public function actor() : BelongsTo
     {
         return $this->belongsTo(LocalActor::class, 'actor_id');
+    }
+
+    public function likes() : HasMany
+    {
+        return $this->hasMany(Like::class, 'target_id');
+    }
+
+    public function shares() : HasMany
+    {
+        return $this->hasMany(Share::class, 'target_id');
     }
 
     public function url() : Attribute
@@ -37,6 +89,13 @@ class Note extends Model implements ContractsNote
     {
         return Attribute::make(
             get: fn () : string => route('status.activity', [$this->actor, $this])
+        );
+    }
+
+    public function activityId() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => $this->url
         );
     }
 
@@ -121,7 +180,7 @@ class Note extends Model implements ContractsNote
 
     public function getAttachment() : array
     {
-        return $this->attachment;
+        return $this->attachments;
     }
 
     public function getTags() : array
@@ -137,5 +196,14 @@ class Note extends Model implements ContractsNote
     public function isSensitive() : bool
     {
         return $this->sensitive;
+    }
+
+    public function scopeByActivityId(Builder $query, string $activityId) : void
+    {
+        $matches = [];
+        if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
+            throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
+        }
+        $query->where('id', $matches['noteId']);
     }
 }

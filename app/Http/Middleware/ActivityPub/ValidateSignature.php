@@ -132,6 +132,8 @@ class ValidateSignature
             abort_if(app()->environment('production'), 403, 'Unable to verify given signature');
         }
 
+        $request->merge(['actorModel' => $actor]);
+
         return $next($request);
     }
 }

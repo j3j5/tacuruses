@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ActivityPub\Actors;
 
+use App\Domain\ActivityPub\Announce;
 use App\Domain\ActivityPub\Follow;
 use App\Domain\ActivityPub\Like;
 use App\Domain\ActivityPub\Undo;
 use App\Http\Controllers\Controller;
+use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
 use App\Models\ActivityPub\Activity;
-use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\ActivityPub\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -32,45 +34,40 @@ class InboxController extends Controller
      */
     public function __invoke(Request $request)
     {
-        info(__CLASS__, ['request' => $request]);
-
+        info(__FILE__ . ':' . __LINE__, );
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
+
+        // Remove the actor from session
+        $actor = $request->actorModel;
+        $action->remove('actorModel');
+
         $type = $action->get('type');
-
-        $actorActivityId = $action->get('actor');
-
         $target = $this->tryToFindTarget($action);
-
+        $objectType = data_get($action->get('object'), 'type');
         // store the action
-        $actionModel = new Activity([
+        $activityModel = Activity::updateOrCreate([
             'activityId' => $action->get('id'),
             'type' => $type,
+        ], [
             'object' => $action->all(),
+            'object_type' => $objectType,
+            'target_id' => $target->id,
+            'actor_id' => $actor->id,
         ]);
-        $actionModel->object_type = $action->get('object.type', '');
-        $actionModel->target_id = $target->id;
-        // Try to find the actor to store it
-        try {
-            $actor = Actor::where('activityId', $actorActivityId)->firstOrFail();
-            $actionModel->actor_id = $actor->id;
-        } catch (ModelNotFoundException) {
-            Log::debug('Unknown actor', ['id' => $actorActivityId]);
-        }
-        $actionModel->save();
 
-        switch($type) {
-            case 'Follow':
-                ProcessFollowAction::dispatch(new Follow($action->all()));
+        switch ($type) {
+            case Follow::TYPE:
+                ProcessFollowAction::dispatch(new Follow($action->all()), $activityModel);
                 break;
-
-            case 'Like':
-                ProcessLikeAction::dispatch(new Like($action->all()));
+            case Like::TYPE:
+                ProcessLikeAction::dispatch(new Like($action->all()), $activityModel);
                 break;
-
-            case 'Undo':
-                ProcessUndoAction::dispatch(new Undo($action->all()));
-                // $this->handleUndoActivity();
+            case Announce::TYPE:
+                ProcessAnnounceAction::dispatch(new Announce($action->all()), $activityModel);
+                break;
+            case Undo::TYPE:
+                ProcessUndoAction::dispatch(new Undo($action->all()), $activityModel);
                 break;
 
                 // case 'View':
@@ -91,9 +88,6 @@ class InboxController extends Controller
                 // case 'Create':
                 // 	break;
 
-                // case 'Announce':
-                // 	break;
-
                 // case 'Accept':
                 // 	break;
 
@@ -110,9 +104,8 @@ class InboxController extends Controller
                 // 	break;
 
             default:
-                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
-                abort(422, 'Unknow type of action');
-                // break;
+                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]) && abort(422, 'Unknow type of action');
+                break;
         }
 
         return response()->activityJson();
@@ -120,22 +113,33 @@ class InboxController extends Controller
         // Follow, replies... come in here
     }
 
-    private function tryToFindTarget(ParameterBag $action)
+    private function tryToFindTarget(ParameterBag $action) : LocalActor|Note
     {
-        $targetActivityId = match ($action->get('type')) {
-            'Follow' => $action->get('object'),
+        return match ($action->get('type')) {
+            Follow::TYPE => $this->tryToFindActorTarget($action->get('object')),
+            Announce::TYPE => $this->tryToFindNoteTarget($action->get('object')),
+            Like::TYPE => $this->tryToFindNoteTarget($action->get('object')),
+            Undo::TYPE => $this->tryToFindUndoTarget($action->get('object')),
+            // default => $this->unknownTarget($action),
         };
+    }
 
-        // For UNDO actions, the target_id is on object.object
-        if (!is_string($targetActivityId)) {
-            $targetActivityId = data_get($targetActivityId, 'object', '');
-        }
+    private function tryToFindUndoTarget(array $object) : LocalActor|Note
+    {
+        return match ($object['type']) {
+            Follow::TYPE => $this->tryToFindActorTarget($object['object']),
+            Announce::TYPE => $this->tryToFindNoteTarget($object['object']),
+            Like::TYPE => $this->tryToFindNoteTarget($object['object']),
+        };
+    }
 
-        try {
-            return LocalActor::where('activityId', $targetActivityId)->firstOrFail();
-        } catch (ModelNotFoundException) {
-            Log::debug("Unknown target, can't save the action", ['id' => $targetActivityId]);
-            abort(404, 'Unknown target');
-        }
+    private function tryToFindActorTarget(string $activityId) : LocalActor
+    {
+        return LocalActor::byActivityId($activityId)->firstOrFail();
+    }
+
+    private function tryToFindNoteTarget(string $activityId) : Note
+    {
+        return Note::byActivityId($activityId)->firstOrFail();
     }
 }

@@ -34,6 +34,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @property-read string $slug
+ * @property int $accepted
  * @property-read \App\Models\ActivityPub\Actor|null $actor
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereAccepted($value)
  * @mixin \Eloquent
@@ -43,7 +44,7 @@ class Activity extends Model
     use HasFactory;
     use HasChildren;
 
-    protected $fillable = ['activityId', 'type', 'object'];
+    protected $guarded = ['id', 'created_at', 'updated_at', 'accepted'];
     protected string $childColumn = 'type';
 
     /** @var array<string, class-string> */
@@ -64,5 +65,13 @@ class Activity extends Model
     public function actor() : BelongsTo
     {
         return $this->belongsTo(Actor::class, 'actor_id');
+    }
+
+    public function markAsAccepted() : self
+    {
+        $this->accepted = true;
+        $this->save();
+
+        return $this;
     }
 }

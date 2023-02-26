@@ -3,7 +3,7 @@
 namespace App\Models\ActivityPub;
 
 use App\Domain\ActivityPub\Contracts\Actor as ContractsActor;
-use App\Domain\ActivityPub\Contracts\Note;
+use App\Domain\ActivityPub\Contracts\Note as ContractsNote;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -115,12 +115,22 @@ class LocalActor extends Actor implements ContractsActor
 
     public function likes() : HasManyThrough
     {
-        return $this->hasManyThrough(Like::class, Note::class, 'target_id');
+        return $this->hasManyThrough(
+            Like::class,
+            Note::class,
+            'actor_id',
+            'target_id'
+        );
     }
 
     public function shares() : HasManyThrough
     {
-        return $this->hasManyThrough(Share::class, Note::class, 'target_id');
+        return $this->hasManyThrough(
+            Share::class,
+            Note::class,
+            'actor_id',
+            'target_id'
+        );
     }
 
     public function avatar() : Attribute
@@ -220,7 +230,7 @@ class LocalActor extends Actor implements ContractsActor
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @return \App\Domain\ActivityPub\Contracts\Note
      */
-    public function getNote(string $noteId): Note
+    public function getNote(string $noteId): ContractsNote
     {
         return $this->model::findOrFail($noteId);
     }

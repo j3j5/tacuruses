@@ -57,12 +57,6 @@ class ActivityUndo extends Activity
 
     public function target() : BelongsTo
     {
-        info(__FILE__ . ':' . __LINE__);
-        info($this->object_type);
-        info(Follow::TYPE);
-        info(Like::TYPE);
-        info(Undo::TYPE);
-        info(Announce::TYPE);
         return match ($this->object_type) {
             Follow::TYPE => $this->belongsTo(LocalActor::class, 'target_id'),
             Like::TYPE, Undo::TYPE, Announce::TYPE => $this->belongsTo(Note::class, 'target_id'),

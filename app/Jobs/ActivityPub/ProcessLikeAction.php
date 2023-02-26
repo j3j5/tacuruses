@@ -3,15 +3,13 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Like as LikeAction;
+use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Like;
-use App\Models\ActivityPub\LocalActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
-use function Safe\parse_url;
 
 class ProcessLikeAction implements ShouldQueue
 {
@@ -22,8 +20,10 @@ class ProcessLikeAction implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(private readonly LikeAction $action)
-    {
+    public function __construct(
+        private readonly LikeAction $action,
+        private readonly ActivityLike $activity
+    ) {
         //
     }
 
@@ -35,16 +35,9 @@ class ProcessLikeAction implements ShouldQueue
     public function handle()
     {
         // First or create the actor
-        $actor = FindActorInfo::dispatchSync($this->action->actor);
-
-        $path = ltrim(parse_url($this->action->target, PHP_URL_PATH), '/');
-        [$actorId, $statusId] = explode('/', $path);
-
-        /** @var \App\Models\ActivityPub\LocalActor $localActor */
-        $localActor = LocalActor::where('slug', $actorId)->firstOrFail();
-
-        /** @var \App\Domain\ActivityPub\Contracts\Note $target */
-        $target = $localActor->getNote($statusId);
+        $actor = $this->activity->actor;
+        /** @var \App\Models\ActivityPub\Note $target */
+        $target = $this->activity->target;
 
         // Store the like
         $like = Like::updateOrCreate(
@@ -53,7 +46,7 @@ class ProcessLikeAction implements ShouldQueue
         );
 
         // Send the accept back
-        // SendLikeAcceptToActor::dispatchAfterResponse($actor, $target, $like);
+        SendLikeAcceptToActor::dispatch($actor, $target, $this->activity);
     }
 
     /**

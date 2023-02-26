@@ -3,9 +3,11 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Contracts\Signer;
-use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note;
+use App\Services\ActivityPub\Context;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,19 +21,26 @@ class SendUndoAcceptToActor implements ShouldQueue
     use SendsSignedRequests;
 
     private readonly Actor $actor;
-    private readonly LocalActor $target;
-    private readonly Activity $undo;
+    private readonly LocalActor|Note $target;
+    private readonly LocalActor|Note $targetActor;
+    private readonly ActivityUndo $undo;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Actor $actor, LocalActor $target, Activity $undo)
+    public function __construct(Actor $actor, LocalActor|Note $target, ActivityUndo $undo)
     {
         $this->actor = $actor;
         $this->target = $target;
         $this->undo = $undo;
+
+        if ($target instanceof Note) {
+            $this->targetActor = $target->actor;
+        } else {
+            $this->targetActor = $target;
+        }
     }
 
     /**
@@ -41,8 +50,9 @@ class SendUndoAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
+        info(__FILE__ . ':' . __LINE__, );
         $accept = [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/undo/' . $this->undo->slug,
             'type' => 'Accept',
             'actor' => $this->target->activityId,
@@ -54,5 +64,7 @@ class SendUndoAcceptToActor implements ShouldQueue
             ],
         ];
         $this->sendSignedRequest($signer, $accept);
+
+        $this->undo->markAsAccepted();
     }
 }

@@ -3,9 +3,10 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Contracts\Signer;
-use App\Domain\ActivityPub\Follow as ActivityPubFollow;
-use App\Models\ActivityPub\ActivityFollow;
+use App\Domain\ActivityPub\Like as ActivityPubLike;
+use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use App\Traits\SendsSignedRequests;
@@ -15,27 +16,27 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendFollowAcceptToActor implements ShouldQueue
+class SendLikeAcceptToActor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
 
     private readonly RemoteActor $actor;
-    private readonly LocalActor $target;
+    private readonly Note $target;
     private readonly LocalActor $targetActor;
-    private ActivityFollow $follow;
+    private readonly ActivityLike $like;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(RemoteActor $actor, LocalActor $target, ActivityFollow $follow)
+    public function __construct(RemoteActor $actor, Note $target, ActivityLike $like)
     {
         $this->actor = $actor;
         $this->target = $target;
-        $this->targetActor = $target;
-        $this->follow = $follow;
+        $this->targetActor = $target->actor;
+        $this->like = $like;
     }
 
     /**
@@ -48,19 +49,18 @@ class SendFollowAcceptToActor implements ShouldQueue
         info(__FILE__ . ':' . __LINE__, );
         $accept = [
             '@context' => Context::ACTIVITY_STREAMS,
-            'id' => $this->target->activityId . '#accepts/follows/' . $this->follow->slug,
+            'id' => $this->target->activityId . '#accepts/likes/' . $this->like->slug,
             'type' => 'Accept',
             'actor' => $this->target->activityId,
             'object' => [
-                'id' => $this->follow->activityId,
+                'id' => $this->like->activityId,
                 'actor' => $this->actor->activityId,
-                'type' => ActivityPubFollow::TYPE,
+                'type' => ActivityPubLike::TYPE,
                 'object' => $this->target->activityId,
             ],
         ];
-
         $this->sendSignedRequest($signer, $accept);
 
-        $this->follow->markAsAccepted();
+        $this->like->markAsAccepted();
     }
 }

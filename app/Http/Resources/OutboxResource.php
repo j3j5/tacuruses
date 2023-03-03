@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  *
- * @mixin \App\Domain\ActivityPub\Contracts\Note
+ * @mixin \App\Models\ActivityPub\Note
  */
 class OutboxResource extends JsonResource
 {
@@ -22,43 +22,42 @@ class OutboxResource extends JsonResource
      */
     public function toArray($request)
     {
-        $actor = $this->getActor();
         return [
-            'id' => $this->getActivityUrl(),
+            'id' => $this->activityId,
             'type' => 'Create',
-            'actor' => $actor->getProfileUrl(),
-            'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
+            'actor' => $this->actor->getProfileUrl(),
+            'published' => $this->created_at->toIso8601ZuluString(),
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
             'cc' => [
-                $actor->getFollowersUrl(),
+                $this->actor->getFollowersUrl(),
             ],
             'object' => [
-                'id' => $this->getNoteUrl(),
+                'id' => $this->activityId,
                 'type' => 'Note',
                 'summary' => null,
                 'inReplyTo' => null,
-                'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
-                'url' => $this->getNoteUrl(),
-                'attributedTo' => $actor->getProfileUrl(),
+                'published' => $this->created_at->toIso8601ZuluString(),
+                'url' => $this->url,
+                'attributedTo' => $this->actor->getProfileUrl(),
                 'to' => [
                     Context::ACTIVITY_STREAMS_PUBLIC,
                 ],
                 'cc' => [
-                    $actor->getFollowersUrl(),
+                    $this->actor->getFollowersUrl(),
                 ],
                 'sensitive' => $this->isSensitive(),
 
             ],
-            // 'inReplyToAtomUri' => null,
+            'inReplyToAtomUri' => null,
             // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
-            'content' => $this->getText(),
+            'content' => $this->text,
             'contentMap' => [
-                $this->getLanguage() => $this->getText(),
+                $this->language => $this->text,
             ],
-            'attachment' => $this->getAttachment(),
-            'tag' => $this->getTags(),
+            'attachment' => $this->attachments,
+            'tag' => $this->tags,
         ];
     }
 }

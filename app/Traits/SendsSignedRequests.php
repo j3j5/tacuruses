@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use App\Domain\ActivityPub\Contracts\Signer;
 use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Signer;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

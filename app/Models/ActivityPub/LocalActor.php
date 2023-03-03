@@ -2,11 +2,8 @@
 
 namespace App\Models\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Actor as ContractsActor;
-use App\Domain\ActivityPub\Contracts\Note as ContractsNote;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,9 +79,12 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor byActivityId(string $activityId)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read int|null $notes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
  * @mixin \Eloquent
  */
-class LocalActor extends Actor implements ContractsActor
+class LocalActor extends Actor
 {
     use HasFactory;
     use HasParent;
@@ -106,6 +106,11 @@ class LocalActor extends Actor implements ContractsActor
     public function getRouteKeyName()
     {
         return 'username';
+    }
+
+    public function notes() : HasMany
+    {
+        return $this->hasMany(Note::class);
     }
 
     public function followers() : HasMany
@@ -136,14 +141,14 @@ class LocalActor extends Actor implements ContractsActor
     public function avatar() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: '/img/default_avatar.svg',
+            get: fn ($value) : string => $value ?: asset('/img/default_avatar.svg'),
         );
     }
 
     public function header() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: '/img/default_avatar.svg',
+            get: fn ($value) : string => $value ?: asset('/img/default_avatar.svg'),
         );
     }
 
@@ -222,22 +227,6 @@ class LocalActor extends Actor implements ContractsActor
     public function getHeaderURL(): string
     {
         return asset($this->header);
-    }
-
-    /**
-     *
-     * @param string $noteId
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return \App\Domain\ActivityPub\Contracts\Note
-     */
-    public function getNote(string $noteId): ContractsNote
-    {
-        return $this->model::findOrFail($noteId);
-    }
-
-    public function getNotes() : Paginator
-    {
-        return $this->model::getStatuses();
     }
 
     public function getActorArray() : array

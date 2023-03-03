@@ -2,12 +2,12 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Signer;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

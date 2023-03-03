@@ -4,13 +4,18 @@ namespace App\Models\ActivityPub;
 
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Parental\HasParent;
 
+use function Safe\parse_url;
+
 /**
  * App\Models\ActivityPub\RemoteActor
+ *
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
@@ -51,7 +56,6 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
- * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  * @property string|null $model
  * @property string|null $alsoKnownAs
  * @property string|null $properties

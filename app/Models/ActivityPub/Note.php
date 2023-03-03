@@ -4,17 +4,16 @@ namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
 use ActivityPhp\Type\Extended\Object\Note as ObjectNote;
-use App\Domain\ActivityPub\Contracts\Actor;
-use App\Domain\ActivityPub\Contracts\Note as ContractsNote;
 use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
-use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 use function Safe\json_decode;
@@ -66,9 +65,13 @@ use function Safe\preg_match;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @mixin \Eloquent
  */
-class Note extends Model implements ContractsNote
+class Note extends Model
 {
     use HasFactory;
     use HasSnowflakePrimary;
@@ -146,75 +149,40 @@ class Note extends Model implements ContractsNote
     {
         /** @var \ActivityPhp\Type\Extended\Object\Note $note */
         $note = Type::create('Note', [
-            'id' => $this->getNoteUrl(),
+            'id' => $this->activityId,
+            'type' => 'Note',
             'summary' => null,
             'inReplyTo' => null,
-            'published' => $this->getPublishedStatusAt()->toIso8601ZuluString(),
-            'url' => $this->getNoteUrl(),
-            'attributedTo' => self::getActor()->activityId,
+            'published' => $this->created_at ? $this->created_at->toIso8601ZuluString() : null,
+            'url' => $this->url,
+            'attributedTo' => $this->actor->getProfileUrl(),
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
             'cc' => [
-                $this->getActor()->getFollowersUrl(),
+                $this->actor->getFollowersUrl(),
             ],
             'sensitive' => $this->isSensitive(),
-            'content' => $this->getText(),
+
+            // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
+            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
+            'inReplyToAtomUri' => null,
+            'content' => $this->text,
+            // TODO: implement proper support for languages/translations
             'contentMap' => [
-                'es' => $this->getText(),
+                $this->language => $this->text,
             ],
-            'attachment' => $this->getAttachment(),
-            'tag' => $this->getTags(),
-            'replies' => $this->getReplies(),
+            'attachment' => $this->attachments,
+            'tag' => $this->tags,
+            'replies' => $this->replies,
         ]);
 
         return $note;
     }
 
-    public function getText() : string
-    {
-        return $this->text;
-    }
-
-    public function getLanguage() : string
-    {
-        return $this->language;
-    }
-
-    public function getPublishedStatusAt() : Carbon
-    {
-        /** @phpstan-ignore-next-line */
-        return $this->created_at;
-    }
-
-    public function getNoteUrl() : string
-    {
-        return $this->url;
-    }
-
     public function getActivityUrl() : string
     {
         return $this->activity_url;
-    }
-
-    public function getActor() : Actor
-    {
-        return $this->actor;
-    }
-
-    public function getAttachment() : array
-    {
-        return $this->attachments;
-    }
-
-    public function getTags() : array
-    {
-        return $this->tags;
-    }
-
-    public function getReplies() : array
-    {
-        return $this->replies;
     }
 
     public function isSensitive() : bool

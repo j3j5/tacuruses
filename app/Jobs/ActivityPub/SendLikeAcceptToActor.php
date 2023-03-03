@@ -2,13 +2,13 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Contracts\Signer;
 use App\Domain\ActivityPub\Like as ActivityPubLike;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

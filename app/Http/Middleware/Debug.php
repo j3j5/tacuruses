@@ -17,16 +17,17 @@ class Debug
      */
     public function handle(Request $request, Closure $next)
     {
-
-
         if (config('app.debug')) {
             Log::debug('request');
-            Log::debug((string)$request);
+            Log::debug((string) $request);
         }
+        /** @var \Illuminate\Http\Response $response */
         $response = $next($request);
         if (config('app.debug')) {
-            Log::debug('response');
-            Log::debug((string)$response);
+            Log::debug('response ' . $response->getStatusCode() . ' - ' . $response->headers->get('Content-Type'));
+            if (!in_array($response->getStatusCode(), [404, 418, 500]) && stripos($response->headers->get('Content-Type'), 'text/html') !== 0) {
+                Log::debug((string) $response);
+            }
         }
 
         return $response;

@@ -34,9 +34,10 @@ class FindActorInfo
      */
     public function handle() : Actor
     {
-        Log::debug('finding actor');
+        Log::debug('finding actor: ' . $this->actorId);
         if ($this->tryLocal) {
             try {
+                Log::debug('Actor found, stop checking remotely');
                 return Actor::where(['activityId' => $this->actorId])->firstOrFail();
             } catch (ModelNotFoundException) {
             }
@@ -67,7 +68,6 @@ class FindActorInfo
         /** @var \App\Models\ActivityPub\RemoteActor $actor */
         $actor = RemoteActor::firstOrNew(['activityId' => $data['id']]);
         $actor->updateFromInstanceData($data);
-        Log::debug('actor updated');
         return $actor;
     }
 }

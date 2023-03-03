@@ -101,6 +101,43 @@ class Note extends Model
         return $this->hasMany(Share::class, 'target_id');
     }
 
+    public function likeActors() : HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Actor::class,
+            Like::class,
+            'target_id', // Foreign key on the likes table...
+            'id', // Foreign key on the actors table.
+            'id', // Local key on the notes table...
+            'actor_id', // Local key on the likes table...
+        );
+    }
+
+    public function shareActors() : HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Actor::class,
+            Share::class,
+            'target_id', // Foreign key on the likes table...
+            'id', // Foreign key on the actors table.
+            'id', // Local key on the notes table...
+            'actor_id', // Local key on the likes table...
+        );
+    }
+
+    public function peers() : HasManyThrough
+    {
+        // There seem to be something weird when applying an union to a HasManyThrough,
+        // hence, the need to manually `select(*)` and to manually add the `laravel_through_key`
+        // to the second part of the union
+        $likes = $this->likeActors()->select('*');
+        $shares = $this->shareActors()->select('*')
+            ->addSelect(DB::raw('`shares`.`target_id` as `laravel_through_key`'));
+
+        return $likes->union($shares);
+        // return $likes->getQuery()->union($shares->getQuery());
+    }
+
     public function url() : Attribute
     {
         return Attribute::make(

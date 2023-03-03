@@ -180,6 +180,27 @@ class LocalActor extends Actor
         );
     }
 
+    public function url() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => route('user.show', [$this]),
+        );
+    }
+
+    public function domain() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => parse_url(config('app.url'), PHP_URL_HOST),
+        );
+    }
+
+    public function fullUsername() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => '@' . $this->username . '@' . $this->domain,
+        );
+    }
+
     public function getKeyId(): string
     {
         return $this->key_id;

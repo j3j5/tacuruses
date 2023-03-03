@@ -2,6 +2,8 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Events\RemoteActorCreated;
+use App\Events\RemoteActorUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -94,6 +96,13 @@ class RemoteActor extends Actor
         $this->publicKeyId = Arr::get($data, 'publicKey.id');
         $this->publicKey = Arr::get($data, 'publicKey.publicKeyPem');
         $this->save();
+
+        if ($this->wasRecentlyCreated) {
+            RemoteActorCreated::dispatch($this);
+        } else {
+            RemoteActorUpdated::dispatch($this);
+        }
+
         return $this;
     }
 }

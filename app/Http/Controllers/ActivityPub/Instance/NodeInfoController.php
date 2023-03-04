@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Instance;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note;
+use Cache;
 
 class NodeInfoController extends Controller
 {
@@ -17,12 +20,13 @@ class NodeInfoController extends Controller
      */
     public static function get()
     {
+        $cacheTTL = now()->addHour();
         return response()->json([
             'metadata' => [
                 'nodeName' => config('app.name'),
                 'software' => [
-                    'homepage' => 'https://bots.j3j5.uy',
-                    'repo' => 'https://gitlab.com/j3j5/twitter-bots',
+                    'homepage' => config('federation.homepage'),
+                    'repo' => 'https://gitlab.com/j3j5/fedi-bots',
                 ],
                 'config' => ['features' => []],
             ],
@@ -34,16 +38,28 @@ class NodeInfoController extends Controller
                 'outbound' => [],
             ],
             'software' => [
-                'name' => 'j3j5-bots',
-                'version' => '1.0',
+                'name' => config('federation.software_name'),
+                'version' => config('federation.software_version'),
             ],
             'usage' => [
-                'localPosts' => 0,
+                'localPosts' => Cache::remember('local-posts', $cacheTTL, function() {
+                    return Note::whereHas('actor')->count();
+                }),
                 'localComments' => 0,
                 'users' => [
-                    'total' => 1,
-                    'activeHalfyear' => 1,
-                    'activeMonth' => 1,
+                    'total' => Cache::remember('total-users', $cacheTTL, function() {
+                        return LocalActor::count();
+                    }),
+                    'activeHalfyear' => Cache::remember('users-active-6m', $cacheTTL, function() {
+                        return LocalActor::whereHas('notes', function($query) {
+                            $query->where('created_at', '>', now()->subMonths(6)->toDateTimeString());
+                        })->count();
+                    }),
+                    'activeMonth' => Cache::remember('users-active-1m', $cacheTTL, function() {
+                        return LocalActor::whereHas('notes', function($query) {
+                            $query->where('created_at', '>', now()->subMonth()->toDateTimeString());
+                        })->count();
+                    }),
                 ],
             ],
             'version' => '2.0',

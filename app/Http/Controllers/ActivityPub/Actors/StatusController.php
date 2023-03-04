@@ -39,6 +39,7 @@ class StatusController extends Controller
 
     private function status(LocalNote $note) : View
     {
-        return view('bots.status', compact(['note']));
+        $peers = $note->peers()->take(10)->get();
+        return view('bots.status', compact(['note', 'peers']));
     }
 }

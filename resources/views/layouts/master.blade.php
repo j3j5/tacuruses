@@ -9,7 +9,6 @@
         {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
         @endisset
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-        <link rel="stylesheet" href="{{ mix('css/status.css') }}">
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body class="font-sans text-base antialiased">

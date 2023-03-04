@@ -6,6 +6,7 @@ use App\Contracts\Snowflake as ContractsSnowflake;
 use Godruoyi\Snowflake\LaravelSequenceResolver;
 use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -36,6 +37,19 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(ContractsSnowflake::class, fn ($app) => $app->make('snowflake'));
+
+        Blade::directive('icon', function (string $expression) {
+            $args = explode(', ', $expression);
+            $icon = $args[0];
+            $class = $args[1] ?? "''";
+            // dd($icon, $class, $args);
+            $iconsUrl = asset('img/icons.svg');
+            return '
+            <?php
+                echo \'<svg class="\' . ' . $class . ' . \'"><use xlink:href="\' . \'' . $iconsUrl . '\' . \'#\' . ' . $icon . ' .' . ' \'">
+                </use></svg>\';
+            ?>';
+        });
     }
 
     public function addLogId(string $id) : void

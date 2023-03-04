@@ -4,6 +4,12 @@ return [
     'homepage' => env('FEDI_HOMEPAGE', ''),
     'software_name' => env('FEDI_APP_NAME', 'j3j5-bots'),
     'software_version' => env('FEDI_APP_VERSION', '1.0'),
+
+    'contact_email' => env('FEDI_CONTACT_EMAIL', ''),
+
+    'languages' => [
+        'en',
+    ],
     "max_characters" =>  500,
     "max_media_attachments" =>  4,
     "characters_reserved_per_url" =>  23,

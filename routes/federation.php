@@ -10,6 +10,7 @@ use App\Http\Controllers\ActivityPub\Actors\ProfileController;
 use App\Http\Controllers\ActivityPub\Actors\StatusActivityController;
 use App\Http\Controllers\ActivityPub\Actors\StatusController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
+use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
 use App\Http\Controllers\ActivityPub\Instance\SharedInboxController;
 use App\Http\Controllers\ActivityPub\Instance\WebfingerController;
@@ -33,6 +34,7 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/.well-known/nodeinfo/', [NodeInfoController::class, 'wellKnown']);
     Route::get('/.well-known/host-meta/', HostMetaController::class);
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
+    Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
     // TODO: POST only??
     Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox')->middleware('valid.http.signature');

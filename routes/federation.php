@@ -36,11 +36,11 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
     Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
-    // TODO: POST only??
-    Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox')->middleware('valid.http.signature');
+    Route::middleware('valid.http.signature')->group(function() {
+        Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
+        Route::post('/{user}/inbox', InboxController::class)->name('user.inbox');
+    });
 
-    // TODO: POST only??
-    Route::post('/{user}/inbox', InboxController::class)->name('user.inbox')->middleware('valid.http.signature');
     Route::get('/{user}/outbox', OutboxController::class)->name('user.outbox');
 });
 

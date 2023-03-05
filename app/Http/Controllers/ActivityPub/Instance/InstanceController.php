@@ -11,7 +11,7 @@ class InstanceController extends Controller
 {
     public function apiV1()
     {
-      $cacheTTL = now()->addHour();
+        $cacheTTL = now()->addHour();
 
         return [
             'uri' => config('app.url'),
@@ -23,12 +23,12 @@ class InstanceController extends Controller
             'urls' => [
             ],
             'stats' => [
-              'user_count' => Cache::remember('total-users', $cacheTTL, function() {
-                return LocalActor::count();
-            }),
-              'status_count' => Cache::remember('local-posts', $cacheTTL, function() {
-                return LocalNote::count();
-            }),
+              'user_count' => Cache::remember('total-users', $cacheTTL, function () {
+                  return LocalActor::count();
+              }),
+              'status_count' => Cache::remember('local-posts', $cacheTTL, function () {
+                  return LocalNote::count();
+              }),
               'domain_count' => 1,
             ],
             'thumbnail' => '',

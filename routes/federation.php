@@ -36,7 +36,7 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
     Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
-    Route::middleware('valid.http.signature')->group(function() {
+    Route::middleware('valid.http.signature')->group(function () {
         Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
         Route::post('/{user}/inbox', InboxController::class)->name('user.inbox');
     });

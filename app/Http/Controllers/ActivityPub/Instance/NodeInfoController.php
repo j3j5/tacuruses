@@ -42,21 +42,21 @@ class NodeInfoController extends Controller
                 'version' => config('federation.software_version'),
             ],
             'usage' => [
-                'localPosts' => Cache::remember('local-posts', $cacheTTL, function() {
+                'localPosts' => Cache::remember('local-posts', $cacheTTL, function () {
                     return LocalNote::count();
                 }),
                 'localComments' => 0,
                 'users' => [
-                    'total' => Cache::remember('total-users', $cacheTTL, function() {
+                    'total' => Cache::remember('total-users', $cacheTTL, function () {
                         return LocalActor::count();
                     }),
-                    'activeHalfyear' => Cache::remember('users-active-6m', $cacheTTL, function() {
-                        return LocalActor::whereHas('notes', function($query) {
+                    'activeHalfyear' => Cache::remember('users-active-6m', $cacheTTL, function () {
+                        return LocalActor::whereHas('notes', function ($query) {
                             $query->where('created_at', '>', now()->subMonths(6)->toDateTimeString());
                         })->count();
                     }),
-                    'activeMonth' => Cache::remember('users-active-1m', $cacheTTL, function() {
-                        return LocalActor::whereHas('notes', function($query) {
+                    'activeMonth' => Cache::remember('users-active-1m', $cacheTTL, function () {
+                        return LocalActor::whereHas('notes', function ($query) {
                             $query->where('created_at', '>', now()->subMonth()->toDateTimeString());
                         })->count();
                     }),

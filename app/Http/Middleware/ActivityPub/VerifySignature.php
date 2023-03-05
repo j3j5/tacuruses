@@ -12,7 +12,7 @@ use function Safe\base64_decode;
 use function Safe\openssl_verify;
 use function Safe\preg_match;
 
-class ValidateSignature
+class VerifySignature
 {
     /**
      * Handle an incoming request.
@@ -31,7 +31,7 @@ class ValidateSignature
             abort(401, $errorMsg);
         }
 
-        // See https://docs.joinmastodon.org/spec/security/#http-verify
+        // // See https://docs.joinmastodon.org/spec/security/#http-verify
         $signature = $request->header('Signature');
         if (!is_string($signature)) {
             $errorMsg = 'Multiple signatures found';

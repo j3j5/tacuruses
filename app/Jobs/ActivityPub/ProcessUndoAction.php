@@ -77,7 +77,7 @@ class ProcessUndoAction implements ShouldQueue
         // Delete the follow relationship
         $actor->following()
             ->where('target_id', $target->id)
-            ->where('activityId', $this->action->object->id)
+            ->where('activityId', $this->action->object->id)    /* @phpstan-ignore-line */
             ->delete();
     }
 
@@ -89,7 +89,7 @@ class ProcessUndoAction implements ShouldQueue
 
         $target->likes()
             ->where('actor_id', $actor->id)
-            ->where('activityId', $this->action->object->id)
+            ->where('activityId', $this->action->object->id)    /* @phpstan-ignore-line */
             ->delete();
     }
 }

@@ -46,7 +46,7 @@ class Kernel extends HttpKernel
         'federation' => [
             'no.cookies',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // 'debug',
+            'debug',
         ],
     ];
 

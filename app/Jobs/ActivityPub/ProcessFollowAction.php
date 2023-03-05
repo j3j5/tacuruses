@@ -46,7 +46,7 @@ class ProcessFollowAction implements ShouldQueue
         // Store the follow
         $follow = Follow::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
-            ['activityId' => $this->action->id]
+            ['activityId' => $this->action->get('id')]
         );
 
         if ($actor instanceof RemoteActor) {

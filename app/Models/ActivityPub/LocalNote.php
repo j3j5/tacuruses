@@ -36,6 +36,7 @@ use function Safe\preg_match;
  * @property array $tags
  * @property string $type
  * @property-read string $activity_id
+ * @property-read string $activityId
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors

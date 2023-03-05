@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\ActivityPub\Instance;
 
+use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
+use App\Jobs\ActivityPub\ProcessAnnounceAction;
+use App\Jobs\ActivityPub\ProcessUndoAction;
+use App\Models\ActivityPub\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SharedInboxController extends Controller
 {
@@ -18,6 +23,74 @@ class SharedInboxController extends Controller
     public function __invoke(Request $request)
     {
         info(__CLASS__, ['request' => $request]);
-        abort(418);
+        /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
+        $action = $request->json();
+
+        // // Remove the actor from session
+        $actor = $request->actorModel;
+        $action->remove('actorModel');
+
+        $type = $action->get('type');
+        // $target = $this->tryToFindTarget($action);
+        // $objectType = data_get($action->get('object'), 'type');
+        // // store the action
+        // $activityModel = Activity::updateOrCreate([
+        //     'activityId' => $action->get('id'),
+        //     'type' => $type,
+        // ], [
+        //     'object' => $action->all(),
+        //     'object_type' => $objectType,
+        //     'target_id' => $target->id,
+        //     'actor_id' => $actor->id,
+        // ]);
+
+        // Go ahead, process it
+        switch ($type) {
+            case 'Announce':
+                /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
+                ProcessAnnounceAction::dispatch(Type::create($type, $action->all()), $activityModel);
+                break;
+            case 'Undo':
+                /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
+                ProcessUndoAction::dispatch(Type::create($type, $action->all()), $activityModel);
+                break;
+
+                // case 'View':
+                // $this->handleViewActivity();
+                // break;
+
+                // case 'Reject':
+                // $this->handleRejectActivity();
+                // break;
+
+                // case 'Delete':
+                // $this->handleDeleteActivity();
+                // break;
+
+                // case 'Add':
+                // 	break;
+
+                // case 'Create':
+                // 	break;
+
+                // case 'Accept':
+                // 	break;
+
+                // case 'Story:Reaction':
+                // 	// $this->handleStoryReactionActivity();
+                // 	break;
+
+                // case 'Story:Reply':
+                // 	// $this->handleStoryReplyActivity();
+                // 	break;
+
+                // case 'Update':
+                // 	(new UpdateActivity($this->payload, $this->profile))->handle();
+                // 	break;
+
+            default:
+                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
+                abort(422, 'Unknow type of action');
+        }
     }
 }

@@ -6,8 +6,12 @@ use ActivityPhp\Type\Extended\Object\Note as ObjectNote;
 
 class Note extends ObjectNote
 {
+    /** @var bool */
     protected $sensitive;
+    /** @var string */
     protected $atomUri;
+    /** @var string */
     protected $inReplyToAtomUri;
+    /** @var string */
     protected $conversation;
 }

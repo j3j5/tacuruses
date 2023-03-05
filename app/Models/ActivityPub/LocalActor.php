@@ -141,14 +141,14 @@ class LocalActor extends Actor
     public function avatar() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: asset('/img/default_avatar.svg'),
+            get: fn ($value) : string => !empty($value) ? Storage::cloud()->url($value) : asset('/img/default_avatar.svg'),
         );
     }
 
     public function header() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => $value ?: asset('/img/default_avatar.svg'),
+            get: fn ($value) : string => !empty($value) ? Storage::cloud()->url($value) : asset('/img/default_avatar.svg'),
         );
     }
 
@@ -230,24 +230,32 @@ class LocalActor extends Actor
         );
     }
 
-    public function getFollowingUrl() : string
+    public function followingUrl() : Attribute
     {
-        return  route('user.following', [$this]);
+        return Attribute::make(
+            get: fn () : string => route('user.following', [$this]),
+        );
     }
 
-    public function getFollowersUrl() : string
+    public function followersUrl() : Attribute
     {
-        return route('user.followers', [$this]);
+        return Attribute::make(
+            get: fn () : string => route('user.followers', [$this]),
+        );
     }
 
-    public function getAvatarURL(): string
+    public function avatarURL() : Attribute
     {
-        return asset($this->avatar);
+        return Attribute::make(
+            get: fn () : string => asset($this->avatar),
+        );
     }
 
-    public function getHeaderURL(): string
+    public function headerURL() : Attribute
     {
-        return asset($this->header);
+        return Attribute::make(
+            get: fn () : string => asset($this->header),
+        );
     }
 
     public function getActorArray() : array
@@ -264,13 +272,13 @@ class LocalActor extends Actor
             'icon' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => $this->getAvatarURL(),
+                'url' => $this->avatar_url,
             ],
             // Header
             'image' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => $this->getHeaderURL(),
+                'url' => $this->header_url,
             ],
         ];
 
@@ -293,8 +301,8 @@ class LocalActor extends Actor
         $links = [
             'inbox' => $this->inbox_url,
             'outbox' => $this->outbox_url,
-            'following' => $this->getFollowingUrl(),
-            'followers' => $this->getFollowersUrl(),
+            'following' => $this->following_url,
+            'followers' => $this->followers_url,
             'manuallyApprovesFollowers' => false,
             'endpoints' => [
                 'sharedInbox' => route('shared-inbox'),

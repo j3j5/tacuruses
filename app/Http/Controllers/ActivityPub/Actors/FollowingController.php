@@ -30,7 +30,7 @@ class FollowingController extends Controller
         if ($request->missing(['page']) && $following->total() > $perPage) {
             return response()->activityJson([
                 '@context' => Context::ACTIVITY_STREAMS,
-                'id' => $actor->getFollowingUrl(),
+                'id' => $actor->following_url,
                 'type' => 'OrderedCollection',
                 'totalItems' => $following->total(),
                 'first' => $following->url(0),

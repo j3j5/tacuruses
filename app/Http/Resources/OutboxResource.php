@@ -31,7 +31,7 @@ class OutboxResource extends JsonResource
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
             'cc' => [
-                $this->actor->getFollowersUrl(),
+                $this->actor->followers_url,
             ],
             'object' => [
                 'id' => $this->activityId,
@@ -45,9 +45,9 @@ class OutboxResource extends JsonResource
                     Context::ACTIVITY_STREAMS_PUBLIC,
                 ],
                 'cc' => [
-                    $this->actor->getFollowersUrl(),
+                    $this->actor->followers_url,
                 ],
-                'sensitive' => $this->isSensitive(),
+                'sensitive' => $this->sensitive,
 
             ],
             'inReplyToAtomUri' => null,

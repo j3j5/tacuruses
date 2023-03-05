@@ -14,29 +14,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\DB;
-use Parental\HasChildren;
+use Parental\HasParent;
 use RuntimeException;
 
 use function Safe\json_decode;
 use function Safe\json_encode;
 use function Safe\preg_match;
 
-
-class Note extends Model
+class RemoteNote extends Note
 {
     use HasFactory;
-    use HasChildren;
-    use HasSnowflakePrimary;
-
-    protected $fillable = ['type'];
-
-    /** @var array<string, class-string> */
-    protected array $childTypes = [
-        'local' => LocalNote::class,
-        'remote' => RemoteNote::class,
-    ];
-
-    protected string $childColumn = 'type';
+    use HasParent;
 
     /** @var array<string, string> */
     protected $casts = [
@@ -48,29 +36,29 @@ class Note extends Model
 
     public function actor() : BelongsTo
     {
-        return $this->belongsTo(Actor::class, 'actor_id');
+        return $this->belongsTo(RemoteActor::class, 'actor_id');
     }
 
-    public function url() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => route('status.show', [$this->actor, $this])
-        );
-    }
+    // public function url() : Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn () : string => route('status.show', [$this->actor, $this])
+    //     );
+    // }
 
-    public function activityUrl() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => route('status.activity', [$this->actor, $this])
-        );
-    }
+    // public function activityUrl() : Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn () : string => route('status.activity', [$this->actor, $this])
+    //     );
+    // }
 
-    public function activityId() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => $this->url
-        );
-    }
+    // public function activityId() : Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn () : string => $this->url
+    //     );
+    // }
 
     public function tags() : Attribute
     {
@@ -95,14 +83,18 @@ class Note extends Model
         );
     }
 
-    public function isSensitive() : bool
+    public function getActivityUrl() : string
     {
-        return (bool) $this->sensitive;
+        return $this->activity_url;
     }
 
-    public function scopeByActivityId(Builder $query, string $activityId) : void
-    {
-        $noteId = $this->getIdFromActivityId();
-        $query->where('id', $noteId);
-    }
+
+    // public function scopeByActivityId(Builder $query, string $activityId) : void
+    // {
+    //     $matches = [];
+    //     if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
+    //         throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
+    //     }
+    //     $query->where('id', $matches['noteId']);
+    // }
 }

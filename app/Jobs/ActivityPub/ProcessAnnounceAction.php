@@ -4,7 +4,7 @@ namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Announce;
 use App\Models\ActivityPub\ActivityAnnounce;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\Share;
 use Illuminate\Bus\Queueable;
@@ -39,11 +39,11 @@ class ProcessAnnounceAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$target instanceof Note) {
+        if (!$target instanceof LocalNote) {
             throw new RuntimeException('The ActivityAnnounce does not seem to have a valid target');
         }
 
-        // Store the like
+        // Store the share
         Share::updateOrCreate(
             ['actor_id' => $actor->id, 'target_id' => $target->id],
             ['activityId' => $this->action->id]

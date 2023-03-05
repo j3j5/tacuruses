@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  *
- * @mixin \App\Models\ActivityPub\Note
+ * @mixin \App\Models\ActivityPub\LocalNote
  */
 class NoteResource extends JsonResource
 {

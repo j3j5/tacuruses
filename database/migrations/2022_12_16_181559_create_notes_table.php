@@ -26,6 +26,8 @@ return new class extends Migration
             $table->json('tags')->nullable();
 
             $table->foreign('actor_id')->references('id')->on('actors');
+
+            $table->string('type');
         });
     }
 

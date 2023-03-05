@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 
 class InstanceController extends Controller
 {

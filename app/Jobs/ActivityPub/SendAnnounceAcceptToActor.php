@@ -5,7 +5,7 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Like as ActivityPubLike;
 use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
@@ -22,7 +22,7 @@ class SendAnnounceAcceptToActor implements ShouldQueue
     use SendsSignedRequests;
 
     private readonly RemoteActor $actor;
-    private readonly Note $target;
+    private readonly LocalNote $target;
     private readonly LocalActor $targetActor;
     private readonly ActivityAnnounce $announce;
 
@@ -31,7 +31,7 @@ class SendAnnounceAcceptToActor implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(RemoteActor $actor, Note $target, ActivityAnnounce $announce)
+    public function __construct(RemoteActor $actor, LocalNote $target, ActivityAnnounce $announce)
     {
         $this->actor = $actor;
         $this->target = $target;

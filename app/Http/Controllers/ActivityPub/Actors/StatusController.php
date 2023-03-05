@@ -7,7 +7,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NoteResource;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -20,7 +20,7 @@ class StatusController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor, string $status) : NoteResource | View
     {
-        $note = Note::withCount(['shares', 'likes'])
+        $note = LocalNote::withCount(['shares', 'likes'])
             ->where('id', $status)
             ->where('actor_id', $actor->id)
             ->firstOrFail();
@@ -32,12 +32,12 @@ class StatusController extends Controller
         return $this->status($note);
     }
 
-    private function activityStatus(Note $note) : NoteResource
+    private function activityStatus(LocalNote $note) : NoteResource
     {
         return new NoteResource($note);
     }
 
-    private function status(Note $note) : View
+    private function status(LocalNote $note) : View
     {
         return view('bots.status', compact(['note']));
     }

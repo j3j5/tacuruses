@@ -5,7 +5,7 @@ namespace App\Jobs\ActivityPub;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
@@ -21,7 +21,7 @@ class SendUndoAcceptToActor implements ShouldQueue
     use SendsSignedRequests;
 
     private readonly Actor $actor;
-    private readonly LocalActor|Note $target;
+    private readonly LocalActor|LocalNote $target;
     private readonly LocalActor $targetActor;
     private readonly ActivityUndo $undo;
 
@@ -30,12 +30,12 @@ class SendUndoAcceptToActor implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Actor $actor, LocalActor|Note $target, ActivityUndo $undo)
+    public function __construct(Actor $actor, LocalActor|LocalNote $target, ActivityUndo $undo)
     {
         $this->actor = $actor;
         $this->target = $target;
         $this->undo = $undo;
-        $this->targetActor = $target instanceof Note ?
+        $this->targetActor = $target instanceof LocalNote ?
             $target->actor :
             $target;
     }

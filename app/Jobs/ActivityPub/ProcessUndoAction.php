@@ -5,7 +5,7 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Undo;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,7 +48,7 @@ class ProcessUndoAction implements ShouldQueue
                 $this->processUndoFollow();
                 break;
             case 'Like':
-                if (!$target instanceof Note) {
+                if (!$target instanceof LocalNote) {
                     throw new RuntimeException('The ActivityUndo do not seem to have a valid note target');
                 }
                 $this->processUndoLike();
@@ -84,7 +84,7 @@ class ProcessUndoAction implements ShouldQueue
     private function processUndoLike() : void
     {
         $actor = $this->activity->actor;
-        /** @var \App\Models\ActivityPub\Note $target */
+        /** @var \App\Models\ActivityPub\LocalNote $target */
         $target = $this->activity->target;
 
         $target->likes()

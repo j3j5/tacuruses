@@ -25,7 +25,7 @@ use RuntimeException;
  * @property array $object
  * @property int $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
- * @property-read \App\Models\ActivityPub\LocalActor|\App\Models\ActivityPub\Note|null $target
+ * @property-read \App\Models\ActivityPub\LocalActor|\App\Models\ActivityPub\LocalNote|null $target
  * @property-read string $slug
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newQuery()
@@ -58,7 +58,7 @@ class ActivityUndo extends Activity
     {
         return match ($this->object_type) {
             Follow::TYPE => $this->belongsTo(LocalActor::class, 'target_id'),
-            Like::TYPE, Undo::TYPE, Announce::TYPE => $this->belongsTo(Note::class, 'target_id'),
+            Like::TYPE, Undo::TYPE, Announce::TYPE => $this->belongsTo(LocalNote::class, 'target_id'),
             default => throw new RuntimeException('Unknown UNDO type "' . $this->object_type . '"'),
         };
     }

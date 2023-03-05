@@ -15,7 +15,7 @@ use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -120,7 +120,7 @@ class InboxController extends Controller
         return response()->activityJson();
     }
 
-    private function tryToFindTarget(ParameterBag $action) : LocalActor|Note
+    private function tryToFindTarget(ParameterBag $action) : LocalActor|LocalNote
     {
         return match ($action->get('type')) {
             Follow::TYPE => $this->tryToFindActorTarget($action->get('object')),
@@ -131,7 +131,7 @@ class InboxController extends Controller
         };
     }
 
-    private function tryToFindUndoTarget(array $object) : LocalActor|Note
+    private function tryToFindUndoTarget(array $object) : LocalActor|LocalNote
     {
         return match ($object['type']) {
             Follow::TYPE => $this->tryToFindActorTarget($object['object']),
@@ -146,8 +146,8 @@ class InboxController extends Controller
         return LocalActor::byActivityId($activityId)->firstOrFail();
     }
 
-    private function tryToFindNoteTarget(string $activityId) : Note
+    private function tryToFindNoteTarget(string $activityId) : LocalNote
     {
-        return Note::byActivityId($activityId)->firstOrFail();
+        return LocalNote::byActivityId($activityId)->firstOrFail();
     }
 }

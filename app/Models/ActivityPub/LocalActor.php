@@ -79,9 +79,9 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor byActivityId(string $activityId)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @mixin \Eloquent
  */
 class LocalActor extends Actor
@@ -110,7 +110,7 @@ class LocalActor extends Actor
 
     public function notes() : HasMany
     {
-        return $this->hasMany(Note::class);
+        return $this->hasMany(LocalNote::class);
     }
 
     public function followers() : HasMany
@@ -122,7 +122,7 @@ class LocalActor extends Actor
     {
         return $this->hasManyThrough(
             Like::class,
-            Note::class,
+            LocalNote::class,
             'actor_id',
             'target_id'
         );
@@ -132,7 +132,7 @@ class LocalActor extends Actor
     {
         return $this->hasManyThrough(
             Share::class,
-            Note::class,
+            LocalNote::class,
             'actor_id',
             'target_id'
         );

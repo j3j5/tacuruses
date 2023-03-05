@@ -21,7 +21,7 @@ use Parental\HasParent;
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\Note|null $target
+ * @property-read \App\Models\ActivityPub\LocalNote|null $target
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce query()
@@ -44,6 +44,6 @@ class ActivityAnnounce extends Activity
 
     public function target() : BelongsTo
     {
-        return $this->belongsTo(Note::class, 'target_id');
+        return $this->belongsTo(LocalNote::class, 'target_id');
     }
 }

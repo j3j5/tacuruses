@@ -6,7 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use Cache;
 
 class NodeInfoController extends Controller
@@ -43,7 +43,7 @@ class NodeInfoController extends Controller
             ],
             'usage' => [
                 'localPosts' => Cache::remember('local-posts', $cacheTTL, function() {
-                    return Note::whereHas('actor')->count();
+                    return LocalNote::count();
                 }),
                 'localComments' => 0,
                 'users' => [

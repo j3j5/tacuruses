@@ -5,7 +5,7 @@ namespace App\Jobs\ActivityPub;
 use App\Domain\ActivityPub\Like as LikeAction;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Like;
-use App\Models\ActivityPub\Note;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,7 +40,7 @@ class ProcessLikeAction implements ShouldQueue
         // First or create the actor
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$target instanceof Note) {
+        if (!$target instanceof LocalNote) {
             throw new RuntimeException('The ActivityLike does not seem to have a valid target');
         }
 

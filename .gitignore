@@ -13,8 +13,6 @@
 .env.backup
 .env.production
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
 auth.json
 npm-debug.log
 yarn-error.log
@@ -22,8 +20,10 @@ yarn-error.log
 /.idea
 /.vscode
 resources/activitypub/examples
+resources/docker/xdebug.override.ini
 .php-cs-fixer.cache
 docker-compose.yml
+docker-compose.override.yml
 Makefile
 _ide_helper.php
 config/debugbar.php

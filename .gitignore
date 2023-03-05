@@ -19,7 +19,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-resources/activitypub/examples
+resources/examples
 resources/docker/xdebug.override.ini
 .php-cs-fixer.cache
 docker-compose.yml

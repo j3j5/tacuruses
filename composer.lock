@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ed9dbe22b4db443872dd627e14a1420",
+    "content-hash": "b3b885c7e2a21b6e571b5bfb28aacc4d",
     "packages": [
         {
             "name": "brick/math",
@@ -1762,16 +1762,16 @@
         },
         {
             "name": "landrok/activitypub",
-            "version": "0.5.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/landrok/activitypub.git",
-                "reference": "f30b8f726cf1a196337ec065536eba2d66a4b329"
+                "url": "https://github.com/j3j5/activitypub.git",
+                "reference": "05345c727931d14f44377bc3a2ecf4a8beb80ecf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/landrok/activitypub/zipball/f30b8f726cf1a196337ec065536eba2d66a4b329",
-                "reference": "f30b8f726cf1a196337ec065536eba2d66a4b329",
+                "url": "https://api.github.com/repos/j3j5/activitypub/zipball/05345c727931d14f44377bc3a2ecf4a8beb80ecf",
+                "reference": "05345c727931d14f44377bc3a2ecf4a8beb80ecf",
                 "shasum": ""
             },
             "require": {
@@ -1786,28 +1786,37 @@
             "require-dev": {
                 "phpunit/phpunit": "*"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "ActivityPhp\\": "src/ActivityPhp/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "ActivityPhpTest\\": "tests/ActivityPhp/"
+                }
+            },
+            "archive": {
+                "exclude": [
+                    "/docs"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "description": "A PHP implementation of ActivityPub protocol based upon the ActivityStreams 2.0 data format.",
             "homepage": "https://github.com/landrok/activitypub",
             "keywords": [
-                "Federation",
-                "activitypub",
-                "activitystreams"
+                "ActivityPub",
+                "ActivityStreams",
+                "federation"
             ],
             "support": {
-                "issues": "https://github.com/landrok/activitypub/issues",
-                "source": "https://github.com/landrok/activitypub/tree/0.5.8"
+                "source": "https://github.com/j3j5/activitypub/tree/CollectionPage-fix"
             },
-            "time": "2022-06-07T11:22:35+00:00"
+            "time": "2023-03-04T21:41:53+00:00"
         },
         {
             "name": "laravel/framework",
@@ -12212,6 +12221,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "landrok/activitypub": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,

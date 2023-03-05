@@ -5,11 +5,14 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use Illuminate\Support\Facades\Cache;
 
 class InstanceController extends Controller
 {
     public function apiV1()
     {
+      $cacheTTL = now()->addHour();
+
         return [
             'uri' => config('app.url'),
             'title' => 'bots.uy',
@@ -20,8 +23,12 @@ class InstanceController extends Controller
             'urls' => [
             ],
             'stats' => [
-              'user_count' => LocalActor::count(),
-              'status_count' => Note::count(),
+              'user_count' => Cache::remember('total-users', $cacheTTL, function() {
+                return LocalActor::count();
+            }),
+              'status_count' => Cache::remember('local-posts', $cacheTTL, function() {
+                return LocalNote::count();
+            }),
               'domain_count' => 1,
             ],
             'thumbnail' => '',

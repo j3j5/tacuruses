@@ -62,7 +62,7 @@ class NodeInfoController extends Controller
                     }),
                 ],
             ],
-            'version' => '2.0',
+            'version' => config('app.version' . '1.0.0'),
             'openRegistrations' => false,
         ]);
     }

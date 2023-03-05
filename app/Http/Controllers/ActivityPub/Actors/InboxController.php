@@ -57,23 +57,24 @@ class InboxController extends Controller
             Log::info('Model already processed and accepted, ignoring');
             return response()->activityJson();
         }
+        $activityStream = Type::create($type, $action->all());
         // Go ahead, process it
         switch ($type) {
             case 'Follow':
                 /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
-                ProcessFollowAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
+                ProcessFollowAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Like':
                 /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
-                ProcessLikeAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
+                ProcessLikeAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Announce':
                 /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
-                ProcessAnnounceAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
+                ProcessAnnounceAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Undo':
                 /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
-                ProcessUndoAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
+                ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
 
                 // case 'View':
@@ -110,7 +111,7 @@ class InboxController extends Controller
                 // 	break;
 
             default:
-                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
+                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action, 'activityStream' => $activityStream]);
                 abort(422, 'Unknow type of action');
         }
 

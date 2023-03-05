@@ -2,25 +2,16 @@
 
 namespace App\Models\ActivityPub;
 
-use ActivityPhp\Type;
-use ActivityPhp\Type\Extended\Object\Note as ObjectNote;
-use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Facades\DB;
 use Parental\HasChildren;
-use RuntimeException;
 
 use function Safe\json_decode;
 use function Safe\json_encode;
-use function Safe\preg_match;
-
 
 class Note extends Model
 {

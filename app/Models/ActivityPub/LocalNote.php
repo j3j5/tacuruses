@@ -20,6 +20,59 @@ use function Safe\json_decode;
 use function Safe\json_encode;
 use function Safe\preg_match;
 
+/**
+ * App\Models\ActivityPub\LocalNote
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $actor_id
+ * @property bool $sensitive
+ * @property string $text
+ * @property string|null $summary
+ * @property string|null $inReplyTo activityId of the status is replying to
+ * @property string $language
+ * @property array $attachments
+ * @property array $tags
+ * @property string $type
+ * @property-read string $activity_id
+ * @property-read string $activity_url
+ * @property-read \App\Models\ActivityPub\LocalActor $actor
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
+ * @property-read int|null $like_actors_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read int|null $likes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
+ * @property-read int|null $peers_count
+ * @property-read array $replies
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
+ * @property-read int|null $share_actors_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read int|null $shares_count
+ * @property-read string $url
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereInReplyTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @mixin \Eloquent
+ */
 class LocalNote extends Note
 {
     use HasFactory;

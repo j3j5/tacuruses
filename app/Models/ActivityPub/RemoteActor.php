@@ -16,7 +16,6 @@ use function Safe\parse_url;
  * App\Models\ActivityPub\RemoteActor
  *
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
- *
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()
@@ -72,6 +71,8 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
+ * @property-read string $domain
+ * @property-read string $full_username
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor

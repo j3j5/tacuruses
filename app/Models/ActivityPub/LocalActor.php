@@ -82,6 +82,14 @@ use function Safe\preg_match;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
+ * @property-read string $avatar_u_r_l
+ * @property-read string $domain
+ * @property-read string $followers_url
+ * @property-read string $following_url
+ * @property-read string $full_username
+ * @property-read string $header_u_r_l
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @mixin \Eloquent
  */
 class LocalActor extends Actor

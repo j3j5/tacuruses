@@ -13,6 +13,44 @@ use function Safe\json_decode;
 use function Safe\json_encode;
 use function Safe\preg_match;
 
+/**
+ * App\Models\ActivityPub\RemoteNote
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $actor_id
+ * @property bool $sensitive
+ * @property string $text
+ * @property string|null $summary
+ * @property string|null $inReplyTo activityId of the status is replying to
+ * @property string $language
+ * @property array $attachments
+ * @property array $tags
+ * @property string $type
+ * @property-read string $activity_id
+ * @property-read string $activity_url
+ * @property-read \App\Models\ActivityPub\RemoteActor $actor
+ * @property-read array $replies
+ * @property-read string $url
+ * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereInReplyTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class RemoteNote extends Note
 {
     use HasFactory;

@@ -4,5 +4,5 @@
     src="{{ $actor->avatar }}"
     title="{{ $actor->name }} ({{ $actor->full_username }})"
     alt="Avatar of {{ $actor->full_username }}"
-    onerror="{{ $fallback }}"
+    onerror="this.onerror=null;this.src='{{ $fallback }}'"
 >

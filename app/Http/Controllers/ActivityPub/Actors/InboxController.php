@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ActivityPub\Actors;
 
-use App\Domain\ActivityPub\Announce;
-use App\Domain\ActivityPub\Follow;
-use App\Domain\ActivityPub\Like;
-use App\Domain\ActivityPub\Undo;
+use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
@@ -62,21 +59,21 @@ class InboxController extends Controller
         }
         // Go ahead, process it
         switch ($type) {
-            case Follow::TYPE:
+            case 'Follow':
                 /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
-                ProcessFollowAction::dispatch(new Follow($action->all()), $activityModel);
+                ProcessFollowAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
                 break;
-            case Like::TYPE:
+            case 'Like':
                 /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
-                ProcessLikeAction::dispatch(new Like($action->all()), $activityModel);
+                ProcessLikeAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
                 break;
-            case Announce::TYPE:
+            case 'Announce':
                 /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
-                ProcessAnnounceAction::dispatch(new Announce($action->all()), $activityModel);
+                ProcessAnnounceAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
                 break;
-            case Undo::TYPE:
+            case 'Undo':
                 /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
-                ProcessUndoAction::dispatch(new Undo($action->all()), $activityModel);
+                ProcessUndoAction::dispatchAfterResponse(Type::create($type, $action->all()), $activityModel);
                 break;
 
                 // case 'View':
@@ -123,10 +120,10 @@ class InboxController extends Controller
     private function tryToFindTarget(ParameterBag $action) : LocalActor|LocalNote
     {
         return match ($action->get('type')) {
-            Follow::TYPE => $this->tryToFindActorTarget($action->get('object')),
-            Announce::TYPE => $this->tryToFindNoteTarget($action->get('object')),
-            Like::TYPE => $this->tryToFindNoteTarget($action->get('object')),
-            Undo::TYPE => $this->tryToFindUndoTarget($action->get('object')),
+            'Follow' => $this->tryToFindActorTarget($action->get('object')),
+            'Announce' => $this->tryToFindNoteTarget($action->get('object')),
+            'Like' => $this->tryToFindNoteTarget($action->get('object')),
+            'Undo' => $this->tryToFindUndoTarget($action->get('object')),
             default => throw new RuntimeException("Type '" . $action->get('type') . "' is not implemented yet!"),
         };
     }
@@ -134,9 +131,9 @@ class InboxController extends Controller
     private function tryToFindUndoTarget(array $object) : LocalActor|LocalNote
     {
         return match ($object['type']) {
-            Follow::TYPE => $this->tryToFindActorTarget($object['object']),
-            Announce::TYPE => $this->tryToFindNoteTarget($object['object']),
-            Like::TYPE => $this->tryToFindNoteTarget($object['object']),
+            'Follow' => $this->tryToFindActorTarget($object['object']),
+            'Announce' => $this->tryToFindNoteTarget($object['object']),
+            'Like' => $this->tryToFindNoteTarget($object['object']),
             default => throw new RuntimeException("Undo Type '" . $object['type'] . "' is not implemented yet!"),
         };
     }

@@ -2,7 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Like as LikeAction;
+use ActivityPhp\Type\Extended\Activity\Like as ExtendedActivityLike;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Like;
 use App\Models\ActivityPub\LocalNote;
@@ -24,7 +24,7 @@ class ProcessLikeAction implements ShouldQueue
      * @return void
      */
     public function __construct(
-        private readonly LikeAction $action,
+        private readonly ExtendedActivityLike $action,
         private readonly ActivityLike $activity
     ) {
         //
@@ -54,16 +54,5 @@ class ProcessLikeAction implements ShouldQueue
             // Send the accept back
             SendLikeAcceptToActor::dispatch($actor, $target, $this->activity);
         }
-    }
-
-    /**
-     *
-     * @param \App\Domain\ActivityPub\Like $action
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return void
-     */
-    protected function findLocalActor(LikeAction $action)
-    {
-        //
     }
 }

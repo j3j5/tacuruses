@@ -2,7 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Undo;
+use ActivityPhp\Type\Extended\Activity\Undo;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -77,7 +77,7 @@ class ProcessUndoAction implements ShouldQueue
         // Delete the follow relationship
         $actor->following()
             ->where('target_id', $target->id)
-            ->where('activityId', $this->action->objectToUndo['id'])
+            ->where('activityId', $this->action->object->id)
             ->delete();
     }
 
@@ -89,7 +89,7 @@ class ProcessUndoAction implements ShouldQueue
 
         $target->likes()
             ->where('actor_id', $actor->id)
-            ->where('activityId', $this->action->objectToUndo['id'])
+            ->where('activityId', $this->action->object->id)
             ->delete();
     }
 }

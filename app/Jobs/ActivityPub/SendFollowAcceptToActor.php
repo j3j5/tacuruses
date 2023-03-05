@@ -2,7 +2,6 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Follow as ActivityPubFollow;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
@@ -53,7 +52,7 @@ class SendFollowAcceptToActor implements ShouldQueue
             'object' => [
                 'id' => $this->follow->activityId,
                 'actor' => $this->actor->activityId,
-                'type' => ActivityPubFollow::TYPE,
+                'type' => 'Follow',
                 'object' => $this->target->activityId,
             ],
         ];

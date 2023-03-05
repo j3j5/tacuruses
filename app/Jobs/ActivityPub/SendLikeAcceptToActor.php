@@ -2,7 +2,6 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Like as ActivityPubLike;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -54,7 +53,7 @@ class SendLikeAcceptToActor implements ShouldQueue
             'object' => [
                 'id' => $this->like->activityId,
                 'actor' => $this->actor->activityId,
-                'type' => ActivityPubLike::TYPE,
+                'type' => 'Like',
                 'object' => $this->target->activityId,
             ],
         ];

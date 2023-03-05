@@ -2,7 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Announce;
+use ActivityPhp\Type\Extended\Activity\Announce;
 use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;

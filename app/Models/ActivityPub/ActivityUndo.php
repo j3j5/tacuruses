@@ -2,10 +2,6 @@
 
 namespace App\Models\ActivityPub;
 
-use App\Domain\ActivityPub\Announce;
-use App\Domain\ActivityPub\Follow;
-use App\Domain\ActivityPub\Like;
-use App\Domain\ActivityPub\Undo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
@@ -57,8 +53,8 @@ class ActivityUndo extends Activity
     public function target() : BelongsTo
     {
         return match ($this->object_type) {
-            Follow::TYPE => $this->belongsTo(LocalActor::class, 'target_id'),
-            Like::TYPE, Undo::TYPE, Announce::TYPE => $this->belongsTo(LocalNote::class, 'target_id'),
+            'Follow' => $this->belongsTo(LocalActor::class, 'target_id'),
+            'Like', 'Undo', 'Announce' => $this->belongsTo(LocalNote::class, 'target_id'),
             default => throw new RuntimeException('Unknown UNDO type "' . $this->object_type . '"'),
         };
     }

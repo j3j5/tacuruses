@@ -2,7 +2,7 @@
 
 namespace App\Jobs\ActivityPub;
 
-use App\Domain\ActivityPub\Follow as FollowAction;
+use ActivityPhp\Type\Extended\Activity\Follow as ExtendedActivityFollow;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
@@ -24,7 +24,7 @@ class ProcessFollowAction implements ShouldQueue
      * @return void
      */
     public function __construct(
-        private readonly FollowAction $action,
+        private readonly ExtendedActivityFollow $action,
         private readonly ActivityFollow $activity
     ) {
         //

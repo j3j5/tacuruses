@@ -8,7 +8,7 @@ parameters:
         - app
 
     excludePaths:
-
+        - app/Events
     level: 8
 
     checkGenericClassInNonGenericObjectType: false

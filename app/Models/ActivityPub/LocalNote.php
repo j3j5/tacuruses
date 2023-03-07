@@ -164,6 +164,18 @@ class LocalNote extends Note
         );
     }
 
+    public function contentMap() : Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) : array => $value === null
+                ? [$this->actor->language => $this->content]
+                : json_decode($value),
+            set: fn (?array $value) => $value !== null
+                ? json_encode($value)
+                : null
+        );
+    }
+
     public function tags() : Attribute
     {
         return Attribute::make(

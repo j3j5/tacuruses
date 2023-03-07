@@ -25,7 +25,7 @@
             </a>
         </div>
         <div class="text-slate-900 text-lg leading-relaxed mt-2 mb-2">
-            {{ $note->text }}
+            {{ $note->content }}
         </div>
         <div class="flex border-solid border-b-2 border-gray-300">
             <div class="text-sm pt-3 pb-3 leading-relaxed">

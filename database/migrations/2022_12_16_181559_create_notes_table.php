@@ -18,12 +18,20 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('actor_id');
             $table->boolean('sensitive')->default(false);
-            $table->text('text');
+            $table->text('content');
             $table->text('summary')->nullable();
+            $table->json('summaryMap')->nullable();
             $table->string('inReplyTo')->nullable()->comment('activityId of the status is replying to');
-            $table->string('language');
+            $table->json('to');
+            $table->json('cc');
+            $table->json('contentMap')->nullable();
+            $table->string('generator')->nullable();
+            $table->string('location')->nullable();
+            $table->timestamp('startTime')->nullable();
+            $table->timestamp('endTime')->nullable();
             $table->json('attachments')->nullable();
             $table->json('tags')->nullable();
+            $table->json('repliesRaw')->nullable(); // remote only
 
             $table->foreign('actor_id')->references('id')->on('actors');
 

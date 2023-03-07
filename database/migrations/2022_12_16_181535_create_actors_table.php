@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            // Local Actor
-            $table->string('model')->nullable();
             // ActivityPub
             $table->string('name');
             $table->string('username');
@@ -27,6 +25,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->json('alsoKnownAs')->nullable();
             $table->json('properties')->nullable();
+            $table->string('language')->default(config('app.locale'));
 
 
             // RemoteActor

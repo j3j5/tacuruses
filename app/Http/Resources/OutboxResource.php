@@ -54,9 +54,9 @@ class OutboxResource extends JsonResource
             ],
             'inReplyToAtomUri' => null,
             // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
-            'content' => $this->text,
+            'content' => $this->content,
             'contentMap' => [
-                $this->language => $this->text,
+                $this->language => $this->content,
             ],
             'attachment' => $this->attachments,
             'tag' => $this->tags,

@@ -6,6 +6,8 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\LocalNote;
+use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;
 use Illuminate\Http\Request;
 
@@ -14,15 +16,13 @@ class StatusActivityController extends Controller
     /**
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\ActivityPub\LocalActor $user
+     * @param \App\Models\ActivityPub\LocalActor $actor
      * @param string $status
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(Request $request, LocalActor $user, string $status)
+    public function __invoke(Request $request, LocalActor $actor, LocalNote $note)
     {
-        $apModel = $user->model::findOrFail($status);
-
         $context = ['@context' => [
             Context::ACTIVITY_STREAMS,
             [

@@ -18,14 +18,8 @@ class StatusController extends Controller
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \App\Http\Resources\NoteResource|\Illuminate\Contracts\View\View
      */
-    public function __invoke(Request $request, LocalActor $actor, string $status) : NoteResource | View
+    public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : NoteResource | View
     {
-        $note = LocalNote::withCount(['shares', 'likes'])
-            ->where('id', $status)
-            ->where('actor_id', $actor->id)
-            ->firstOrFail();
-        $note->setRelation('actor', $actor);
-
         if ($request->wantsJson()) {
             return $this->activityStatus($note);
         }

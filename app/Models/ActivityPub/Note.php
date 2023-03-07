@@ -3,7 +3,6 @@
 namespace App\Models\ActivityPub;
 
 use App\Traits\HasSnowflakePrimary;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -122,16 +121,5 @@ class Note extends Model
         return Attribute::make(
             get: fn () : array => []
         );
-    }
-
-    public function isSensitive() : bool
-    {
-        return (bool) $this->sensitive;
-    }
-
-    public function scopeByActivityId(Builder $query, string $activityId) : void
-    {
-        $noteId = $this->getIdFromActivityId();
-        $query->where('id', $noteId);
     }
 }

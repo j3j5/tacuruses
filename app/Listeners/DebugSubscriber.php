@@ -11,7 +11,7 @@ class DebugSubscriber
     /**
      * Handle user logout events.
      */
-    public function debug($event)
+    public function debug(RemoteActorCreated|RemoteActorUpdated $event) : void
     {
         if (config('app.debug')) {
             Log::debug(get_class($event));
@@ -24,7 +24,7 @@ class DebugSubscriber
      * @param  \Illuminate\Events\Dispatcher  $events
      * @return array
      */
-    public function subscribe($events)
+    public function subscribe($events) : array
     {
         return [
             RemoteActorCreated::class => 'debug',

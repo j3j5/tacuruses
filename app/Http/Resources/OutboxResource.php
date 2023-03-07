@@ -25,7 +25,8 @@ class OutboxResource extends JsonResource
         return [
             'id' => $this->activityId,
             'type' => 'Create',
-            'actor' => $this->actor->getProfileUrl(),
+            'actor' => $this->actor->profile_url,
+            /* @phpstan-ignore-next-line */
             'published' => $this->created_at->toIso8601ZuluString(),
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
@@ -38,9 +39,10 @@ class OutboxResource extends JsonResource
                 'type' => 'Note',
                 'summary' => null,
                 'inReplyTo' => null,
+                /* @phpstan-ignore-next-line */
                 'published' => $this->created_at->toIso8601ZuluString(),
                 'url' => $this->url,
-                'attributedTo' => $this->actor->getProfileUrl(),
+                'attributedTo' => $this->actor->profile_url,
                 'to' => [
                     Context::ACTIVITY_STREAMS_PUBLIC,
                 ],

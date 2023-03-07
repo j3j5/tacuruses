@@ -3,10 +3,10 @@
 namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
-use ActivityPhp\Type\Extended\Object\Note as ObjectNote;
+use ActivityPhp\Type\Core\Collection;
+use App\Domain\ActivityPub\Mastodon\Create;
+use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Services\ActivityPub\Context;
-use App\Traits\HasSnowflakePrimary;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -78,7 +78,6 @@ class LocalNote extends Note
 {
     use HasFactory;
     use HasParent;
-    use HasSnowflakePrimary;
 
     public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
 
@@ -131,14 +130,17 @@ class LocalNote extends Note
 
     public function peers() : HasManyThrough
     {
-        // There seem to be something weird when applying an union to a HasManyThrough,
-        // hence, the need to manually `select(*)` and to manually add the `laravel_through_key`
-        // to the second part of the union
+        /*
+          There seem to be something weird when applying an union to a
+          HasManyThrough relationship, hence, the need to manually `select(*)`
+          and to manually add the `laravel_through_key` to the second part of
+          the union.
+        */
         $likes = $this->likeActors()->select('actors.*');
         $shares = $this->shareActors()->select('actors.*')
             ->addSelect(DB::raw('`shares`.`target_id` as `laravel_through_key`'));
 
-        return $likes->union($shares);
+        return $likes->union($shares);  /* @phpstan-ignore-line */
     }
 
     public function url() : Attribute
@@ -181,13 +183,13 @@ class LocalNote extends Note
     public function replies() : Attribute
     {
         return Attribute::make(
-            get: fn () : array => []
+            get: fn () : ?array => null
         );
     }
 
-    public function getAPNote() : ObjectNote
+    public function getAPNote() : ActivityNote
     {
-        /** @var \ActivityPhp\Type\Extended\Object\Note $note */
+        /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
         $note = Type::create('Note', [
             'id' => $this->activityId,
             'type' => 'Note',
@@ -195,7 +197,7 @@ class LocalNote extends Note
             'inReplyTo' => null,
             'published' => $this->created_at ? $this->created_at->toIso8601ZuluString() : null,
             'url' => $this->url,
-            'attributedTo' => $this->actor->getProfileUrl(),
+            'attributedTo' => $this->actor->profile_url,
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
@@ -207,35 +209,62 @@ class LocalNote extends Note
             // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
             // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
             'inReplyToAtomUri' => null,
-            'content' => $this->text,
+            'content' => $this->content,
             // TODO: implement proper support for languages/translations
-            'contentMap' => [
-                $this->language => $this->text,
-            ],
+            'contentMap' => $this->contentMap,
             'attachment' => $this->attachments,
             'tag' => $this->tags,
-            'replies' => $this->replies,
+            'replies' => $this->getAPReplies(),
         ]);
 
         return $note;
     }
 
-    public function getActivityUrl() : string
+    public function getAPCreate() : Create
     {
-        return $this->activity_url;
+        /** @var \App\Domain\ActivityPub\Mastodon\Create $create */
+        $create = Type::create('Create', [
+            'id' => $this->activityId,
+            'actor' => $this->actor->profile_url,
+            'published' => $this->created_at ? $this->created_at->toIso8601ZuluString() : null,
+            'to' => [
+                Context::ACTIVITY_STREAMS_PUBLIC,
+            ],
+            'cc' => [
+                $this->actor->followers_url,
+            ],
+            'object' => $this->getAPNote()->toArray(),
+        ]);
+
+        return $create;
     }
 
-    public function isSensitive() : bool
+    public function getAPReplies() : Collection
     {
-        return (bool) $this->sensitive;
+        /** @var \ActivityPhp\Type\Core\Collection  $collection */
+        $collection = Type::create('Collection', [
+            'id' => route('status.replies', [$this->actor, $this]),
+            'first' => Type::create('CollectionPage', [
+                'next' => route('status.replies', [$this->actor, $this]),
+                'partOf' => route('status.replies', [$this->actor, $this]),
+                'items' => [],
+            ]),
+        ]);
+
+        return $collection;
     }
 
-    public function scopeByActivityId(Builder $query, string $activityId) : void
+    public function scopeByActivityId($query, string $activityId)
+    {
+        $query->where('id', $this->getIdFromActivityId($activityId));
+    }
+
+    protected function getIdFromActivityId(string $activityId) : string
     {
         $matches = [];
         if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
             throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
         }
-        $query->where('id', $matches['noteId']);
+        return $matches['noteId'];
     }
 }

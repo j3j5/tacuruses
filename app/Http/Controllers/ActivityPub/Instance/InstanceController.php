@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class InstanceController extends Controller
 {
-    public function apiV1()
+    public function apiV1() : array
     {
         $cacheTTL = now()->addHour();
 
@@ -65,7 +65,7 @@ class InstanceController extends Controller
         ];
     }
 
-    public function apiV2()
+    public function apiV2() : array
     {
         return [];
     }

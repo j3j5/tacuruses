@@ -24,10 +24,10 @@ class Signer
             ' ',
             array_map('strtolower', array_keys($headers))
         );
-        $key = openssl_pkey_get_private($user->getPrivateKey());
+        $key = openssl_pkey_get_private($user->private_key);
         openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
         $signature = base64_encode($signature);
-        $signatureHeader = 'keyId="' . $user->getKeyId() . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
+        $signatureHeader = 'keyId="' . $user->key_id . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
 

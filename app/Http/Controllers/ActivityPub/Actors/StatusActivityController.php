@@ -7,7 +7,6 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
-use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;
 use Illuminate\Http\Request;
 
@@ -37,7 +36,7 @@ class StatusActivityController extends Controller
             ],
         ]];
 
-        $activity = $apModel->getCreateActivity();
+        $activity = $note->getAPCreate();
 
         return response()->activityJson(array_merge($context, $activity->toArray()));
     }

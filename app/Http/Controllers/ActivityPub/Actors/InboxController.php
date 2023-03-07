@@ -61,18 +61,22 @@ class InboxController extends Controller
         // Go ahead, process it
         switch ($type) {
             case 'Follow':
+                /** @var \ActivityPhp\Type\Extended\Activity\Follow $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
                 ProcessFollowAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Like':
+                /** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
                 ProcessLikeAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Announce':
+                /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
                 ProcessAnnounceAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Undo':
+                /** @var \ActivityPhp\Type\Extended\Activity\Undo $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
                 ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;

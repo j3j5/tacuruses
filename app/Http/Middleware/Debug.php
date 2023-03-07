@@ -25,7 +25,10 @@ class Debug
         $response = $next($request);
         if (config('app.debug')) {
             Log::debug('response ' . $response->getStatusCode() . ' - ' . $response->headers->get('Content-Type'));
-            if (!in_array($response->getStatusCode(), [404, 418, 500]) && stripos($response->headers->get('Content-Type'), 'text/html') !== 0) {
+            if (
+                !in_array($response->getStatusCode(), [404, 418, 500]) &&
+                stripos((string) $response->headers->get('Content-Type'), 'text/html') !== 0
+            ) {
                 Log::debug((string) $response);
             }
         }

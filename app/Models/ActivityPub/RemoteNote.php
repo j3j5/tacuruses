@@ -7,11 +7,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
-use RuntimeException;
 
 use function Safe\json_decode;
 use function Safe\json_encode;
-use function Safe\preg_match;
 
 /**
  * App\Models\ActivityPub\RemoteNote
@@ -118,12 +116,8 @@ class RemoteNote extends Note
         return $this->activity_url;
     }
 
-    // public function scopeByActivityId(Builder $query, string $activityId) : void
-    // {
-    //     $matches = [];
-    //     if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
-    //         throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
-    //     }
-    //     $query->where('id', $matches['noteId']);
-    // }
+    public function scopeByActivityId(Builder $query, string $activityId) : void
+    {
+        $query->where('activityId', $activityId);
+    }
 }

@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::model('user', LocalActor::class);
 
-        Route::bind('status', function(string $value, RoutingRoute $route) : LocalNote {
+        Route::bind('status', function (string $value, RoutingRoute $route) : LocalNote {
             if (!$route->hasParameter('user') || !$route->parameter('user') instanceof LocalActor) {
                 throw new RuntimeException('Unresolvable param on route for status');
             }

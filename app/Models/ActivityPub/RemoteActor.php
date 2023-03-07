@@ -121,7 +121,7 @@ class RemoteActor extends Actor
     public function domain() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => parse_url($this->url, PHP_URL_HOST),
+            get: fn () : string => parse_url($this->url, PHP_URL_HOST), /* @phpstan-ignore-line */
         );
     }
 

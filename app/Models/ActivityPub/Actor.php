@@ -70,7 +70,6 @@ class Actor extends Model
     use HasFactory;
     use HasChildren;
 
-    // protected $guarded = ['id'];
     protected $fillable = ['type'];
 
     /** @var array<string, class-string> */

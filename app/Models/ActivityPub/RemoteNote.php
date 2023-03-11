@@ -2,6 +2,8 @@
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use App\Services\ActivityPub\Context;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +59,13 @@ class RemoteNote extends Note
     /** @var array<string, string> */
     protected $casts = [
         'sensitive' => 'boolean',
+        'to' => 'array',
+        'cc' => 'array',
+        'contentMap' => 'array',
+        'summaryMap' => 'array',
+        'repliesRaw' => 'array',
+        'startTime' => 'datetime',
+        'endTime' => 'datetime',
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
@@ -66,27 +75,6 @@ class RemoteNote extends Note
     {
         return $this->belongsTo(RemoteActor::class, 'actor_id');
     }
-
-    // public function url() : Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn () : string => route('status.show', [$this->actor, $this])
-    //     );
-    // }
-
-    // public function activityUrl() : Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn () : string => route('status.activity', [$this->actor, $this])
-    //     );
-    // }
-
-    // public function activityId() : Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn () : string => $this->url
-    //     );
-    // }
 
     public function tags() : Attribute
     {
@@ -107,13 +95,41 @@ class RemoteNote extends Note
     public function replies() : Attribute
     {
         return Attribute::make(
-            get: fn () : array => []
+            get: fn () : ?array => $this->repliesRaw === null ? null : json_decode($this->repliesRaw, true),
         );
     }
 
-    public function getActivityUrl() : string
+    public function getAPNote() : ActivityNote
     {
-        return $this->activity_url;
+        /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
+        $note = Type::create('Note', [
+            'id' => $this->activityId,
+            'type' => 'Note',
+            'summary' => $this->summary,
+            'inReplyTo' => $this->inReplyTo,
+            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
+            'url' => $this->url,
+            'attributedTo' => $this->actor->profile_url,
+            'to' => [
+                Context::ACTIVITY_STREAMS_PUBLIC,
+            ],
+            'cc' => [
+                $this->actor->followers_url,
+            ],
+            'sensitive' => $this->sensitive,
+
+            // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
+            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
+            // 'inReplyToAtomUri' => null,
+            'content' => $this->content,
+            // TODO: implement proper support for languages/translations
+            'contentMap' => $this->contentMap,
+            'attachment' => $this->attachments,
+            'tag' => $this->tags,
+            'replies' => $this->repliesRaw,
+        ]);
+
+        return $note;
     }
 
     public function scopeByActivityId(Builder $query, string $activityId) : void

@@ -84,6 +84,9 @@ class LocalNote extends Note
     /** @var array<string, string> */
     protected $casts = [
         'sensitive' => 'boolean',
+        'startTime' => 'datetime',
+        'endTime' => 'datetime',
+        'source' => 'array',
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
@@ -205,9 +208,10 @@ class LocalNote extends Note
         $note = Type::create('Note', [
             'id' => $this->activityId,
             'type' => 'Note',
+            // On Mastodon, if sensitive is true, only this is visible, content goes after a click
             'summary' => null,
             'inReplyTo' => null,
-            'published' => $this->created_at ? $this->created_at->toIso8601ZuluString() : null,
+            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'url' => $this->url,
             'attributedTo' => $this->actor->profile_url,
             'to' => [
@@ -220,7 +224,7 @@ class LocalNote extends Note
 
             // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
             // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
-            'inReplyToAtomUri' => null,
+            // 'inReplyToAtomUri' => null,
             'content' => $this->content,
             // TODO: implement proper support for languages/translations
             'contentMap' => $this->contentMap,
@@ -238,7 +242,7 @@ class LocalNote extends Note
         $create = Type::create('Create', [
             'id' => $this->activityId,
             'actor' => $this->actor->profile_url,
-            'published' => $this->created_at ? $this->created_at->toIso8601ZuluString() : null,
+            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
@@ -278,5 +282,10 @@ class LocalNote extends Note
             throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
         }
         return $matches['noteId'];
+    }
+
+    public function scopePublished($query) : void
+    {
+        $query->whereNotNull('published');
     }
 }

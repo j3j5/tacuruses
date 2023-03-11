@@ -9,6 +9,7 @@ use App\Http\Controllers\ActivityPub\Actors\OutboxController;
 use App\Http\Controllers\ActivityPub\Actors\ProfileController;
 use App\Http\Controllers\ActivityPub\Actors\StatusActivityController;
 use App\Http\Controllers\ActivityPub\Actors\StatusController;
+use App\Http\Controllers\ActivityPub\Actors\StatusRepliesController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
 use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
@@ -50,6 +51,7 @@ Route::get('/{user}', ProfileController::class)->name('user.show');
 Route::get('/{user}/following', FollowingController::class)->name('user.following');
 Route::get('/{user}/followers', FollowersController::class)->name('user.followers');
 Route::get('/{user}/{status}/activity', StatusActivityController::class)->name('status.activity');
+Route::get('/{user}/{status}/replies', StatusRepliesController::class)->name('status.replies');
 Route::get('/{user}/{status}', StatusController::class)->name('status.show');
 
 Route::fallback(function (Request $request) {

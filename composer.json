@@ -19,6 +19,7 @@
         "landrok/activitypub": "dev-master",
         "laravel/framework": "^9.19",
         "laravel/tinker": "^2.7",
+        "opcodesio/log-viewer": "^2.3",
         "phpseclib/phpseclib": "^3.0",
         "roave/security-advisories": "dev-latest",
         "sentry/sentry-laravel": "^2.8",

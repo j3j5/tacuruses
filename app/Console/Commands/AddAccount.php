@@ -49,7 +49,6 @@ class AddAccount extends Command
         $bot->bio = $this->ask('What about the bio?');
         $bot->avatar = $this->ask('Is the avatar already on the repo?');
         $bot->header = $this->ask('What about the header? Is it also on the repo?');
-        $bot->model = $this->ask('Now I need the full class name of the model this actor will use');
 
         $bot->save();
 

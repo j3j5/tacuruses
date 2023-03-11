@@ -12,7 +12,7 @@ return new class() extends Migration {
      */
     public function up()
     {
-        Schema::connection('mysql')->create('shares', function (Blueprint $table) {
+        Schema::create('shares', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('actor_id');
             $table->unsignedBigInteger('target_id'); // A note
@@ -32,6 +32,6 @@ return new class() extends Migration {
      */
     public function down()
     {
-        Schema::connection('mysql')->dropIfExists('shares');
+        Schema::dropIfExists('shares');
     }
 };

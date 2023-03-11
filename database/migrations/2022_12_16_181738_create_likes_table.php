@@ -15,7 +15,7 @@ return new class() extends Migration {
         Schema::connection('mysql')->create('likes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('actor_id');
-            $table->unsignedBigInteger('target_id');    // It's a status
+            $table->unsignedBigInteger('target_id');    // It's a note
             $table->text('activityId');
 
             $table->timestamps();

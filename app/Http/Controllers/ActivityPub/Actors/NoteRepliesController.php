@@ -11,7 +11,7 @@ use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use Illuminate\Http\Request;
 
-class StatusRepliesController extends Controller
+class NoteRepliesController extends Controller
 {
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note)
     {
@@ -21,11 +21,11 @@ class StatusRepliesController extends Controller
 
         $context = ['@context' => Context::ACTIVITY_STREAMS];
         $collection = new Collection();
-        $collection->id = route('status.replies', [$note->actor, $this]);
+        $collection->id = route('note.replies', [$note->actor, $this]);
         $page = new CollectionPage();
-        $page->id = route('status.replies', [$note->actor, $this, 'page' => 1]);
-        $page->next = route('status.replies', [$note->actor, $this, 'page' => 1]);
-        $page->partOf = route('status.replies', [$note->actor, $this]);
+        $page->id = route('note.replies', [$note->actor, $this, 'page' => 1]);
+        $page->next = route('note.replies', [$note->actor, $this, 'page' => 1]);
+        $page->partOf = route('note.replies', [$note->actor, $this]);
         $page->items = [];
         $collection->first = $page;
 

@@ -11,7 +11,7 @@ use App\Models\ActivityPub\LocalNote;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class StatusController extends Controller
+class NoteController extends Controller
 {
     /**
      *
@@ -20,20 +20,21 @@ class StatusController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : NoteResource | View
     {
+        $note->setRelation('actor', $actor);
         if ($request->wantsJson()) {
-            return $this->activityStatus($note);
+            return $this->jsonNote($note);
         }
-        return $this->status($note);
+        return $this->viewNote($note);
     }
 
-    private function activityStatus(LocalNote $note) : NoteResource
+    private function jsonNote(LocalNote $note) : NoteResource
     {
         return new NoteResource($note);
     }
 
-    private function status(LocalNote $note) : View
+    private function viewNote(LocalNote $note) : View
     {
-        $peers = $note->peers()->take(10)->get();
-        return view('bots.status', compact(['note', 'peers']));
+        $peers = $note->peers()->inRandomOrder()->take(10)->get();
+        return view('bots.note', compact(['note', 'peers']));
     }
 }

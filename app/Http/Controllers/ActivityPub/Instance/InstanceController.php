@@ -26,7 +26,7 @@ class InstanceController extends Controller
               'user_count' => Cache::remember('total-users', $cacheTTL, function () {
                   return LocalActor::count();
               }),
-              'status_count' => Cache::remember('local-posts', $cacheTTL, function () {
+              'status_count' => Cache::remember('local-notes', $cacheTTL, function () {
                   return LocalNote::count();
               }),
               'domain_count' => 1,

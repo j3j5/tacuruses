@@ -5,7 +5,7 @@
             class="w-16 mr-2 relative border-solid border-4 border-gray-500"
         />
     </a>
-    <a class="block float-right text-slate-500 hover:text-slate-700" href="{{ route('status.show', [$note->actor, $note]) }}">
+    <a class="block float-right text-slate-500 hover:text-slate-700" href="{{ route('note.show', [$note->actor, $note]) }}">
         @icon('clock', 'inline-block w-4 h-4')
         <span class="">
             {{-- {{ $note->created_at->locale($note->language)->isoFormat('h:mm a - Do MMM YYYY') }} --}}

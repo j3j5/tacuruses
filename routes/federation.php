@@ -7,9 +7,9 @@ use App\Http\Controllers\ActivityPub\Actors\FollowingController;
 use App\Http\Controllers\ActivityPub\Actors\InboxController;
 use App\Http\Controllers\ActivityPub\Actors\OutboxController;
 use App\Http\Controllers\ActivityPub\Actors\ProfileController;
-use App\Http\Controllers\ActivityPub\Actors\StatusActivityController;
-use App\Http\Controllers\ActivityPub\Actors\StatusController;
-use App\Http\Controllers\ActivityPub\Actors\StatusRepliesController;
+use App\Http\Controllers\ActivityPub\Actors\NoteActivityController;
+use App\Http\Controllers\ActivityPub\Actors\NoteController;
+use App\Http\Controllers\ActivityPub\Actors\NoteRepliesController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
 use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
@@ -50,9 +50,9 @@ Route::get('/{user}', ProfileController::class)->name('user.show');
 // Route::get('/{user}/following', BotFollowingController::class)->name('user.following');
 Route::get('/{user}/following', FollowingController::class)->name('user.following');
 Route::get('/{user}/followers', FollowersController::class)->name('user.followers');
-Route::get('/{user}/{status}/activity', StatusActivityController::class)->name('status.activity');
-Route::get('/{user}/{status}/replies', StatusRepliesController::class)->name('status.replies');
-Route::get('/{user}/{status}', StatusController::class)->name('status.show');
+Route::get('/{user}/{note}/activity', NoteActivityController::class)->name('note.activity');
+Route::get('/{user}/{note}/replies', NoteRepliesController::class)->name('note.replies');
+Route::get('/{user}/{note}', NoteController::class)->name('note.show');
 
 Route::fallback(function (Request $request) {
     info('fallback', ['request' => $request]);

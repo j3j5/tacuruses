@@ -149,14 +149,14 @@ class LocalNote extends Note
     public function url() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('status.show', [$this->actor, $this])
+            get: fn () : string => route('note.show', [$this->actor, $this])
         );
     }
 
     public function activityUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('status.activity', [$this->actor, $this])
+            get: fn () : string => route('note.activity', [$this->actor, $this])
         );
     }
 
@@ -259,10 +259,10 @@ class LocalNote extends Note
     {
         /** @var \ActivityPhp\Type\Core\Collection  $collection */
         $collection = Type::create('Collection', [
-            'id' => route('status.replies', [$this->actor, $this]),
+            'id' => route('note.replies', [$this->actor, $this]),
             'first' => Type::create('CollectionPage', [
-                'next' => route('status.replies', [$this->actor, $this]),
-                'partOf' => route('status.replies', [$this->actor, $this]),
+                'next' => route('note.replies', [$this->actor, $this]),
+                'partOf' => route('note.replies', [$this->actor, $this]),
                 'items' => [],
             ]),
         ]);

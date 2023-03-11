@@ -10,7 +10,7 @@ use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use Illuminate\Http\Request;
 
-class StatusActivityController extends Controller
+class NoteActivityController extends Controller
 {
     /**
      *

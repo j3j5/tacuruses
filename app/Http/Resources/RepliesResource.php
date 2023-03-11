@@ -35,12 +35,12 @@ class RepliesResource extends JsonResource
         ]];
 
         $collection = new Collection();
-        $collection->id = route('status.replies', [$this->actor, $this]);
+        $collection->id = route('note.replies', [$this->actor, $this]);
 
         $page = new CollectionPage();
-        $page->id = route('status.replies', [$this->actor, $this, 'page' => 1]);
-        $page->next = route('status.replies', [$this->actor, $this, 'page' => 1]);
-        $page->partOf = route('status.replies', [$this->actor, $this]);
+        $page->id = route('note.replies', [$this->actor, $this, 'page' => 1]);
+        $page->next = route('note.replies', [$this->actor, $this, 'page' => 1]);
+        $page->partOf = route('note.replies', [$this->actor, $this]);
         $page->items = $this->replies->transform->getAP;
 
         $collection->first = $page;

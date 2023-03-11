@@ -15,7 +15,7 @@ return new class() extends Migration {
         Schema::connection('mysql')->create('shares', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('actor_id');
-            $table->unsignedBigInteger('target_id'); // A status
+            $table->unsignedBigInteger('target_id'); // A note
             $table->text('activityId');
 
             $table->timestamps();

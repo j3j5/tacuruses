@@ -12,7 +12,7 @@
             <h1>{{ $actor->bio }}</h1>
 
             @foreach ($actor->notes as $note)
-                @include('bots._status')
+                @include('bots._note')
             @endforeach
         </div>
     </div>

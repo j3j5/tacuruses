@@ -82,14 +82,14 @@ class Note extends Model
     public function url() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('status.show', [$this->actor, $this])
+            get: fn () : string => route('note.show', [$this->actor, $this])
         );
     }
 
     public function activityUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('status.activity', [$this->actor, $this])
+            get: fn () : string => route('note.activity', [$this->actor, $this])
         );
     }
 

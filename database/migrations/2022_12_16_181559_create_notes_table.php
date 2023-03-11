@@ -33,7 +33,7 @@ return new class extends Migration
             $table->json('cc')->nullable()->comment('array of recipients of the carbon copy');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-bcc
             $table->json('bcc')->nullable()->comment('array of recipients of the blind carbon copy');
-            $table->string('inReplyTo')->nullable()->comment('activityId of the status is replying to, if any');
+            $table->string('inReplyTo')->nullable()->comment('activityId of the note is replying to, if any');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-generator
             $table->json('generator')->nullable()->comment('the entity that generated the object');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-location

@@ -28,13 +28,13 @@ class ProfileController extends Controller
 
     /**
      *
-     * @param \App\Models\ActivityPub\LocalActor $user
+     * @param \App\Models\ActivityPub\LocalActor $actor
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \Illuminate\Contracts\View\View
      */
-    private function profile(LocalActor $user)
+    private function profile(LocalActor $actor)
     {
-        return view('bots.profile', compact(['user']));
+        return view('bots.profile', compact(['actor']));
     }
 
     /**

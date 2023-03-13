@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use Illuminate\Http\Client\Response;
@@ -11,9 +12,13 @@ use RuntimeException;
 
 trait SendsSignedRequests
 {
-    private function sendSignedRequest(Signer $signer, array $request) : Response
-    {
-        if (!is_string(($this->actor->inbox)) || empty($this->actor->inbox)) {
+    private function sendSignedRequest(
+        Signer $signer,
+        LocalActor $actorSigning,
+        array $request,
+        string $inbox
+    ) : Response {
+        if (!is_string(($inbox)) || empty($inbox)) {
             throw new RuntimeException('Actor\'s inbox url is empty');
         }
 
@@ -21,8 +26,8 @@ trait SendsSignedRequests
         // Make HTTP post back to the server of the actor
 
         $headers = $signer->sign(
-            $this->targetActor,
-            $this->actor->inbox,
+            $actorSigning,
+            $inbox,
             $body,
             [
                 'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
@@ -31,7 +36,7 @@ trait SendsSignedRequests
         );
 
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::withHeaders($headers)->post($this->actor->inbox, $request);
+        $response = Http::withHeaders($headers)->post($inbox, $request);
         if ($response->failed()) {
             Log::warning('Request failed. Response:', [$response]);
             $response->throw();

@@ -57,7 +57,12 @@ class SendLikeAcceptToActor implements ShouldQueue
                 'object' => $this->target->activityId,
             ],
         ];
-        $this->sendSignedRequest($signer, $accept);
+        $this->sendSignedRequest(
+            signer: $signer,
+            request: $accept,
+            inbox: $this->actor->inbox,
+            actorSigning: $this->targetActor
+        );
 
         $this->like->markAsAccepted();
     }

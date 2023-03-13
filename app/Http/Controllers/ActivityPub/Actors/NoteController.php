@@ -20,7 +20,6 @@ class NoteController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : NoteResource | View
     {
-        $note->setRelation('actor', $actor);
         if ($request->wantsJson()) {
             return $this->jsonNote($note);
         }

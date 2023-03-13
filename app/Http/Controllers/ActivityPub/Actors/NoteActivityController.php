@@ -18,9 +18,9 @@ class NoteActivityController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\ActivityPub\LocalActor $actor
      * @param \App\Models\ActivityPub\LocalNote $note
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : JsonResponse
     {

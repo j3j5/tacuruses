@@ -44,9 +44,13 @@ class Activity extends Model
     use HasFactory;
     use HasChildren;
 
+    /** @var string[] */
     protected $guarded = ['id', 'created_at', 'updated_at', 'accepted'];
+
+    /** @var string */
     protected string $childColumn = 'type';
 
+    /** @var string[] */
     protected $casts = [
         'accepted' => 'boolean',
         'object' => 'array',

@@ -7,9 +7,8 @@
     </a>
     <a class="block float-right text-slate-500 hover:text-slate-700" href="{{ route('note.show', [$note->actor, $note]) }}">
         @icon('clock', 'inline-block w-4 h-4')
-        <span class="">
-            {{-- {{ $note->created_at->locale($note->language)->isoFormat('h:mm a - Do MMM YYYY') }} --}}
-            {{ $note->published_at->locale($note->language)->diffForHumans() }}
+        <span class="" title="{{ $note->created_at->locale($note->actor->language)->isoFormat('D MMM YYYY - h:mm a') }}">
+            {{ $note->published_at->locale($note->actor->language)->diffForHumans() }}
         </span>
     </a>
     <a href="{{ route('actor.show', [$note->actor]) }}">

@@ -58,10 +58,11 @@ class Activity extends Model
 
     /** @var array<string, class-string> */
     protected array $childTypes = [
+        'Announce' => ActivityAnnounce::class,
+        'Create' => ActivityCreate::class,
         'Follow' => ActivityFollow::class,
         'Like' => ActivityLike::class,
         'Undo' => ActivityUndo::class,
-        'Announce' => ActivityAnnounce::class,
     ];
 
     public function slug() : Attribute

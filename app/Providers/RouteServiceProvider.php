@@ -37,17 +37,18 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/federation.php'));
         });
 
-        Route::model('user', LocalActor::class);
+        Route::model('actor', LocalActor::class);
 
         Route::bind('note', function (string $value, RoutingRoute $route) : LocalNote {
-            if (!$route->hasParameter('user') || !$route->parameter('user') instanceof LocalActor) {
+            if (!$route->hasParameter('actor') || !$route->parameter('actor') instanceof LocalActor) {
                 throw new RuntimeException('Unresolvable param on route for status');
             }
             $note = LocalNote::withCount(['shares', 'likes'])
                 ->where('id', $value)
-                ->where('actor_id', $route->parameter('user')->id)
+                ->where('actor_id', $route->parameter('actor')->id)
+                ->whereNotNull('published_at')
                 ->firstOrFail();
-            $note->setRelation('actor', $route->parameter('user'));
+            $note->setRelation('actor', $route->parameter('actor'));
             return $note;
         });
     }

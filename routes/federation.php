@@ -5,11 +5,11 @@ declare(strict_types=1);
 use App\Http\Controllers\ActivityPub\Actors\FollowersController;
 use App\Http\Controllers\ActivityPub\Actors\FollowingController;
 use App\Http\Controllers\ActivityPub\Actors\InboxController;
-use App\Http\Controllers\ActivityPub\Actors\OutboxController;
-use App\Http\Controllers\ActivityPub\Actors\ProfileController;
 use App\Http\Controllers\ActivityPub\Actors\NoteActivityController;
 use App\Http\Controllers\ActivityPub\Actors\NoteController;
 use App\Http\Controllers\ActivityPub\Actors\NoteRepliesController;
+use App\Http\Controllers\ActivityPub\Actors\OutboxController;
+use App\Http\Controllers\ActivityPub\Actors\ProfileController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
 use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
@@ -39,20 +39,20 @@ Route::middleware(['no.cookies'])->group(function () {
 
     Route::middleware('valid.http.signature')->group(function () {
         Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
-        Route::post('/{user}/inbox', InboxController::class)->name('user.inbox');
+        Route::post('/{actor}/inbox', InboxController::class)->name('actor.inbox');
     });
 
-    Route::get('/{user}/outbox', OutboxController::class)->name('user.outbox');
+    Route::get('/{actor}/outbox', OutboxController::class)->name('actor.outbox');
 });
 
-// Federation Users
-Route::get('/{user}', ProfileController::class)->name('user.show');
-// Route::get('/{user}/following', BotFollowingController::class)->name('user.following');
-Route::get('/{user}/following', FollowingController::class)->name('user.following');
-Route::get('/{user}/followers', FollowersController::class)->name('user.followers');
-Route::get('/{user}/{note}/activity', NoteActivityController::class)->name('note.activity');
-Route::get('/{user}/{note}/replies', NoteRepliesController::class)->name('note.replies');
-Route::get('/{user}/{note}', NoteController::class)->name('note.show');
+// Federation actors
+Route::get('/{actor}', ProfileController::class)->name('actor.show');
+// Route::get('/{actor}/following', BotFollowingController::class)->name('actor.following');
+Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
+Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
+Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');
+Route::get('/{actor}/{note}/replies', NoteRepliesController::class)->name('note.replies');
+Route::get('/{actor}/{note}', NoteController::class)->name('note.show');
 
 Route::fallback(function (Request $request) {
     info('fallback', ['request' => $request]);

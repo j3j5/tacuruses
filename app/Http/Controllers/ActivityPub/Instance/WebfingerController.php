@@ -53,7 +53,7 @@ class WebfingerController extends Controller
                 [
                     'rel' => 'self',
                     'type' => 'application/activity+json',
-                    'href' => route('user.show', [$user]),
+                    'href' => route('actor.show', [$user]),
                 ],
                 [
                     'rel' => 'http://ostatus.org/schema/1.0/subscribe',

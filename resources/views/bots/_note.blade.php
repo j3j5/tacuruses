@@ -1,5 +1,5 @@
 <div class="mb-4 overflow-hidden no-underline">
-    <a href="{{ route('user.show', [$note->actor]) }}">
+    <a href="{{ route('actor.show', [$note->actor]) }}">
         <x-avatar
             :actor="$note->actor"
             class="w-16 mr-2 relative border-solid border-4 border-gray-500"
@@ -12,7 +12,7 @@
             {{ $note->published_at->locale($note->language)->diffForHumans() }}
         </span>
     </a>
-    <a href="{{ route('user.show', [$note->actor]) }}">
+    <a href="{{ route('actor.show', [$note->actor]) }}">
         <div class="font-bold text-xl pb-1">{{ $note->actor->name }}</div>
         <div class="text-base text-slate-500">
             {{ $note->actor->full_username }}

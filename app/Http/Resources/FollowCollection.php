@@ -45,7 +45,7 @@ class FollowCollection extends ResourceCollection
             'totalItems' => $this->resource->count(),
             'next' => $this->when(!empty($next), $next),
             'prev' => $this->when(!empty($prev), $prev),
-            'partOf' => route('user.followers', [$this->user]),
+            'partOf' => route('actor.followers', [$this->user]),
             'orderedItems' => $this->collection->map(
                 fn (FollowResource $follow) => $follow->getId()
             ),

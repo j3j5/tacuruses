@@ -168,7 +168,7 @@ class LocalActor extends Actor
     public function activityId() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.show', [$this]),
+            get: fn () : string => route('actor.show', [$this]),
         );
     }
 
@@ -196,7 +196,7 @@ class LocalActor extends Actor
     public function url() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.show', [$this]),
+            get: fn () : string => route('actor.show', [$this]),
         );
     }
 
@@ -217,35 +217,35 @@ class LocalActor extends Actor
     public function inboxUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.inbox', [$this]),
+            get: fn () : string => route('actor.inbox', [$this]),
         );
     }
 
     public function outboxUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.outbox', [$this]),
+            get: fn () : string => route('actor.outbox', [$this]),
         );
     }
 
     public function followingUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.following', [$this]),
+            get: fn () : string => route('actor.following', [$this]),
         );
     }
 
     public function followersUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.followers', [$this]),
+            get: fn () : string => route('actor.followers', [$this]),
         );
     }
 
     public function profileUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('user.show', [$this]),
+            get: fn () : string => route('actor.show', [$this]),
         );
     }
 

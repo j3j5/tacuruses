@@ -4,8 +4,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
-use App\Jobs\ActivityPub\ProcessAnnounceAction;
-use App\Jobs\ActivityPub\ProcessUndoAction;
+use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Models\ActivityPub\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +21,7 @@ class SharedInboxController extends Controller
      */
     public function __invoke(Request $request)
     {
-        info(__CLASS__, ['request' => $request]);
+        // info(__CLASS__, ['request' => $request]);
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
 
@@ -45,32 +44,28 @@ class SharedInboxController extends Controller
         // ]);
 
         // Go ahead, process it
+        $activityStream = Type::create($type, $action->all());
         switch ($type) {
-            case 'Announce':
-                /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
-                ProcessAnnounceAction::dispatch(Type::create($type, $action->all()), $activityModel);
+            case 'Create':
+                /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
+                ProcessCreateAction::dispatch($activityStream);
                 break;
-            case 'Undo':
-                /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
-                ProcessUndoAction::dispatch(Type::create($type, $action->all()), $activityModel);
-                break;
+            case 'Update':
+                // case 'Delete':
+                // break;
+                // case 'Undo':
+                // break;
 
                 // case 'View':
-                // $this->handleViewActivity();
                 // break;
 
                 // case 'Reject':
-                // $this->handleRejectActivity();
                 // break;
 
                 // case 'Delete':
-                // $this->handleDeleteActivity();
                 // break;
 
                 // case 'Add':
-                // 	break;
-
-                // case 'Create':
                 // 	break;
 
                 // case 'Accept':
@@ -92,5 +87,7 @@ class SharedInboxController extends Controller
                 Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
                 abort(422, 'Unknow type of action');
         }
+
+        return response()->activityJson();
     }
 }

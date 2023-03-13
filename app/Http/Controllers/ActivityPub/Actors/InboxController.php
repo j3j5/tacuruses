@@ -65,12 +65,13 @@ class InboxController extends Controller
                 /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
                 ProcessFollowAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
+
             case 'Like':
                 /** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
                 ProcessLikeAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
-            case 'Announce':
+            case 'Announce':    // Share/Boost
                 /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
                 /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
                 ProcessAnnounceAction::dispatchAfterResponse($activityStream, $activityModel);
@@ -80,42 +81,18 @@ class InboxController extends Controller
                 /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
                 ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
-
-                // case 'View':
-                // $this->handleViewActivity();
-                // break;
-
-                // case 'Reject':
-                // $this->handleRejectActivity();
-                // break;
-
-                // case 'Delete':
-                // $this->handleDeleteActivity();
-                // break;
-
-                // case 'Add':
-                // 	break;
-
-                // case 'Create':
-                // 	break;
-
-                // case 'Accept':
-                // 	break;
-
-                // case 'Story:Reaction':
-                // 	// $this->handleStoryReactionActivity();
-                // 	break;
-
-                // case 'Story:Reply':
-                // 	// $this->handleStoryReplyActivity();
-                // 	break;
-
-                // case 'Update':
-                // 	(new UpdateActivity($this->payload, $this->profile))->handle();
-                // 	break;
-
+            case 'Create':
+            case 'Accept':
+            case 'Reject':
+            case 'Add':
+            case 'Remove':
+            case 'Block':
+            case 'Flag':
+            case 'Update':
+            case 'Move':
+            case 'Delete':
             default:
-                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action, 'activityStream' => $activityStream]);
+                Log::warning('Unknown/unsupported verb on inbox', ['class' => __CLASS__, 'payload' => $action, 'activityStream' => $activityStream]);
                 abort(422, 'Unknow type of action');
         }
 

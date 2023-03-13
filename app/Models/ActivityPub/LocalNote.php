@@ -6,6 +6,7 @@ use ActivityPhp\Type;
 use ActivityPhp\Type\Core\Collection;
 use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Events\LocalNotePublished;
 use App\Services\ActivityPub\Context;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -86,7 +87,12 @@ class LocalNote extends Note
         'sensitive' => 'boolean',
         'startTime' => 'datetime',
         'endTime' => 'datetime',
+        'published_at' => 'datetime',
         'source' => 'array',
+        'to' => 'array',
+        'bto' => 'array',
+        'cc' => 'array',
+        'bcc' => 'array',
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
@@ -238,8 +244,23 @@ class LocalNote extends Note
 
     public function getAPCreate() : Create
     {
+        $context = [
+            'https://www.w3.org/ns/activitystreams',
+            [
+                'ostatus' => 'http://ostatus.org#',
+                'atomUri' => 'ostatus:atomUri',
+                'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
+                'conversation' => 'ostatus:conversation',
+                'sensitive' => 'as:sensitive',
+                'toot' => 'http://joinmastodon.org/ns#',
+                'votersCount' => 'toot:votersCount',
+                'Hashtag' => 'as:Hashtag',
+            ],
+        ];
+
         /** @var \App\Domain\ActivityPub\Mastodon\Create $create */
         $create = Type::create('Create', [
+            '@context' => $context,
             'id' => $this->activityId,
             'actor' => $this->actor->profile_url,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
@@ -268,6 +289,16 @@ class LocalNote extends Note
         ]);
 
         return $collection;
+    }
+
+    public function publish() : self
+    {
+        $this->published_at = now();
+        $this->save();
+
+        LocalNotePublished::dispatch($this);
+
+        return $this;
     }
 
     public function scopeByActivityId($query, string $activityId)

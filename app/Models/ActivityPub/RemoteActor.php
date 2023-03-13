@@ -4,10 +4,11 @@ namespace App\Models\ActivityPub;
 
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
+use App\Jobs\ActivityPub\DeliverActivity;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Parental\HasParent;
 
 use function Safe\parse_url;
@@ -130,5 +131,19 @@ class RemoteActor extends Actor
         return Attribute::make(
             get: fn () : string => '@' . $this->username . '@' . $this->domain,
         );
+    }
+
+    public function sendNote(LocalNote $note) : self
+    {
+        $inbox = empty($this->sharedInbox) ? $this->inbox : $this->inbox;
+        if (!is_string($inbox) || empty($inbox)) {
+            Log::warning('Actor does not seem to have a valid inbox');
+            return $this;
+        }
+
+        Log::debug('dispatching job to deliver the Create activity for a note', ['actor' => $this, 'note' => $note]);
+        DeliverActivity::dispatch($note->actor, $note->getAPCreate(), $inbox);
+
+        return $this;
     }
 }

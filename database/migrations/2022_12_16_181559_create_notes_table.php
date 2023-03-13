@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('actor_id');
+            $table->string('activityId')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
             $table->timestamp('published_at')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-content
@@ -29,7 +30,7 @@ return new class extends Migration
             $table->boolean('sensitive')->default(false)->comment('Mastodon-specific; content warning');
             $table->json('to')->comment('array of recipients');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-bto
-            $table->json('bto')->comment('array of recipients of the blind carbon copy');
+            $table->json('bto')->nullable()->comment('array of recipients of the blind carbon copy');
             $table->json('cc')->nullable()->comment('array of recipients of the carbon copy');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-bcc
             $table->json('bcc')->nullable()->comment('array of recipients of the blind carbon copy');
@@ -47,10 +48,12 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->json('repliesRaw')->nullable(); // remote only
             $table->json('source')->nullable()->comment('original representation of the content');
-
-            $table->foreign('actor_id')->references('id')->on('actors');
+            $table->string('conversation')->nullable()->comment('');
 
             $table->string('type');
+
+            $table->foreign('actor_id')->references('id')->on('actors');
+            $table->index(['published_at', 'actor_id', 'id']);
         });
     }
 

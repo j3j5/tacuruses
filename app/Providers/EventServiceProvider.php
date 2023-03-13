@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\LocalNotePublished;
 use App\Listeners\DebugSubscriber;
+use App\Listeners\SendNoteToFollowers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -14,7 +16,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        //
+        LocalNotePublished::class => [
+            SendNoteToFollowers::class,
+        ],
     ];
 
     /**

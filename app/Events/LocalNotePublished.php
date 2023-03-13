@@ -2,23 +2,25 @@
 
 namespace App\Events;
 
-use App\Models\ActivityPub\RemoteActor;
+use App\Models\ActivityPub\LocalNote;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RemoteActorUpdated
+class LocalNotePublished
 {
     use Dispatchable, SerializesModels;
+
+    public readonly LocalNote $note;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(private readonly RemoteActor $actor)
+    public function __construct(LocalNote $note)
     {
-        //
+        $this->note = $note;
     }
 
     /**

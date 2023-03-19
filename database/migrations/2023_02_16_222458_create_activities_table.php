@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityPub\Actor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,16 +19,15 @@ return new class extends Migration
             $table->timestamps();
             $table->string('activityId');
             $table->string('type');
-            $table->unsignedBigInteger('actor_id');
-            $table->unsignedBigInteger('target_id');
+            $table->foreignIdFor(Actor::class)->constrained();
+            // target_id is not constrained because it can point to actors or notes
+            // depending on the type
+            $table->foreignId('target_id');
             $table->string('object_type')->nullable();
             $table->json('object');
             $table->boolean('accepted')->default(false);
 
             $table->unique('activityId');
-            $table->foreign('actor_id')->references('id')->on('actors');
-            // target_id is not a foreign key because it can point to actors or notes
-            // depending on the type
         });
     }
 

@@ -14,14 +14,10 @@ return new class() extends Migration {
     {
         Schema::create('shares', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('actor_id');
-            $table->unsignedBigInteger('target_id'); // A note
+            $table->foreignIdFor(Actor::class)->constrained();
+            $table->foreignId('target_id')->constrained('notes');
             $table->text('activityId');
-
             $table->timestamps();
-
-            $table->foreign('actor_id')->references('id')->on('actors');
-            $table->foreign('target_id')->references('id')->on('notes');
         });
     }
 

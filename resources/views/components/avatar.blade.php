@@ -1,5 +1,5 @@
 <img
-    {{ $attributes->merge(['class' => 'block float-left rounded-full']) }}
+    {{ $attributes->merge(['class' => 'block float-left rounded-full border-solid border-2 border-gray-500']) }}
     {{-- class="{{ $attributes->merge(['class' => 'block float-left rounded-full']) }}" --}}
     src="{{ $actor->avatar }}"
     @empty($actor->name)

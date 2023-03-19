@@ -1,9 +1,15 @@
 @extends('layouts.master')
 
 @section('content')
-<div class="w-full flex justify-center m-6">
-    <div class="flex-auto relative p-8 max-w-md">
-        @include('bots._note')
-    </div>
+<div class="w-full flex flex-col justify-center m-4">
+        @include('bots._note', ['avatar_size' => 'w-16'])
+    <hr>
+@foreach ($note->replies->load('actor') as $reply)
+        @include('bots._note', [
+            'name_class' => 'text-l truncate',
+            'avatar_size' => 'w-10',
+            'note' => $reply,
+        ])
+@endforeach
 </div>
 @endsection

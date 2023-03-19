@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
@@ -90,6 +91,16 @@ use function Safe\preg_match;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
+ * @property-read int|null $mentions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
@@ -129,6 +140,11 @@ class LocalActor extends Actor
         return $this->hasMany(Follow::class, 'target_id');
     }
 
+    public function following() : HasMany
+    {
+        return $this->hasMany(Follow::class, 'target_id');
+    }
+
     public function likes() : HasManyThrough
     {
         return $this->hasManyThrough(
@@ -147,6 +163,11 @@ class LocalActor extends Actor
             'actor_id',
             'target_id'
         );
+    }
+
+    public function mentions() : BelongsToMany
+    {
+        return $this->belongsToMany(Note::class);
     }
 
     public function avatar() : Attribute

@@ -1,0 +1,52 @@
+<?php
+
+namespace ActivityPhp\Type\Core;
+
+/**
+ * CollectionPage is an implementation of one
+ * of the Activity Streams Core Types.
+ *
+ * Used to represent distinct subsets of items from a Collection.
+ *
+ * @see https://www.w3.org/TR/activitystreams-core/#paging
+ */
+class CollectionPage extends Collection
+{
+    /**
+     * @var non-empty-string
+     */
+    protected $type = 'CollectionPage';
+
+    /**
+     * @var string
+     */
+    protected $id;
+
+    /**
+     * Identifies the Collection to which CollectionPage objects items
+     * belong.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-partof
+     *
+     * @var string|\ActivityPhp\Type\Core\Link|\ActivityPhp\Type\Core\Collection|null
+     */
+    protected $partOf;
+
+    /**
+     * Indicates the next page of items.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-next
+     *
+     * @var string|\ActivityPhp\Type\Core\Link|\ActivityPhp\Type\Core\CollectionPage|null
+     */
+    protected $next;
+
+    /**
+     * Identifies the previous page of items.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-prev
+     *
+     * @var string|\ActivityPhp\Type\Core\Link|\ActivityPhp\Type\Core\CollectionPage|null
+     */
+    protected $prev;
+}

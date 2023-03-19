@@ -1,0 +1,121 @@
+<?php
+
+namespace ActivityPhp\Type;
+
+/**
+ * @template \TKey
+ */
+
+/**
+ * \ActivityPhp\Type\AbstractObject is an abstract class for all
+ * Activity Streams Core Types.
+ *
+ * @see https://www.w3.org/TR/activitystreams-core/#model
+ */
+abstract class AbstractObject
+{
+    /**
+     * Keep all properties values that have been set
+     *
+     * @var array<string, mixed>
+     */
+    private $_props;
+
+    /**
+     * Standard setter method
+     * - Perform content validation if a validator exists
+     *
+     * @param  string $name
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function set($name, $value) : self;
+
+    /**
+     * Affect a value to a property or an extended property
+     *
+     * @param  \TKey $value
+     * @return \ActivityPhp\Type\AbstractObject|array<\ActivityPhp\Type\AbstractObject>|\TKey
+     */
+    private function transform($value);
+
+    /**
+     * Standard getter method
+     *
+     * @return mixed|null
+     */
+    public function get(string $name);
+
+    /**
+     * Checks that property exists
+     */
+    public function has(string $name, bool $strict = false): bool;
+
+    /**
+     * Get a list of all properties names
+     *
+     * @return array<string, mixed>
+     */
+    public function getProperties();
+
+
+    /**
+     * Get a list of all properties and their values
+     * as an associative array.
+     * Null values are not returned.
+     * @return array<string, mixed>
+     */
+    public function toArray(): array;
+
+
+    /**
+     * Get a JSON
+     *
+     * @param int $options PHP JSON options
+     * @return string
+     */
+    public function toJson(?int $options = null): string;
+
+    /**
+     * Get a copy of current object and return a new instance
+     *
+     * @return self A new instance of this object
+     */
+    public function copy(): self;
+
+    /**
+     * Extend current type properties
+     *
+     * @param mixed  $default
+     */
+    public function extend(string $property, mixed $default = null): void;
+
+    /**
+     * Magical isset method
+     */
+    public function __isset(string $name): bool;
+
+    /**
+     * Magical setter method
+     *
+     * @param mixed  $value
+     */
+    public function __set(string $name, $value): void;
+
+    /**
+     * Magical getter method
+     *
+     * @return mixed|null
+     */
+    public function __get(string $name);
+
+    /**
+     * Overloading methods
+     *
+     * @param string $name
+     * @param array<int|string, mixed>|null $arguments
+     * @return self|null|mixed
+     * @throws \Exception
+     */
+    public function __call(string $name, ?array $arguments = []);
+}

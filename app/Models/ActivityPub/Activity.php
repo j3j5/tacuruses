@@ -50,7 +50,7 @@ class Activity extends Model
     /** @var string */
     protected string $childColumn = 'type';
 
-    /** @var string[] */
+    /** @var array<string, string> */
     protected $casts = [
         'accepted' => 'boolean',
         'object' => 'array',

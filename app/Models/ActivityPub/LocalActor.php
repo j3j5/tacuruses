@@ -22,7 +22,6 @@ use function Safe\preg_match;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $model
  * @property string $name
  * @property string $username
  * @property string $avatar
@@ -30,10 +29,11 @@ use function Safe\preg_match;
  * @property string|null $bio
  * @property array|null $alsoKnownAs
  * @property array|null $properties
+ * @property string $language
  * @property string|null $activityId
  * @property string|null $type
  * @property string $url
- * @property string|null $inbox
+ * @property string $inbox
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
@@ -49,7 +49,6 @@ use function Safe\preg_match;
  * @property-read string $following_url
  * @property-read string $full_username
  * @property-read string $header_url
- * @property-read string $inbox_url
  * @property-read string $key_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
@@ -57,7 +56,7 @@ use function Safe\preg_match;
  * @property-read int|null $likes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
- * @property-read string $outbox_url
+ * @property-read string $outbox
  * @property-read string $private_key
  * @property-read string $public_key
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
@@ -77,7 +76,7 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKey($value)
@@ -92,7 +91,6 @@ use function Safe\preg_match;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
- * @property-read string $profile_url
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @mixin \Eloquent
@@ -104,7 +102,7 @@ class LocalActor extends Actor
 
     public const USER_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)$#';
 
-    protected $connection = 'mysql';
+    protected $fillable = ['actor_type'];
 
     protected $casts = [
         'alsoKnownAs' => 'array',
@@ -214,14 +212,14 @@ class LocalActor extends Actor
         );
     }
 
-    public function inboxUrl() : Attribute
+    public function inbox() : Attribute
     {
         return Attribute::make(
             get: fn () : string => route('actor.inbox', [$this]),
         );
     }
 
-    public function outboxUrl() : Attribute
+    public function outbox() : Attribute
     {
         return Attribute::make(
             get: fn () : string => route('actor.outbox', [$this]),
@@ -239,13 +237,6 @@ class LocalActor extends Actor
     {
         return Attribute::make(
             get: fn () : string => route('actor.followers', [$this]),
-        );
-    }
-
-    public function profileUrl() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => route('actor.show', [$this]),
         );
     }
 
@@ -270,7 +261,7 @@ class LocalActor extends Actor
             'type' => 'Service', // Bot
             'id' => $this->activityId,
             'preferredUsername' => $this->username,
-            'url' => $this->profile_url,
+            'url' => $this->url,
             'name' => $this->name,
             'summary' => $this->bio,
             // Avatar
@@ -304,8 +295,8 @@ class LocalActor extends Actor
         }
 
         $links = [
-            'inbox' => $this->inbox_url,
-            'outbox' => $this->outbox_url,
+            'inbox' => $this->inbox,
+            'outbox' => $this->outbox,
             'following' => $this->following_url,
             'followers' => $this->followers_url,
             'manuallyApprovesFollowers' => false,

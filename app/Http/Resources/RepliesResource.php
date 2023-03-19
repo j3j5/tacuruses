@@ -18,7 +18,7 @@ class RepliesResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request) : array
     {
         $context = ['@context' => [
             Context::ACTIVITY_STREAMS,
@@ -41,8 +41,10 @@ class RepliesResource extends JsonResource
         $page->id = route('note.replies', [$this->actor, $this, 'page' => 1]);
         $page->next = route('note.replies', [$this->actor, $this, 'page' => 1]);
         $page->partOf = route('note.replies', [$this->actor, $this]);
-        $page->items = $this->replies->transform->getAP;
+        $page->items = collect($this->replies)->map->getAPNote()->toArray();
 
         $collection->first = $page;
+
+        return $collection->toArray();
     }
 }

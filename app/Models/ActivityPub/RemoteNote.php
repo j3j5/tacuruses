@@ -20,33 +20,62 @@ use function Safe\json_encode;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $actor_id
- * @property bool $sensitive
- * @property string $text
- * @property string|null $summary
- * @property string|null $inReplyTo activityId of the status is replying to
- * @property string $language
+ * @property string|null $activityId
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property string $content
+ * @property array|null $contentMap
+ * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
+ * @property array|null $summaryMap
+ * @property bool $sensitive Mastodon-specific; content warning
+ * @property array $to array of recipients
+ * @property string|null $bto array of recipients of the blind carbon copy
+ * @property array|null $cc array of recipients of the carbon copy
+ * @property string|null $bcc array of recipients of the blind carbon copy
+ * @property string|null $inReplyTo activityId of the note is replying to, if any
+ * @property string|null $generator the entity that generated the object
+ * @property string|null $location
+ * @property \Illuminate\Support\Carbon|null $startTime
+ * @property \Illuminate\Support\Carbon|null $endTime
  * @property array $attachments
  * @property array $tags
+ * @property array|null $repliesRaw
+ * @property string|null $source original representation of the content
+ * @property string|null $conversation
  * @property string $type
  * @property-read string $activity_id
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\RemoteActor $actor
- * @property-read array $replies
  * @property-read string $url
- * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote byActivityId(string $activityId)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereActorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereBcc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereBto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereCc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereContentMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereConversation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereGenerator($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereInReplyTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereRepliesRaw($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSummaryMap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTags($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -64,6 +93,7 @@ class RemoteNote extends Note
         'contentMap' => 'array',
         'summaryMap' => 'array',
         'repliesRaw' => 'array',
+        'published_at' => 'datetime',
         'startTime' => 'datetime',
         'endTime' => 'datetime',
         // Implemented manually to force array return
@@ -104,13 +134,9 @@ class RemoteNote extends Note
             'inReplyTo' => $this->inReplyTo,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'url' => $this->url,
-            'attributedTo' => $this->actor->profile_url,
-            'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
-            ],
-            'cc' => [
-                $this->actor->followers_url,
-            ],
+            'attributedTo' => $this->actor->url,
+            'to' => $this->to,
+            'cc' => $this->cc,
             'sensitive' => $this->sensitive,
 
             // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
@@ -127,8 +153,15 @@ class RemoteNote extends Note
         return $note;
     }
 
-    public function scopeByActivityId(Builder $query, string $activityId) : void
+    public function url() : Attribute
     {
-        $query->where('activityId', $activityId);
+        return Attribute::make(
+            get: fn () : string => (string) $this->activityId
+        );
+    }
+
+    public function scopeByActivityId(Builder $query, string $activityId) : Builder
+    {
+        return $query->where('activityId', $activityId);
     }
 }

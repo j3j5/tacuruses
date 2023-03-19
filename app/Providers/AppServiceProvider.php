@@ -42,7 +42,6 @@ class AppServiceProvider extends ServiceProvider
             $args = explode(', ', $expression);
             $icon = $args[0];
             $class = $args[1] ?? "''";
-            // dd($icon, $class, $args);
             $iconsUrl = asset('img/icons.svg');
             return '
             <?php

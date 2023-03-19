@@ -16,39 +16,48 @@ use function Safe\parse_url;
 /**
  * App\Models\ActivityPub\RemoteActor
  *
- * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string $activityId
- * @property string $type
- * @property string $username
  * @property string $name
- * @property string|null $bio
- * @property string $url
+ * @property string $username
  * @property string|null $avatar
  * @property string|null $header
+ * @property string|null $bio
+ * @property string|null $alsoKnownAs
+ * @property string|null $properties
+ * @property string $language
+ * @property string|null $activityId
+ * @property string|null $type
+ * @property string|null $url
  * @property string $inbox
- * @property string $sharedInbox
- * @property string $publicKeyId
- * @property string $publicKey
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $follows
- * @property-read int|null $follows_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $likes
- * @property-read int|null $likes_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shares
- * @property-read int|null $shares_count
+ * @property string|null $sharedInbox
+ * @property string|null $publicKeyId
+ * @property string|null $publicKey
+ * @property string|null $actor_type
+ * @property-read string $domain
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read int|null $following_count
+ * @property-read string $full_username
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read int|null $liked_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read int|null $shared_count
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKeyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereSharedInbox($value)
@@ -56,24 +65,16 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
- * @property string|null $model
- * @property string|null $alsoKnownAs
- * @property string|null $properties
- * @property string|null $actor_type
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $followers
- * @property-read int|null $followers_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $following
- * @property-read int|null $following_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $liked
- * @property-read int|null $liked_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shared
- * @property-read int|null $shared_count
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereModel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
- * @property-read string $domain
- * @property-read string $full_username
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor
@@ -81,7 +82,7 @@ class RemoteActor extends Actor
     use HasFactory;
     use HasParent;
 
-    protected $fillable = ['activityId', 'type'];
+    protected $fillable = ['activityId', 'type', 'actor_type'];
 
     /**
      * Create an Actor model from the data returned from an instance
@@ -142,6 +143,7 @@ class RemoteActor extends Actor
         }
 
         Log::debug('dispatching job to deliver the Create activity for a note', ['actor' => $this, 'note' => $note]);
+
         DeliverActivity::dispatch($note->actor, $note->getAPCreate(), $inbox);
 
         return $this;

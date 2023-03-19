@@ -49,6 +49,40 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
+ * @property string|null $activityId
+ * @property string|null $published_at
+ * @property string $content
+ * @property string|null $contentMap
+ * @property string|null $summaryMap
+ * @property string $to array of recipients
+ * @property string|null $bto array of recipients of the blind carbon copy
+ * @property string|null $cc array of recipients of the carbon copy
+ * @property string|null $bcc array of recipients of the blind carbon copy
+ * @property string|null $generator the entity that generated the object
+ * @property string|null $location
+ * @property string|null $startTime
+ * @property string|null $endTime
+ * @property string|null $repliesRaw
+ * @property string|null $source original representation of the content
+ * @property string|null $conversation
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereBcc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereBto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereCc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereContentMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereConversation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereGenerator($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereRepliesRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummaryMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereTo($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -65,11 +99,12 @@ class Note extends Model
         'remote' => RemoteNote::class,
     ];
 
-    protected string $childColumn = 'type';
+    protected string $childColumn = 'note_type';
 
     /** @var array<string, string> */
     protected $casts = [
         'sensitive' => 'boolean',
+        'published_at' => 'datetime',
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
@@ -114,5 +149,4 @@ class Note extends Model
     {
         return $this->belongsToMany(LocalActor::class);
     }
-
 }

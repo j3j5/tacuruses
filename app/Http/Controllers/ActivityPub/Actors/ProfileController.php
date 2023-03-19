@@ -7,6 +7,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProfileResource;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -34,6 +35,16 @@ class ProfileController extends Controller
      */
     private function profile(LocalActor $actor)
     {
+        $actor->load(['notes' => fn ($query) => $query->take(5)]);
+        $actor->loadCount([
+            'followers',
+            'following',
+        ]);
+        $actor->notes->loadCount([
+            'likes',
+            'shares',
+            // 'replies',
+        ])->transform(fn (LocalNote $note) => $note->setRelation('actor', $actor));
         return view('bots.profile', compact(['actor']));
     }
 

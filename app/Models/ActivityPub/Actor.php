@@ -13,7 +13,6 @@ use Parental\HasChildren;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $model
  * @property string $name
  * @property string $username
  * @property string|null $avatar
@@ -21,26 +20,21 @@ use Parental\HasChildren;
  * @property string|null $bio
  * @property string|null $alsoKnownAs
  * @property string|null $properties
+ * @property string $language
  * @property string|null $activityId
  * @property string|null $type
  * @property string|null $url
- * @property string|null $inbox
+ * @property string $inbox
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
  * @property string|null $actor_type
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $followers
- * @property-read int|null $followers_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Follow[] $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Like[] $likes
- * @property-read int|null $likes_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityPub\Share[] $shares
- * @property-read int|null $shares_count
  * @method static \Illuminate\Database\Eloquent\Builder|Actor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Actor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Actor query()
@@ -53,7 +47,7 @@ use Parental\HasChildren;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Actor whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Actor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor wherePublicKey($value)
@@ -63,6 +57,15 @@ use Parental\HasChildren;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUsername($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @mixin \Eloquent
  */
 class Actor extends Model
@@ -70,7 +73,7 @@ class Actor extends Model
     use HasFactory;
     use HasChildren;
 
-    protected $fillable = ['type'];
+    protected $fillable = ['type', 'actor_type'];
 
     /** @var array<string, class-string> */
     protected array $childTypes = [

@@ -33,7 +33,7 @@ class UpdateRemoteProfiles extends Command
         $total = RemoteActor::count();
         $this->info($total . ' ' . Str::plural('actor', $total) . ' found, launching jobs on 1000 chunks');
         RemoteActor::lazy()->each(
-            fn (RemoteActor $actor) => FindActorInfo::dispatch($actor->activityId, false)
+            fn (RemoteActor $actor) => is_string($actor->activityId) ? FindActorInfo::dispatch($actor->activityId, false) : null
         );
         $this->info('Done');
         return Command::SUCCESS;

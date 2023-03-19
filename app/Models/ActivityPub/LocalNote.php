@@ -8,6 +8,7 @@ use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Events\LocalNotePublished;
 use App\Services\ActivityPub\Context;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,51 +29,78 @@ use function Safe\preg_match;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $actor_id
- * @property bool $sensitive
- * @property string $text
- * @property string|null $summary
- * @property string|null $inReplyTo activityId of the status is replying to
- * @property string $language
+ * @property string|null $activityId
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property string $content
+ * @property string|null $contentMap
+ * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
+ * @property string|null $summaryMap
+ * @property bool $sensitive Mastodon-specific; content warning
+ * @property array $to array of recipients
+ * @property array|null $bto array of recipients of the blind carbon copy
+ * @property array|null $cc array of recipients of the carbon copy
+ * @property array|null $bcc array of recipients of the blind carbon copy
+ * @property string|null $inReplyTo activityId of the note is replying to, if any
+ * @property string|null $generator the entity that generated the object
+ * @property string|null $location
+ * @property \Illuminate\Support\Carbon|null $startTime
+ * @property \Illuminate\Support\Carbon|null $endTime
  * @property array $attachments
  * @property array $tags
+ * @property string|null $repliesRaw
+ * @property array|null $source original representation of the content
+ * @property string|null $conversation
  * @property string $type
  * @property-read string $activity_id
- * @property-read string $activityId
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
+ * @property-read array $content_map
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
  * @property-read int|null $like_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read int|null $likes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
  * @property-read int|null $peers_count
- * @property-read array $replies
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
+ * @property-read int|null $replies_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
  * @property-read int|null $share_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read int|null $shares_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
  * @property-read string $url
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote byActivityId(string $activityId)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote query()
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereInReplyTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereLanguage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereSensitive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereSummary($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereTags($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereText($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LocalNote whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @method static Builder|LocalNote byActivityId(string $activityId)
+ * @method static Builder|LocalNote newModelQuery()
+ * @method static Builder|LocalNote newQuery()
+ * @method static Builder|LocalNote published()
+ * @method static Builder|LocalNote query()
+ * @method static Builder|LocalNote whereActivityId($value)
+ * @method static Builder|LocalNote whereActorId($value)
+ * @method static Builder|LocalNote whereAttachments($value)
+ * @method static Builder|LocalNote whereBcc($value)
+ * @method static Builder|LocalNote whereBto($value)
+ * @method static Builder|LocalNote whereCc($value)
+ * @method static Builder|LocalNote whereContent($value)
+ * @method static Builder|LocalNote whereContentMap($value)
+ * @method static Builder|LocalNote whereConversation($value)
+ * @method static Builder|LocalNote whereCreatedAt($value)
+ * @method static Builder|LocalNote whereEndTime($value)
+ * @method static Builder|LocalNote whereGenerator($value)
+ * @method static Builder|LocalNote whereId($value)
+ * @method static Builder|LocalNote whereInReplyTo($value)
+ * @method static Builder|LocalNote whereLocation($value)
+ * @method static Builder|LocalNote wherePublishedAt($value)
+ * @method static Builder|LocalNote whereRepliesRaw($value)
+ * @method static Builder|LocalNote whereSensitive($value)
+ * @method static Builder|LocalNote whereSource($value)
+ * @method static Builder|LocalNote whereStartTime($value)
+ * @method static Builder|LocalNote whereSummary($value)
+ * @method static Builder|LocalNote whereSummaryMap($value)
+ * @method static Builder|LocalNote whereTags($value)
+ * @method static Builder|LocalNote whereTo($value)
+ * @method static Builder|LocalNote whereType($value)
+ * @method static Builder|LocalNote whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class LocalNote extends Note
@@ -219,7 +247,7 @@ class LocalNote extends Note
             'inReplyTo' => null,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'url' => $this->url,
-            'attributedTo' => $this->actor->profile_url,
+            'attributedTo' => $this->actor->url,
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
             ],
@@ -262,7 +290,7 @@ class LocalNote extends Note
         $create = Type::create('Create', [
             '@context' => $context,
             'id' => $this->activityId,
-            'actor' => $this->actor->profile_url,
+            'actor' => $this->actor->url,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'to' => [
                 Context::ACTIVITY_STREAMS_PUBLIC,
@@ -301,9 +329,9 @@ class LocalNote extends Note
         return $this;
     }
 
-    public function scopeByActivityId($query, string $activityId)
+    public function scopeByActivityId(Builder $query, string $activityId) : Builder
     {
-        $query->where('id', $this->getIdFromActivityId($activityId));
+        return $query->where('id', $this->getIdFromActivityId($activityId));
     }
 
     protected function getIdFromActivityId(string $activityId) : string
@@ -315,8 +343,8 @@ class LocalNote extends Note
         return $matches['noteId'];
     }
 
-    public function scopePublished($query) : void
+    public function scopePublished(Builder $query) : Builder
     {
-        $query->whereNotNull('published');
+        return $query->whereNotNull('published_at');
     }
 }

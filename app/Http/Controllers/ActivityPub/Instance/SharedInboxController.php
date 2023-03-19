@@ -5,7 +5,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessCreateAction;
-use App\Models\ActivityPub\Activity;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -17,38 +17,29 @@ class SharedInboxController extends Controller
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @return never
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request) : JsonResponse
     {
         // info(__CLASS__, ['request' => $request]);
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
 
-        // // Remove the actor from session
+        /** @var \App\Models\ActivityPub\Actor $actor */
         $actor = $request->actorModel;
+        // // Remove the actor from request
         $action->remove('actorModel');
 
+        /** @var string $type */
         $type = $action->get('type');
-        // $target = $this->tryToFindTarget($action);
-        // $objectType = data_get($action->get('object'), 'type');
-        // // store the action
-        // $activityModel = Activity::updateOrCreate([
-        //     'activityId' => $action->get('id'),
-        //     'type' => $type,
-        // ], [
-        //     'object' => $action->all(),
-        //     'object_type' => $objectType,
-        //     'target_id' => $target->id,
-        //     'actor_id' => $actor->id,
-        // ]);
 
         // Go ahead, process it
         $activityStream = Type::create($type, $action->all());
+
         switch ($type) {
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
-                ProcessCreateAction::dispatch($activityStream);
+                ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
             case 'Update':
                 // case 'Delete':
@@ -69,14 +60,6 @@ class SharedInboxController extends Controller
                 // 	break;
 
                 // case 'Accept':
-                // 	break;
-
-                // case 'Story:Reaction':
-                // 	// $this->handleStoryReactionActivity();
-                // 	break;
-
-                // case 'Story:Reply':
-                // 	// $this->handleStoryReplyActivity();
                 // 	break;
 
                 // case 'Update':

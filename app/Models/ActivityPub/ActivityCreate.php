@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
 
 /**
- * App\Models\ActivityPub\ActivityAnnounce
+ * App\Models\ActivityPub\ActivityCreate
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -21,20 +21,20 @@ use Parental\HasParent;
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\LocalNote|null $target
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce query()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereUpdatedAt($value)
+ * @property-read \App\Models\ActivityPub\RemoteNote|null $target
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityCreate extends Activity
@@ -44,6 +44,6 @@ class ActivityCreate extends Activity
 
     public function target() : BelongsTo
     {
-        return $this->belongsTo(LocalNote::class, 'target_id');
+        return $this->belongsTo(RemoteNote::class, 'target_id');
     }
 }

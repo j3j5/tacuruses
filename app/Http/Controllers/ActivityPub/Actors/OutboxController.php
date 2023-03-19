@@ -20,7 +20,7 @@ class OutboxController extends Controller
         if ($request->missing(['page']) && $notes->total() > $perPage) {
             return response()->activityJson([
                 '@context' => Context::ACTIVITY_STREAMS,
-                'id' => $actor->outboxUrl(),
+                'id' => $actor->outbox,
                 'type' => 'OrderedCollection',
                 'totalItems' => $notes->total(),
                 // Latest items order by desc (the first on this collection is the latest published)

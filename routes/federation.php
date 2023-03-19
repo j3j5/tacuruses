@@ -37,7 +37,7 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
     Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
-    Route::middleware('valid.http.signature')->group(function () {
+    Route::middleware(['valid.http.signature', 'debug'])->group(function () {
         Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
         Route::post('/{actor}/inbox', InboxController::class)->name('actor.inbox');
     });
@@ -47,7 +47,6 @@ Route::middleware(['no.cookies'])->group(function () {
 
 // Federation actors
 Route::get('/{actor}', ProfileController::class)->name('actor.show');
-// Route::get('/{actor}/following', BotFollowingController::class)->name('actor.following');
 Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
 Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
 Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');

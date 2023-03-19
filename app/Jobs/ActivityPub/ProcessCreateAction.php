@@ -2,35 +2,44 @@
 
 namespace App\Jobs\ActivityPub;
 
+use ActivityPhp\Type\Extended\Object\Article;
 use App\Domain\ActivityPub\Mastodon\Create;
+use App\Domain\ActivityPub\Mastodon\Document;
 use App\Domain\ActivityPub\Mastodon\Note;
 use App\Domain\ActivityPub\Mastodon\RsaSignature2017;
+use App\Events\LocalActorMentioned;
+use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note as ActivityPubNote;
 use App\Models\ActivityPub\RemoteNote;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+
+use function Safe\json_encode;
+use function Safe\preg_match;
 
 class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected Actor $activityActor;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(protected readonly Create $action)
+    public function __construct(protected Actor $activityActor, protected readonly Create $action)
     {
         //
     }
@@ -48,28 +57,73 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         } catch(RuntimeException $e) {
             Log::error($e->getMessage());
         }
+
+        DB::beginTransaction();
         // Store the object
         $object = $this->action->object;
-        if (!$object instanceof Note) {
-            throw new RuntimeException('Unsupported object');
+
+        // Supported objects
+        $supportedObjects = [
+            Article::class,
+            Document::class,
+            Note::class,
+        ];
+
+        if (!in_array(get_class($object), $supportedObjects)) {
+            DB::rollBack();
+            throw new RuntimeException(get_class($object) . ' is an unsupported object');
         }
-        // TODO: validate or create manually
-        $note = new RemoteNote();
+        /** @var \ActivityPhp\Type\Extended\Object\Article|\App\Domain\ActivityPub\Mastodon\Document|\App\Domain\ActivityPub\Mastodon\Note $object */
+        $note = RemoteNote::firstOrNew(['activityId' => $object->id]);
         $note->actor_id = $this->activityActor->id;
-        $note->published_at = $object->published;
-        $note->content = $object->content;
+        if ($object->published !== null) {
+            $note->published_at = Carbon::parse($object->published);
+        }
+
+        $note->content = data_get($object, 'content', '');
         $note->contentMap = $object->contentMap;
-        $note->summary = $object->summary;
+        $note->summary = is_string($object->summary) ? $object->summary : json_encode($object->summary);
         $note->sensitive = $object->sensitive;
-        $note->to = $object->to;
-        $note->cc = $object->cc;
-        $note->inReplyTo = $object->inReplyTo;
-        // Get all local recipients
-        $this->getLocalRecipients()->each(function (LocalActor $actor) {
+        $note->to = $object->to !== null ? Arr::wrap($object->to) : null;
+        $note->cc = $object->to !== null ? Arr::wrap($object->cc) : null;
+        if (!empty($object->inReplyTo)) {
+            $note->inReplyTo = is_string($object->inReplyTo) ? $object->inReplyTo : json_encode($object->inReplyTo);
+            // Store the id if available
+            // TODO: add support for inReplyTo in array form
+            if (is_string($object->inReplyTo)) {
+                try {
+                    $replyTo = ActivityPubNote::where('activityId', $object->inReplyTo)->firstOrFail();
+                    $note->replyTo_id = $replyTo->id;
+                } catch (ModelNotFoundException) {
+                }
+            }
+        }
+        $note->save();
+
+        // Store the activity
+        $activityModel = Activity::updateOrCreate([
+            'activityId' => $this->action->get('id'),
+            'type' => $this->action->type,
+        ], [
+            'object' => $this->action->all(),
+            'object_type' => data_get($this->action, 'object.type'),
+            'target_id' => $note->id,
+            'actor_id' => $this->activityActor->id,
+        ]);
+
+        DB::commit();
+
+        // Attach the mention to all local recipients
+        $this->getLocalRecipients()->each(function (LocalActor $actor) use ($note) : void {
+            $actor->mentions()->attach($note);
+            LocalActorMentioned::dispatch($actor, $note);
         });
-        // Process activity for all the local recipients (add replies or mentions)
-        // Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding
+
+        // TODO: Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding
         //
+
+        // Accept the creation
+        SendCreateAcceptToActor::dispatch($this->activityActor, $activityModel);
     }
 
     /**
@@ -83,15 +137,18 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         if (data_get($this->action, 'signature', false)) {
             throw new RuntimeException('No signature available on object');
         }
+
         // Wrong signature type, mastodon-specific
         if (!$this->action->signature instanceof RsaSignature2017) {
             throw new RuntimeException('Signature is not RsaSignature2017');
         }
+
         // Signature's creator and actor don't match
         if (mb_strpos($this->action->signature->creator, $this->action->actor) !== 0) {
             throw new RuntimeException("Signature actor and activity actor don't match: \n
                 {$this->action->signature->creator} != {$this->action->actor}");
         }
+
         // Sender an author match
         if ($this->action->actor !== $this->action->object->attributedTo) {
             throw new RuntimeException('Actor and object attribution don\'t match');
@@ -105,6 +162,7 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 
         $array = $this->action->toArray();
         unset($array['signature']['id'], $array['signature']['type'], $array['signature']['signatureValue']);
+
         // TODO: Base64-decode the signatureValue and verify it against the public key in signature[creator].
     }
 

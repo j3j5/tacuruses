@@ -3,7 +3,7 @@
 namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
-use App\Services\ActivityPub\Context;
+use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -71,6 +71,8 @@ class RemoteNote extends Note
         // 'tags' => 'array',
     ];
 
+    protected $fillable = ['note_type', 'activityId'];
+
     public function actor() : BelongsTo
     {
         return $this->belongsTo(RemoteActor::class, 'actor_id');
@@ -89,13 +91,6 @@ class RemoteNote extends Note
         return Attribute::make(
             get: fn (?string $value) : array => $value === null ? [] : json_decode($value),
             set: fn (?array $value) => $value !== null ? json_encode($value) : null
-        );
-    }
-
-    public function replies() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : ?array => $this->repliesRaw === null ? null : json_decode($this->repliesRaw, true),
         );
     }
 

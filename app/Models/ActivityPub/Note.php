@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Parental\HasChildren;
 
 use function Safe\json_decode;
@@ -56,7 +57,7 @@ class Note extends Model
     use HasChildren;
     use HasSnowflakePrimary;
 
-    protected $fillable = ['type'];
+    protected $fillable = ['type', 'note_type'];
 
     /** @var array<string, class-string> */
     protected array $childTypes = [
@@ -93,13 +94,6 @@ class Note extends Model
         );
     }
 
-    public function activityId() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => $this->url
-        );
-    }
-
     public function tags() : Attribute
     {
         return Attribute::make(
@@ -116,10 +110,9 @@ class Note extends Model
         );
     }
 
-    public function replies() : Attribute
+    public function mentions() : BelongsToMany
     {
-        return Attribute::make(
-            get: fn () : array => []
-        );
+        return $this->belongsToMany(LocalActor::class);
     }
+
 }

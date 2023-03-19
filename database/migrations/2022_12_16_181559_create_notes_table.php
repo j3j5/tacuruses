@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityPub\Actor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,11 @@ return new class extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('actor_id');
+            $table->foreignIdFor(Actor::class)
+                ->constrained()
+                ->onUpdate('restrict')
+                ->onDelete('restrict');
+            $table->string('replyTo_id')->nullable()->comment('id (PK) of the note is replying to, if any');
             $table->string('activityId')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
             $table->timestamp('published_at')->nullable();
@@ -26,6 +31,7 @@ return new class extends Migration
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-summary
             $table->text('summary')->nullable()->comment("On Mastodon, this field contains the visible way when sensitive is true");
             $table->json('summaryMap')->nullable();
+            $table->string('type')->comment('Type of object, Note, Article...');
             // Mastodon-specific
             $table->boolean('sensitive')->default(false)->comment('Mastodon-specific; content warning');
             $table->json('to')->comment('array of recipients');
@@ -50,9 +56,8 @@ return new class extends Migration
             $table->json('source')->nullable()->comment('original representation of the content');
             $table->string('conversation')->nullable()->comment('');
 
-            $table->string('type');
+            $table->string('note_type');
 
-            $table->foreign('actor_id')->references('id')->on('actors');
             $table->index(['published_at', 'actor_id', 'id']);
         });
     }

@@ -82,6 +82,8 @@ class LocalNote extends Note
 
     public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
 
+    protected $fillable = ['note_type'];
+
     /** @var array<string, string> */
     protected $casts = [
         'sensitive' => 'boolean',
@@ -111,6 +113,11 @@ class LocalNote extends Note
     public function shares() : HasMany
     {
         return $this->hasMany(Share::class, 'target_id');
+    }
+
+    public function replies() : HasMany
+    {
+        return $this->hasMany(Note::class, 'replyTo_id');
     }
 
     public function likeActors() : HasManyThrough
@@ -198,13 +205,6 @@ class LocalNote extends Note
         return Attribute::make(
             get: fn (?string $value) : array => $value === null ? [] : json_decode($value),
             set: fn (?array $value) => $value !== null ? json_encode($value) : null
-        );
-    }
-
-    public function replies() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : ?array => null
         );
     }
 

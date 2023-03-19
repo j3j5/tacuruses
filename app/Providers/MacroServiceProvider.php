@@ -19,10 +19,10 @@ class MacroServiceProvider extends ServiceProvider
         /**
          * @example: return response()->activityJson($data)
          */
-        Response::macro('activityJson', function (array $data = []) {
+        Response::macro('activityJson', function (array $data = [], int $status = HttpResponse::HTTP_OK) {
             return response()->json(
                 $data,
-                HttpResponse::HTTP_OK,
+                $status,
                 ['Content-Type' => 'application/activity+json; charset=utf-8'],
                 JSON_HEX_TAG | JSON_UNESCAPED_SLASHES
             );
@@ -31,10 +31,10 @@ class MacroServiceProvider extends ServiceProvider
         /**
          * @example: return response()->activityJson($data)
          */
-        Response::macro('jrdJson', function (array $data = []) {
+        Response::macro('jrdJson', function (array $data = [], int $status = HttpResponse::HTTP_OK) {
             return response()->json(
                 $data,
-                HttpResponse::HTTP_OK,
+                $status,
                 ['Content-Type' => 'application/jrd+json; charset=utf-8'],
                 JSON_HEX_TAG | JSON_UNESCAPED_SLASHES
             );

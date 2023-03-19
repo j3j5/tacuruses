@@ -59,6 +59,7 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         }
 
         DB::beginTransaction();
+
         // Store the object
         $object = $this->action->object;
 
@@ -110,6 +111,13 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             'target_id' => $note->id,
             'actor_id' => $this->activityActor->id,
         ]);
+
+        // Make sure it hasn't been already processed
+        if ($activityModel->accepted) {
+            Log::info('Model already processed and accepted, ignoring');
+            DB::rollBack();
+            return;
+        }
 
         DB::commit();
 

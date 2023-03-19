@@ -7,6 +7,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Jobs\ActivityPub\ProcessAnnounceAction;
+use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
@@ -39,23 +40,26 @@ class InboxController extends Controller
         $action->remove('actorModel');
 
         $type = $action->get('type');
-        $target = $this->tryToFindTarget($action);
-        $objectType = data_get($action->get('object'), 'type');
-        // store the action
-        $activityModel = Activity::updateOrCreate([
-            'activityId' => $action->get('id'),
-            'type' => $type,
-        ], [
-            'object' => $action->all(),
-            'object_type' => $objectType,
-            'target_id' => $target->id,
-            'actor_id' => $actor->id,
-        ]);
+        if ($type !== 'Create') {
 
-        // Make sure it hasn't been already processed
-        if ($activityModel->accepted) {
-            Log::info('Model already processed and accepted, ignoring');
-            return response()->activityJson();
+            $target = $this->tryToFindTarget($action);
+            $objectType = data_get($action->get('object'), 'type');
+            // store the action
+            $activityModel = Activity::updateOrCreate([
+                'activityId' => $action->get('id'),
+                'type' => $type,
+            ], [
+                'object' => $action->all(),
+                'object_type' => $objectType,
+                'target_id' => $target->id,
+                'actor_id' => $actor->id,
+            ]);
+
+            // Make sure it hasn't been already processed
+            if ($activityModel->accepted) {
+                Log::info('Model already processed and accepted, ignoring');
+                return response()->activityJson();
+            }
         }
         $activityStream = Type::create($type, $action->all());
         // Go ahead, process it
@@ -82,6 +86,9 @@ class InboxController extends Controller
                 ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Create':
+                /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
+                ProcessCreateAction::dispatch($actor, $activityStream);
+                break;
             case 'Accept':
             case 'Reject':
             case 'Add':

@@ -43,13 +43,13 @@ class RouteServiceProvider extends ServiceProvider
             if (!$route->hasParameter('actor') || !$route->parameter('actor') instanceof LocalActor) {
                 throw new RuntimeException('Unresolvable param on route for status');
             }
+            /** @var \App\Models\ActivityPub\LocalNote $note */
             $note = LocalNote::withCount(['shares', 'likes'])
                 ->where('id', $value)
                 ->where('actor_id', $route->parameter('actor')->id)
-                ->whereNotNull('published_at')
+                ->published()
                 ->firstOrFail();
-            $note->setRelation('actor', $route->parameter('actor'));
-            return $note;
+            return $note->setRelation('actor', $route->parameter('actor'));
         });
     }
 

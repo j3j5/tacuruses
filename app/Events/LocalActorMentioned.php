@@ -2,17 +2,18 @@
 
 namespace App\Events;
 
-use App\Models\ActivityPub\RemoteActor;
+use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\Note;
 use Illuminate\Broadcasting\PrivateChannel;
 
-class RemoteActorUpdated extends BaseEvent
+class LocalActorMentioned extends BaseEvent
 {
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(private readonly RemoteActor $actor)
+    public function __construct(private LocalActor $actor, private Note $note)
     {
         //
     }

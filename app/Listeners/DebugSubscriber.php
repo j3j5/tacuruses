@@ -2,6 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Events\BaseEvent;
+use App\Events\LocalActorMentioned;
+use App\Events\LocalNotePublished;
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +14,7 @@ class DebugSubscriber
     /**
      * Handle user logout events.
      */
-    public function debug(RemoteActorCreated|RemoteActorUpdated $event) : void
+    public function debug(BaseEvent $event) : void
     {
         if (config('app.debug')) {
             Log::debug(get_class($event));
@@ -29,6 +32,8 @@ class DebugSubscriber
         return [
             RemoteActorCreated::class => 'debug',
             RemoteActorUpdated::class => 'debug',
+            LocalNotePublished::class => 'debug',
+            LocalActorMentioned::class => 'debug',
         ];
     }
 }

@@ -4,13 +4,9 @@ namespace App\Events;
 
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
-class RemoteActorCreated
+class RemoteActorCreated extends BaseEvent
 {
-    use Dispatchable, SerializesModels;
-
     /**
      * Create a new event instance.
      *

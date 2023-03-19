@@ -25,11 +25,8 @@ class SendNoteToFollowers implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @param  object  $event
-     * @return void
      */
-    public function handle(LocalNotePublished $event)
+    public function handle(LocalNotePublished $event) : void
     {
         $followers = $event->note->actor->followers
             ->map(fn (Follow $follow) => $follow->actor)

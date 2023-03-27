@@ -16,6 +16,7 @@ use function Safe\parse_url;
 /**
  * App\Models\ActivityPub\RemoteActor
  *
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -35,6 +36,9 @@ use function Safe\parse_url;
  * @property string|null $publicKeyId
  * @property string|null $publicKey
  * @property string|null $actor_type
+ * @property string|null $followers_url
+ * @property string|null $following_url
+ * @property string|null $outbox
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
@@ -52,11 +56,14 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereFollowersUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereFollowingUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereInbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereOutbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKeyId($value)
@@ -66,15 +73,6 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor
@@ -99,6 +97,9 @@ class RemoteActor extends Actor
         $this->avatar = Arr::get($data, 'icon.url');
         $this->header = Arr::get($data, 'image.url');
         $this->inbox = $data['inbox'];
+        $this->outbox = $data['outbox'];
+        $this->following_url = $data['following'];
+        $this->followers_url = $data['followers'];
         $this->sharedInbox = Arr::get($data, 'endpoints.sharedInbox');
         $this->publicKeyId = Arr::get($data, 'publicKey.id');
         $this->publicKey = Arr::get($data, 'publicKey.publicKeyPem');

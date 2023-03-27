@@ -24,11 +24,14 @@ use Parental\HasChildren;
  * @property string|null $activityId
  * @property string|null $type
  * @property string|null $url
- * @property string $inbox
+ * @property string|null $inbox
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
  * @property string|null $actor_type
+ * @property string|null $followers_url
+ * @property string|null $following_url
+ * @property string|null $outbox
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
@@ -44,11 +47,14 @@ use Parental\HasChildren;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Actor whereFollowersUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Actor whereFollowingUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereInbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Actor whereOutbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor wherePublicKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor wherePublicKeyId($value)
@@ -57,15 +63,6 @@ use Parental\HasChildren;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUsername($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @mixin \Eloquent
  */
 class Actor extends Model

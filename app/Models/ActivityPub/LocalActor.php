@@ -39,15 +39,16 @@ use function Safe\preg_match;
  * @property string|null $publicKeyId
  * @property string|null $publicKey
  * @property string|null $actor_type
+ * @property string $followers_url
+ * @property string $following_url
+ * @property string $outbox
  * @property-read string $activity_id
  * @property-read string $avatar_url
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
  * @property-read int|null $followers_count
- * @property-read string $followers_url
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
- * @property-read string $following_url
  * @property-read string $full_username
  * @property-read string $header_url
  * @property-read string $key_id
@@ -55,9 +56,10 @@ use function Safe\preg_match;
  * @property-read int|null $liked_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read int|null $likes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
+ * @property-read int|null $mentions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
- * @property-read string $outbox
  * @property-read string $private_key
  * @property-read string $public_key
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
@@ -74,11 +76,14 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereFollowersUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereFollowingUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereHeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereInbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereLanguage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereOutbox($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereProperties($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKeyId($value)
@@ -87,23 +92,6 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
- * @property-read int|null $mentions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @mixin \Eloquent
  */
 class LocalActor extends Actor

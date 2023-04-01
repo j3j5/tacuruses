@@ -2,6 +2,9 @@
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,7 +34,6 @@ use function Safe\json_encode;
  * @property-read string $activity_id
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\Actor $actor
- * @property-read array $replies
  * @property-read string $url
  * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
  * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
@@ -50,7 +52,7 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
  * @property string|null $activityId
- * @property string|null $published_at
+ * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
  * @property string|null $contentMap
  * @property string|null $summaryMap
@@ -83,6 +85,11 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereTo($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
  * @property-read int|null $mentions_count
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereNoteType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereReplyToId($value)
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -115,6 +122,11 @@ class Note extends Model
         return $this->belongsTo(Actor::class, 'actor_id');
     }
 
+    public function mentions() : BelongsToMany
+    {
+        return $this->belongsToMany(LocalActor::class);
+    }
+
     public function url() : Attribute
     {
         return Attribute::make(
@@ -145,8 +157,38 @@ class Note extends Model
         );
     }
 
-    public function mentions() : BelongsToMany
+    public function getAPNote() : ActivityNote
     {
-        return $this->belongsToMany(LocalActor::class);
+        /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
+        $note = Type::create('Note', [
+            'id' => $this->activityId,
+            'type' => 'Note',
+            // On Mastodon, if sensitive is true, only this is visible, content goes after a click
+            'summary' => null,
+            // TODO: implement
+            'inReplyTo' => null,
+            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
+            'url' => $this->url,
+            'attributedTo' => $this->actor->url,
+            'to' => [
+                Context::ACTIVITY_STREAMS_PUBLIC,
+            ],
+            'cc' => [
+                $this->actor->followers_url,
+            ],
+            'sensitive' => $this->sensitive,
+
+            // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
+            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
+            // 'inReplyToAtomUri' => null,
+            'content' => $this->content,
+            // TODO: implement proper support for languages/translations
+            'contentMap' => $this->contentMap,
+            'attachment' => $this->attachments,
+            'tag' => $this->tags,
+            // 'replies' => $this->getAPReplies(),
+        ]);
+
+        return $note;
     }
 }

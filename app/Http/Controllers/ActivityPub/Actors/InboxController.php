@@ -12,6 +12,10 @@ use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
 use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityAnnounce;
+use App\Models\ActivityPub\ActivityFollow;
+use App\Models\ActivityPub\ActivityLike;
+use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
@@ -40,8 +44,8 @@ class InboxController extends Controller
         $action->remove('actorModel');
 
         $type = $action->get('type');
+        $activityModel = null;
         if ($type !== 'Create') {
-
             $target = $this->tryToFindTarget($action);
             $objectType = data_get($action->get('object'), 'type');
             // store the action
@@ -54,35 +58,43 @@ class InboxController extends Controller
                 'target_id' => $target->id,
                 'actor_id' => $actor->id,
             ]);
-
-            // Make sure it hasn't been already processed
-            if ($activityModel->accepted) {
-                Log::info('Model already processed and accepted, ignoring');
-                return response()->activityJson();
-            }
         }
+
+        // Make sure it hasn't been already processed
+        if ($activityModel instanceof Activity && $activityModel->accepted) {
+            Log::info('Model already processed and accepted, ignoring');
+            return response()->activityJson();
+        }
+
         $activityStream = Type::create($type, $action->all());
         // Go ahead, process it
         switch ($type) {
             case 'Follow':
+                if (!$activityModel instanceof ActivityFollow) {
+                    throw new RuntimeException('Unknown activity model');
+                }
                 /** @var \ActivityPhp\Type\Extended\Activity\Follow $activityStream */
-                /** @var \App\Models\ActivityPub\ActivityFollow $activityModel */
                 ProcessFollowAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
 
             case 'Like':
-                /** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
-                /** @var \App\Models\ActivityPub\ActivityLike $activityModel */
+                if (!$activityModel instanceof ActivityLike) {
+                    throw new RuntimeException('Unknown activity model');
+                }/** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
                 ProcessLikeAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Announce':    // Share/Boost
+                if (!$activityModel instanceof ActivityAnnounce) {
+                    throw new RuntimeException('Unknown activity model');
+                }
                 /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
-                /** @var \App\Models\ActivityPub\ActivityAnnounce $activityModel */
                 ProcessAnnounceAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Undo':
+                if (!$activityModel instanceof ActivityUndo) {
+                    throw new RuntimeException('Unknown activity model');
+                }
                 /** @var \ActivityPhp\Type\Extended\Activity\Undo $activityStream */
-                /** @var \App\Models\ActivityPub\ActivityUndo $activityModel */
                 ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
                 break;
             case 'Create':

@@ -2,7 +2,6 @@
 
 namespace App\Models\ActivityPub;
 
-use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -32,13 +31,14 @@ use function Safe\json_encode;
  * @property array|null $cc array of recipients of the carbon copy
  * @property string|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
+ * @property int|null $replyTo_id id of the note on the system
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
  * @property \Illuminate\Support\Carbon|null $startTime
  * @property \Illuminate\Support\Carbon|null $endTime
  * @property array $attachments
  * @property array $tags
- * @property array|null $repliesRaw
+ * @property \Illuminate\Support\Collection|null $repliesRaw
  * @property string|null $source original representation of the content
  * @property string|null $conversation
  * @property string $type
@@ -78,6 +78,9 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
+ * @property string $note_type
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereNoteType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereReplyToId($value)
  * @mixin \Eloquent
  */
 class RemoteNote extends Note
@@ -92,7 +95,7 @@ class RemoteNote extends Note
         'cc' => 'array',
         'contentMap' => 'array',
         'summaryMap' => 'array',
-        'repliesRaw' => 'array',
+        'repliesRaw' => 'collection',
         'published_at' => 'datetime',
         'startTime' => 'datetime',
         'endTime' => 'datetime',
@@ -126,29 +129,8 @@ class RemoteNote extends Note
 
     public function getAPNote() : ActivityNote
     {
-        /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
-        $note = Type::create('Note', [
-            'id' => $this->activityId,
-            'type' => 'Note',
-            'summary' => $this->summary,
-            'inReplyTo' => $this->inReplyTo,
-            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
-            'url' => $this->url,
-            'attributedTo' => $this->actor->url,
-            'to' => $this->to,
-            'cc' => $this->cc,
-            'sensitive' => $this->sensitive,
-
-            // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
-            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
-            // 'inReplyToAtomUri' => null,
-            'content' => $this->content,
-            // TODO: implement proper support for languages/translations
-            'contentMap' => $this->contentMap,
-            'attachment' => $this->attachments,
-            'tag' => $this->tags,
-            'replies' => $this->repliesRaw,
-        ]);
+        $note = parent::getAPNote();
+        $note->replies = $this->repliesRaw;
 
         return $note;
     }

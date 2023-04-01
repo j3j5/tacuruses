@@ -21,16 +21,16 @@ use Parental\HasChildren;
  * @property string|null $alsoKnownAs
  * @property string|null $properties
  * @property string $language
- * @property string|null $activityId
+ * @property string $activityId
  * @property string|null $type
- * @property string|null $url
- * @property string|null $inbox
+ * @property string $url
+ * @property string $inbox
  * @property string|null $sharedInbox
- * @property string|null $publicKeyId
- * @property string|null $publicKey
+ * @property string $publicKeyId
+ * @property string $publicKey
  * @property string|null $actor_type
- * @property string|null $followers_url
- * @property string|null $following_url
+ * @property string $followers_url
+ * @property string $following_url
  * @property string|null $outbox
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count

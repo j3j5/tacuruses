@@ -13,7 +13,7 @@ use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note as ActivityPubNote;
 use App\Models\ActivityPub\RemoteNote;
-use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,6 +23,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -70,6 +71,11 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             Note::class,
         ];
 
+        if (empty($object) || is_string($object)) {
+            DB::rollBack();
+            throw new RuntimeException("'$object'  is an unsupported type");
+        }
+
         if (!in_array(get_class($object), $supportedObjects)) {
             DB::rollBack();
             throw new RuntimeException(get_class($object) . ' is an unsupported object');
@@ -78,14 +84,17 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         $note = RemoteNote::firstOrNew(['activityId' => $object->id]);
         $note->actor_id = $this->activityActor->id;
         if ($object->published !== null) {
-            $note->published_at = Carbon::parse($object->published);
+            try {
+                $note->published_at = Carbon::parse($object->published);
+            } catch (InvalidFormatException) {
+            }
         }
 
         $note->content = data_get($object, 'content', '');
         $note->contentMap = $object->contentMap;
         $note->summary = is_string($object->summary) ? $object->summary : json_encode($object->summary);
-        $note->sensitive = $object->sensitive;
-        $note->to = $object->to !== null ? Arr::wrap($object->to) : null;
+        $note->sensitive = data_get($object, 'sensitive', false);
+        $note->to = $object->to !== null ? Arr::wrap($object->to) : [];
         $note->cc = $object->to !== null ? Arr::wrap($object->cc) : null;
         if (!empty($object->inReplyTo)) {
             $note->inReplyTo = is_string($object->inReplyTo) ? $object->inReplyTo : json_encode($object->inReplyTo);
@@ -99,14 +108,17 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
                 }
             }
         }
+        // Default to 'Note' if no type exists
+        $note->type = data_get($object, 'type', 'Note');
         $note->save();
 
         // Store the activity
+        /** @var \App\Models\ActivityPub\ActivityCreate $activityModel */
         $activityModel = Activity::updateOrCreate([
             'activityId' => $this->action->get('id'),
             'type' => $this->action->type,
         ], [
-            'object' => $this->action->all(),
+            'object' => $this->action->toArray(),
             'object_type' => data_get($this->action, 'object.type'),
             'target_id' => $note->id,
             'actor_id' => $this->activityActor->id,
@@ -121,8 +133,9 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 
         DB::commit();
 
+        $localRecipients = $this->getLocalRecipients();
         // Attach the mention to all local recipients
-        $this->getLocalRecipients()->each(function (LocalActor $actor) use ($note) : void {
+        $localRecipients->each(function (LocalActor $actor) use ($note) : void {
             $actor->mentions()->attach($note);
             LocalActorMentioned::dispatch($actor, $note);
         });
@@ -130,8 +143,8 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         // TODO: Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding
         //
 
-        // Accept the creation
-        SendCreateAcceptToActor::dispatch($this->activityActor, $activityModel);
+        // Accept the creation, any of the receivers can sign the accept in the name of the instance
+        SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel);
     }
 
     /**
@@ -151,20 +164,26 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             throw new RuntimeException('Signature is not RsaSignature2017');
         }
 
+        $actor = $this->action->actor;
+        if (!is_string($actor)) {
+            throw new RuntimeException('unsupported actor type: ' . json_encode($actor));
+        }
+
         // Signature's creator and actor don't match
-        if (mb_strpos($this->action->signature->creator, $this->action->actor) !== 0) {
+        if (mb_strpos($this->action->signature->creator, $actor) !== 0) {
             throw new RuntimeException("Signature actor and activity actor don't match: \n
-                {$this->action->signature->creator} != {$this->action->actor}");
+                {$this->action->signature->creator} != {$actor}");
         }
 
         // Sender an author match
-        if ($this->action->actor !== $this->action->object->attributedTo) {
+        if ($this->action->actor !== data_get($this->action, 'object.attributedTo')) {
             throw new RuntimeException('Actor and object attribution don\'t match');
         }
 
         // Actor should have been retrieved on middleware so if real, it should exists on the DB
-        $this->activityActor = Actor::where('activityId', $this->action->actor)->first();
-        if (!$this->activityActor) {
+        try {
+            $this->activityActor = Actor::where('activityId', $this->action->actor)->firstOrFail();
+        } catch (ModelNotFoundException) {
             throw new RuntimeException('Could not find the actor on the DB');
         }
 
@@ -185,13 +204,13 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         );
 
         $localRecipients = collect($recipients)
-        ->filter(fn (string $recipient) : bool => mb_strpos($recipient, config('app.url')) === 0)
-        ->map(function (string $recipient) : string {
-            if (!preg_match(LocalActor::USER_REGEX, $recipient, $matches)) {
-                throw new RuntimeException('Unknow local user on our own domain');
-            }
-            return $matches['user'];
-        });
+            ->filter(fn (string $recipient) : bool => mb_strpos($recipient, config('app.url')) === 0)
+            ->map(function (string $recipient) : string {
+                if (!preg_match(LocalActor::USER_REGEX, $recipient, $matches)) {
+                    throw new RuntimeException('Unknow local user on our own domain');
+                }
+                return $matches['user'];
+            });
 
         return LocalActor::whereIn('username', $localRecipients)->get();
     }

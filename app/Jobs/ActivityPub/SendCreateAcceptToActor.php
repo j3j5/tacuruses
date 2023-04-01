@@ -3,7 +3,7 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\ActivityCreate;
-use App\Models\ActivityPub\RemoteActor;
+use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
@@ -23,7 +23,7 @@ class SendCreateAcceptToActor implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(private readonly RemoteActor $actor, private ActivityCreate $create)
+    public function __construct(private readonly LocalActor $actor, private ActivityCreate $create)
     {
         //
     }
@@ -39,10 +39,10 @@ class SendCreateAcceptToActor implements ShouldQueue
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->create->target->activityId . '#accepts/create/' . $this->create->slug,
             'type' => 'Accept',
-            'actor' => $this->actor->activityId,
+            'actor' => $this->create->target->actor->activityId,
             'object' => [
                 'id' => $this->create->activityId,
-                'actor' => $this->actor->activityId,
+                'actor' => $this->create->target->actor->activityId,
                 'type' => 'Create',
                 'object' => $this->create->target->activityId,
             ],
@@ -50,8 +50,8 @@ class SendCreateAcceptToActor implements ShouldQueue
         $this->sendSignedRequest(
             signer: $signer,
             request: $accept,
-            inbox: $this->actor->inbox,
-            actorSigning: $this->create->target->actor,
+            inbox: $this->create->target->actor->inbox,
+            actorSigning: $this->actor,
         );
 
         $this->create->markAsAccepted();

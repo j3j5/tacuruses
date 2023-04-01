@@ -16,7 +16,8 @@ use function Safe\parse_url;
 /**
  * App\Models\ActivityPub\RemoteActor
  *
- * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
+ * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon: array<string,string>, image: array<string,string>, inbox: string, outbox: string, following: string, followers: string, endpoints: array<string,string>, publicKey: array<string,string> }
+ *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -72,7 +73,6 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
- * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon:array<string,string>, image: array<string,string>, inbox: string, endpoints: array<string, string>, publicKey: array<string, string> }
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor
@@ -84,7 +84,9 @@ class RemoteActor extends Actor
 
     /**
      * Create an Actor model from the data returned from an instance
-     * @param InstanceUser $data
+     * @param array $data
+     * @phpstan-param InstanceUser $data
+     *
      */
     public function updateFromInstanceData(array $data) : self
     {
@@ -97,7 +99,7 @@ class RemoteActor extends Actor
         $this->avatar = Arr::get($data, 'icon.url');
         $this->header = Arr::get($data, 'image.url');
         $this->inbox = $data['inbox'];
-        $this->outbox = $data['outbox'];
+        $this->outbox = Arr::get($data, 'outbox');
         $this->following_url = $data['following'];
         $this->followers_url = $data['followers'];
         $this->sharedInbox = Arr::get($data, 'endpoints.sharedInbox');

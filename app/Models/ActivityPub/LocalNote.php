@@ -101,6 +101,16 @@ use function Safe\preg_match;
  * @method static Builder|LocalNote whereTo($value)
  * @method static Builder|LocalNote whereType($value)
  * @method static Builder|LocalNote whereUpdatedAt($value)
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @method static Builder|LocalNote whereNoteType($value)
+ * @method static Builder|LocalNote whereReplyToId($value)
  * @mixin \Eloquent
  */
 class LocalNote extends Note
@@ -238,34 +248,8 @@ class LocalNote extends Note
 
     public function getAPNote() : ActivityNote
     {
-        /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
-        $note = Type::create('Note', [
-            'id' => $this->activityId,
-            'type' => 'Note',
-            // On Mastodon, if sensitive is true, only this is visible, content goes after a click
-            'summary' => null,
-            'inReplyTo' => null,
-            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
-            'url' => $this->url,
-            'attributedTo' => $this->actor->url,
-            'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
-            ],
-            'cc' => [
-                $this->actor->followers_url,
-            ],
-            'sensitive' => $this->sensitive,
-
-            // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",
-            // "conversation": "tag:hachyderm.io,2022-11-10:objectId=1050302:objectType=Conversation",
-            // 'inReplyToAtomUri' => null,
-            'content' => $this->content,
-            // TODO: implement proper support for languages/translations
-            'contentMap' => $this->contentMap,
-            'attachment' => $this->attachments,
-            'tag' => $this->tags,
-            'replies' => $this->getAPReplies(),
-        ]);
+        $note = parent::getAPNote();
+        $note->replies = $this->getAPReplies();
 
         return $note;
     }
@@ -275,13 +259,13 @@ class LocalNote extends Note
         $context = [
             'https://www.w3.org/ns/activitystreams',
             [
-                'ostatus' => 'http://ostatus.org#',
-                'atomUri' => 'ostatus:atomUri',
-                'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-                'conversation' => 'ostatus:conversation',
+                // 'ostatus' => 'http://ostatus.org#',
+                // 'atomUri' => 'ostatus:atomUri',
+                // 'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
+                // 'conversation' => 'ostatus:conversation',
                 'sensitive' => 'as:sensitive',
-                'toot' => 'http://joinmastodon.org/ns#',
-                'votersCount' => 'toot:votersCount',
+                // 'toot' => 'http://joinmastodon.org/ns#',
+                // 'votersCount' => 'toot:votersCount',
                 'Hashtag' => 'as:Hashtag',
             ],
         ];

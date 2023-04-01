@@ -21,7 +21,7 @@ use Parental\HasParent;
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\RemoteNote|null $target
+ * @property-read \App\Models\ActivityPub\RemoteNote $target
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate query()

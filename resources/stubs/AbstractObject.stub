@@ -34,8 +34,9 @@ abstract class AbstractObject
     /**
      * Affect a value to a property or an extended property
      *
-     * @param  \TKey $value
-     * @return \ActivityPhp\Type\AbstractObject|array<\ActivityPhp\Type\AbstractObject>|\TKey
+     * @template T<TKey, TValue>
+     * @param  TKey $value
+     * @return \ActivityPhp\Type\AbstractObject|array<\ActivityPhp\Type\AbstractObject>|TKey
      */
     private function transform($value);
 

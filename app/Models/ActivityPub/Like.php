@@ -35,7 +35,6 @@ class Like extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysql';
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function actor() : BelongsTo

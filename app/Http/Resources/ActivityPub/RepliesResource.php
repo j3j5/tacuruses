@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ActivityPub;
 
 use ActivityPhp\Type\Core\Collection;
 use ActivityPhp\Type\Core\CollectionPage;

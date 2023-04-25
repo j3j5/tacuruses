@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ActivityPub;
 
-use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class OutboxCollection extends ResourceCollection
+class FollowCollection extends ResourceCollection
 {
     use ActivityPubResource;
 
@@ -18,7 +17,7 @@ class OutboxCollection extends ResourceCollection
      *
      * @var string
      */
-    public $collects = OutboxResource::class;
+    public $collects = FollowResource::class;
 
     /**
      * The "data" wrapper that should be applied.
@@ -27,7 +26,7 @@ class OutboxCollection extends ResourceCollection
      */
     public static $wrap = null;
 
-    public LocalActor $actor;
+    public LocalActor $user;
 
     /**
      * Transform the resource collection into an array.
@@ -37,19 +36,20 @@ class OutboxCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $collectionPage = Type::create('OrderedCollectionPage', [
+        $prev = $this->resource->previousPageUrl();
+        $next = $this->resource->nextPageUrl();
+        return [
+            '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->resource->url($this->resource->currentPage()),
-            '@context' => [
-                Context::ACTIVITY_STREAMS,
-                Context::$status,
-            ],
-            'next' => $this->resource->nextPageUrl(),
-            'prev' => $this->resource->previousPageUrl(),
-            'partOf' => route('actor.outbox', [$this->actor]),
-            'orderedItems' => $this->collection,
-      ]);
-
-        return $collectionPage->toArray();
+            'type' => 'OrderedCollectionPage',
+            'totalItems' => $this->resource->count(),
+            'next' => $this->when(!empty($next), $next),
+            'prev' => $this->when(!empty($prev), $prev),
+            'partOf' => route('actor.followers', [$this->user]),
+            'orderedItems' => $this->collection->map(
+                fn (FollowResource $follow) => $follow->getId()
+            ),
+        ];
     }
 
     /**

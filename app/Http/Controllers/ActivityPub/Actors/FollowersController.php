@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FollowCollection;
+use App\Http\Resources\ActivityPub\FollowCollection;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use Illuminate\Http\JsonResponse;

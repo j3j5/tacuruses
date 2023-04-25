@@ -5,7 +5,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use ActivityPhp\Type\Core\Collection;
 use ActivityPhp\Type\Core\CollectionPage;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\RepliesResource;
+use App\Http\Resources\ActivityPub\RepliesResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;

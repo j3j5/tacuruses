@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\NoteResource;
+use App\Http\Resources\ActivityPub\NoteResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Contracts\View\View;

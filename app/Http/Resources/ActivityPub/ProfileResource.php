@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ActivityPub;
 
 use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;

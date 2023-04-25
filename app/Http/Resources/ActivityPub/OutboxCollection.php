@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class FollowCollection extends ResourceCollection
+class OutboxCollection extends ResourceCollection
 {
     use ActivityPubResource;
 
@@ -17,7 +18,7 @@ class FollowCollection extends ResourceCollection
      *
      * @var string
      */
-    public $collects = FollowResource::class;
+    public $collects = OutboxResource::class;
 
     /**
      * The "data" wrapper that should be applied.
@@ -26,7 +27,7 @@ class FollowCollection extends ResourceCollection
      */
     public static $wrap = null;
 
-    public LocalActor $user;
+    public LocalActor $actor;
 
     /**
      * Transform the resource collection into an array.
@@ -36,20 +37,19 @@ class FollowCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $prev = $this->resource->previousPageUrl();
-        $next = $this->resource->nextPageUrl();
-        return [
-            '@context' => Context::ACTIVITY_STREAMS,
+        $collectionPage = Type::create('OrderedCollectionPage', [
             'id' => $this->resource->url($this->resource->currentPage()),
-            'type' => 'OrderedCollectionPage',
-            'totalItems' => $this->resource->count(),
-            'next' => $this->when(!empty($next), $next),
-            'prev' => $this->when(!empty($prev), $prev),
-            'partOf' => route('actor.followers', [$this->user]),
-            'orderedItems' => $this->collection->map(
-                fn (FollowResource $follow) => $follow->getId()
-            ),
-        ];
+            '@context' => [
+                Context::ACTIVITY_STREAMS,
+                Context::$status,
+            ],
+            'next' => $this->resource->nextPageUrl(),
+            'prev' => $this->resource->previousPageUrl(),
+            'partOf' => route('actor.outbox', [$this->actor]),
+            'orderedItems' => $this->collection,
+      ]);
+
+        return $collectionPage->toArray();
     }
 
     /**

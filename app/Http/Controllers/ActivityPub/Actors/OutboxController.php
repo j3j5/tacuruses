@@ -6,7 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type\Core\OrderedCollection;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\OutboxCollection;
+use App\Http\Resources\ActivityPub\OutboxCollection;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;

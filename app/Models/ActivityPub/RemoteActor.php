@@ -17,7 +17,6 @@ use function Safe\parse_url;
  * App\Models\ActivityPub\RemoteActor
  *
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon: array<string,string>, image: array<string,string>, inbox: string, outbox: string, following: string, followers: string, endpoints: array<string,string>, publicKey: array<string,string> }
- *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -147,7 +146,7 @@ class RemoteActor extends Actor
 
         Log::debug('dispatching job to deliver the Create activity for a note', ['actor' => $this, 'note' => $note]);
 
-        DeliverActivity::dispatch($note->actor, $note->getAPCreate(), $inbox);
+        DeliverActivity::dispatch($note->actor, $note->getAPActivity(), $inbox);
 
         return $this;
     }

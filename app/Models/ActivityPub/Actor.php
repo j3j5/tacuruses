@@ -5,6 +5,7 @@ namespace App\Models\ActivityPub;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Parental\HasChildren;
 
 /**
@@ -88,6 +89,21 @@ class Actor extends Model
     public function liked() : HasMany
     {
         return $this->hasMany(Like::class);
+    }
+
+    public function shares() : HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Share::class,
+            LocalNote::class,
+            'actor_id',
+            'target_id'
+        );
+    }
+
+    public function notes() : HasMany
+    {
+        return $this->hasMany(Note::class);
     }
 
     public function shared() : HasMany

@@ -9,12 +9,19 @@ class Context
     public const W3ID_SECURITY = 'https://w3id.org/security/v1';
 
     public static array $status = [
-        'ostatus' => 'http://ostatus.org#',
-        'atomUri' => 'ostatus:atomUri',
-        'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-        'conversation' => 'ostatus:conversation',
+        // 'ostatus' => 'http://ostatus.org#',
+        // 'atomUri' => 'ostatus:atomUri',
+        // 'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
+        // 'conversation' => 'ostatus:conversation',
         'sensitive' => 'as:sensitive',
-        'toot' => 'http://joinmastodon.org/ns#',
-        'votersCount' => 'toot:votersCount',
+        // 'toot' => 'http://joinmastodon.org/ns#',
+        // 'votersCount' => 'toot:votersCount',
+        'Hashtag' => 'as:Hashtag',
+        'Emoji' => 'toot:Emoji',
+        // 'blurhash' => 'toot:blurhash',
+        // 'focalPoint' => [
+            // '@container' => '@list',
+            // '@id' => 'toot:focalPoint',
+        // ],
     ];
 }

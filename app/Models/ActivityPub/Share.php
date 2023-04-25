@@ -19,7 +19,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\Actor $target
+ * @property-read \App\Models\ActivityPub\LocalNote $target
  * @method static \Illuminate\Database\Eloquent\Builder|Share newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Share newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Share query()
@@ -44,7 +44,7 @@ class Share extends Model
 
     public function target() : BelongsTo
     {
-        return $this->belongsTo(Actor::class, 'target_id');
+        return $this->belongsTo(LocalNote::class, 'target_id');
     }
 
     public function slug() : Attribute

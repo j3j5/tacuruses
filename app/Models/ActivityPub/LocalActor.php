@@ -118,11 +118,6 @@ class LocalActor extends Actor
         return 'username';
     }
 
-    public function notes() : HasMany
-    {
-        return $this->hasMany(LocalNote::class);
-    }
-
     public function followers() : HasMany
     {
         return $this->hasMany(Follow::class, 'target_id');
@@ -137,16 +132,6 @@ class LocalActor extends Actor
     {
         return $this->hasManyThrough(
             Like::class,
-            LocalNote::class,
-            'actor_id',
-            'target_id'
-        );
-    }
-
-    public function shares() : HasManyThrough
-    {
-        return $this->hasManyThrough(
-            Share::class,
             LocalNote::class,
             'actor_id',
             'target_id'

@@ -22,7 +22,7 @@ class RepliesResource extends JsonResource
      */
     public function toArray($request) : array
     {
-        $context = ['@context' => [
+        $context = [
             Context::ACTIVITY_STREAMS,
             [
                 'ostatus' => 'http://ostatus.org#',
@@ -34,10 +34,11 @@ class RepliesResource extends JsonResource
                 'votersCount' => 'toot:votersCount',
                 'Hashtag' => 'as:Hashtag',
             ],
-        ]];
+        ];
 
         $collection = new Collection();
         $collection->id = route('note.replies', [$this->actor, $this]);
+        $collection->set('@context', $context);
 
         $page = new CollectionPage();
         $page->id = route('note.replies', [$this->actor, $this, 'page' => 1]);

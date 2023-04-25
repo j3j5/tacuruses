@@ -38,7 +38,7 @@ class NoteActivityController extends Controller
             ],
         ]];
 
-        $activity = $note->getAPCreate();
+        $activity = $note->getAPActivity();
 
         return response()->activityJson(array_merge($context, $activity->toArray()));
     }

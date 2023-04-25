@@ -2,7 +2,10 @@
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use ActivityPhp\Type\Extended\Activity\Announce;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Services\ActivityPub\Context;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -133,6 +136,48 @@ class RemoteNote extends Note
         $note->replies = $this->repliesRaw;
 
         return $note;
+    }
+
+    /** Shares */
+    public function getAPActivity() : Announce
+    {
+        /*
+        {
+            "id": "https://masto.remote-dev.j3j5.uy/users/admin/statuses/109968314274969290/activity",
+            "type": "Announce",
+            "actor": "https://masto.remote-dev.j3j5.uy/users/admin",
+            "published": "2023-03-05T02:28:31Z",
+            "to": [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc": [
+                "https://bots.remote-dev.j3j5.uy/testbot2",
+                "https://masto.remote-dev.j3j5.uy/users/admin/followers"
+            ],
+            "object": "https://bots.remote-dev.j3j5.uy/testbot2/20317650118905856"
+        }
+        */
+
+        /** @var \App\Domain\ActivityPub\Mastodon\Create $create */
+        $create = Type::create('Announce', [
+            'id' => $this->activityId . '/activity',
+            '@context' => [
+                Context::ACTIVITY_STREAMS,
+                Context::$status,
+            ],
+            'actor' => $this->actor->url,
+            'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
+            'to' => [
+                Context::ACTIVITY_STREAMS_PUBLIC,
+            ],
+            'cc' => [
+                $this->actor->activityId,
+                $this->actor->followers_url,
+            ],
+            'object' => $this->activityId,
+        ]);
+
+        return $create;
     }
 
     public function url() : Attribute

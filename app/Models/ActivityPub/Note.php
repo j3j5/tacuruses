@@ -119,7 +119,7 @@ class Note extends Model
 
     public function actor() : BelongsTo
     {
-        return $this->belongsTo(Actor::class, 'actor_id');
+        return $this->belongsTo(Actor::class);
     }
 
     public function mentions() : BelongsToMany
@@ -161,6 +161,10 @@ class Note extends Model
     {
         /** @var \App\Domain\ActivityPub\Mastodon\Note $note */
         $note = Type::create('Note', [
+            '@context' => [
+                Context::ACTIVITY_STREAMS,
+                Context::$status,
+            ],
             'id' => $this->activityId,
             'type' => 'Note',
             // On Mastodon, if sensitive is true, only this is visible, content goes after a click

@@ -153,7 +153,7 @@ class LocalNote extends Note
         return $this->hasMany(Share::class, 'target_id');
     }
 
-    public function replies() : HasMany
+    public function directReplies() : HasMany
     {
         return $this->hasMany(Note::class, 'replyTo_id');
     }
@@ -254,20 +254,12 @@ class LocalNote extends Note
         return $note;
     }
 
-    public function getAPCreate() : Create
+    /** Publications */
+    public function getAPActivity() : Create
     {
         $context = [
-            'https://www.w3.org/ns/activitystreams',
-            [
-                // 'ostatus' => 'http://ostatus.org#',
-                // 'atomUri' => 'ostatus:atomUri',
-                // 'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-                // 'conversation' => 'ostatus:conversation',
-                'sensitive' => 'as:sensitive',
-                // 'toot' => 'http://joinmastodon.org/ns#',
-                // 'votersCount' => 'toot:votersCount',
-                'Hashtag' => 'as:Hashtag',
-            ],
+            Context::ACTIVITY_STREAMS,
+            Context::$status,
         ];
 
         /** @var \App\Domain\ActivityPub\Mastodon\Create $create */

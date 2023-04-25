@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;
@@ -36,40 +37,19 @@ class OutboxCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $context = [
+        $collectionPage = Type::create('OrderedCollectionPage', [
+            'id' => $this->resource->url($this->resource->currentPage()),
             '@context' => [
-                Context::ACTIVITY_STREAMS, [
-                    'ostatus' => 'http://ostatus.org#',
-                    'atomUri' => 'ostatus:atomUri',
-                    'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-                    'conversation' => 'ostatus:conversation',
-                    'sensitive' => 'as:sensitive',
-                    'toot' => 'http://joinmastodon.org/ns#',
-                    // 'votersCount' => 'toot:votersCount', // Only for polls
-                    'Hashtag' => 'as:Hashtag',
-                    // ONLY FOR PICS WITH ATTACHMENT
-                    // 'blurhash' => 'toot:blurhash',
-                    // 'focalPoint' => [
-                    //     '@container' => '@list',
-                    //     '@id' => 'toot:focalPoint',
-                    // ],
-                    'Emoji' => 'toot:Emoji',
-                ],
+                Context::ACTIVITY_STREAMS,
+                Context::$status,
             ],
-        ];
-        // TODO: fix this
+            'next' => $this->resource->nextPageUrl(),
+            'prev' => $this->resource->previousPageUrl(),
+            'partOf' => route('actor.outbox', [$this->actor]),
+            'orderedItems' => $this->collection,
+      ]);
 
-        $collectionPage = [
-              'id' => $this->resource->url($this->resource->currentPage()),
-              'type' => 'OrderedCollectionPage',
-              'next' => $this->resource->nextPageUrl(),
-              'prev' => $this->resource->previousPageUrl(),
-              'partOf' => route('actor.outbox', [$this->actor]),
-              'orderedItems' => $this->collection,
-            //   "orderedItems" => $this->resource->items()
-        ];
-
-        return array_merge($context, $collectionPage);
+        return $collectionPage->toArray();
     }
 
     /**

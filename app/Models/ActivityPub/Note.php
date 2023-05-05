@@ -24,75 +24,68 @@ use function Safe\json_encode;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $actor_id
- * @property bool $sensitive
- * @property string $text
- * @property string|null $summary
- * @property string|null $inReplyTo activityId of the status is replying to
- * @property string $language
- * @property array $attachments
- * @property array $tags
- * @property string $type
- * @property-read string $activity_id
- * @property-read string $activity_url
- * @property-read \App\Models\ActivityPub\Actor $actor
- * @property-read string $url
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @property-read int|null $mentions_count
- * @property int|null $replyTo_id
- * @property string $note_type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
- * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Note newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Note query()
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereInReplyTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereLanguage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSensitive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummary($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereTags($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereText($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
  * @property string|null $contentMap
+ * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
  * @property string|null $summaryMap
+ * @property bool $sensitive Mastodon-specific; content warning
  * @property string $to array of recipients
  * @property string|null $bto array of recipients of the blind carbon copy
  * @property string|null $cc array of recipients of the carbon copy
  * @property string|null $bcc array of recipients of the blind carbon copy
+ * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
  * @property string|null $startTime
  * @property string|null $endTime
+ * @property array $attachments
+ * @property array $tags
  * @property string|null $repliesRaw
  * @property string|null $source original representation of the content
  * @property string|null $conversation
+ * @property string $type
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property int $actor_id
  * @property Visibility $visibility
+ * @property-read string $activity_url
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
+ * @property-read string $url
+ * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note query()
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereAttachments($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereBcc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereBto($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereCc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereContentMap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereConversation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereEndTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereGenerator($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereInReplyTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereNoteType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note wherePublishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereRepliesRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSensitive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummary($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummaryMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereTags($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereNoteType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereVisibility($value)
  * @mixin \Eloquent
  */

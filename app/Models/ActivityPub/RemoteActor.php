@@ -39,14 +39,22 @@ use function Safe\parse_url;
  * @property string|null $followers_url
  * @property string|null $following_url
  * @property string|null $outbox
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $allNotes
+ * @property-read int|null $all_notes_count
  * @property-read string $domain
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts
+ * @property-read int|null $drafts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
  * @property-read string $full_username
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read int|null $notes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read int|null $shares_count
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()

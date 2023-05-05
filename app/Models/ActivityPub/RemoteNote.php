@@ -22,7 +22,6 @@ use function Safe\json_encode;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $actor_id
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
@@ -35,7 +34,6 @@ use function Safe\json_encode;
  * @property array|null $cc array of recipients of the carbon copy
  * @property string|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
- * @property int|null $replyTo_id id of the note on the system
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
  * @property \Illuminate\Support\Carbon|null $startTime
@@ -46,12 +44,13 @@ use function Safe\json_encode;
  * @property string|null $source original representation of the content
  * @property string|null $conversation
  * @property string $type
- * @property-read string $activity_id
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property int $actor_id
+ * @property Visibility $visibility
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\RemoteActor $actor
  * @property-read string $url
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @property-read int|null $mentions_count
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote byActivityId(string $activityId)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newQuery()
@@ -71,8 +70,10 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereInReplyTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereNoteType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote wherePublishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereRepliesRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereReplyToId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSensitive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereStartTime($value)
@@ -82,10 +83,6 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
- * @property string $note_type
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereNoteType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereReplyToId($value)
- * @property Visibility $visibility
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereVisibility($value)
  * @mixin \Eloquent
  */

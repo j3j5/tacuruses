@@ -31,7 +31,6 @@ use function Safe\preg_match;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $actor_id
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
@@ -54,24 +53,26 @@ use function Safe\preg_match;
  * @property array|null $source original representation of the content
  * @property string|null $conversation
  * @property string $type
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property int $actor_id
+ * @property Visibility $visibility
  * @property-read string $activity_id
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
  * @property-read array $content_map
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $directReplies
+ * @property-read int|null $direct_replies_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
  * @property-read int|null $like_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read int|null $likes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
  * @property-read int|null $peers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
- * @property-read int|null $replies_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
  * @property-read int|null $share_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read int|null $shares_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @property-read int|null $mentions_count
  * @property-read string $url
  * @method static Builder|LocalNote byActivityId(string $activityId)
  * @method static Builder|LocalNote newModelQuery()
@@ -93,8 +94,10 @@ use function Safe\preg_match;
  * @method static Builder|LocalNote whereId($value)
  * @method static Builder|LocalNote whereInReplyTo($value)
  * @method static Builder|LocalNote whereLocation($value)
+ * @method static Builder|LocalNote whereNoteType($value)
  * @method static Builder|LocalNote wherePublishedAt($value)
  * @method static Builder|LocalNote whereRepliesRaw($value)
+ * @method static Builder|LocalNote whereReplyToId($value)
  * @method static Builder|LocalNote whereSensitive($value)
  * @method static Builder|LocalNote whereSource($value)
  * @method static Builder|LocalNote whereStartTime($value)
@@ -104,30 +107,6 @@ use function Safe\preg_match;
  * @method static Builder|LocalNote whereTo($value)
  * @method static Builder|LocalNote whereType($value)
  * @method static Builder|LocalNote whereUpdatedAt($value)
- * @property int|null $replyTo_id
- * @property string $note_type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
- * @method static Builder|LocalNote whereNoteType($value)
- * @method static Builder|LocalNote whereReplyToId($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
- * @property Visibility $visibility
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $directReplies
- * @property-read int|null $direct_replies_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @method static Builder|LocalNote whereVisibility($value)
  * @mixin \Eloquent
  */

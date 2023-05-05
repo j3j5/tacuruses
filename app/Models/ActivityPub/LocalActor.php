@@ -3,14 +3,20 @@
 namespace App\Models\ActivityPub;
 
 use Carbon\Carbon;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
+
 use Parental\HasParent;
 use RuntimeException;
 
@@ -92,12 +98,24 @@ use function Safe\preg_match;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @mixin \Eloquent
  */
-class LocalActor extends Actor
+class LocalActor extends Actor implements
+    AuthenticatableContract,
+    AuthorizableContract
 {
     use HasFactory;
     use HasParent;
+    use Authenticatable, Authorizable;
+    use HasApiTokens;
 
     public const USER_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)$#';
 

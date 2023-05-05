@@ -35,6 +35,10 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
             Route::middleware('federation')
                 ->group(base_path('routes/federation.php'));
+
+            Route::middleware('mastodon-api')
+                ->prefix('/api/v1')
+                ->group(base_path('routes/mastodon-api.php'));
         });
 
         Route::model('actor', LocalActor::class);

@@ -43,6 +43,11 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
+        'mastodon-api' => [
+            // 'throttle:mastodon-api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
         'federation' => [
             'no.cookies',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,

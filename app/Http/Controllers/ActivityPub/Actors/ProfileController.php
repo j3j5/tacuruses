@@ -35,7 +35,7 @@ class ProfileController extends Controller
      */
     private function profile(LocalActor $actor)
     {
-        $actor->load(['notes' => fn ($query) => $query->take(5)]);
+        $actor->load(['notes' => fn ($query) => $query->take(5)->latest()]);
         $actor->loadCount([
             'followers',
             'following',

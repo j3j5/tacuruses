@@ -5,6 +5,7 @@ namespace App\Models\ActivityPub;
 use ActivityPhp\Type;
 use ActivityPhp\Type\Extended\Activity\Announce;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Enums\Visibility;
 use App\Services\ActivityPub\Context;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -84,6 +85,8 @@ use function Safe\json_encode;
  * @property string $note_type
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereNoteType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereReplyToId($value)
+ * @property Visibility $visibility
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereVisibility($value)
  * @mixin \Eloquent
  */
 class RemoteNote extends Note
@@ -102,6 +105,7 @@ class RemoteNote extends Note
         'published_at' => 'datetime',
         'startTime' => 'datetime',
         'endTime' => 'datetime',
+        'visibility' => Visibility::class,
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',

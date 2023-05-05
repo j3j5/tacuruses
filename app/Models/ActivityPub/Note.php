@@ -4,6 +4,7 @@ namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Enums\Visibility;
 use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 use Parental\HasChildren;
 
 use function Safe\json_decode;
@@ -35,6 +37,11 @@ use function Safe\json_encode;
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
+ * @property int|null $replyTo_id
+ * @property string $note_type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
  * @method static \Illuminate\Database\Eloquent\Builder|Note byActivityId(string $activityId)
  * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Note newQuery()
@@ -67,6 +74,7 @@ use function Safe\json_encode;
  * @property string|null $repliesRaw
  * @property string|null $source original representation of the content
  * @property string|null $conversation
+ * @property Visibility $visibility
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereBcc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereBto($value)
@@ -83,13 +91,9 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummaryMap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereTo($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @property-read int|null $mentions_count
- * @property int|null $replyTo_id
- * @property string $note_type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereNoteType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereVisibility($value)
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -112,9 +116,15 @@ class Note extends Model
     protected $casts = [
         'sensitive' => 'boolean',
         'published_at' => 'datetime',
+        'visibility' => Visibility::class,
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     public function actor() : BelongsTo
@@ -174,12 +184,8 @@ class Note extends Model
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'url' => $this->url,
             'attributedTo' => $this->actor->url,
-            'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
-            ],
-            'cc' => [
-                $this->actor->followers_url,
-            ],
+            'to' => Arr::wrap($this->to),
+            'cc' => Arr::wrap($this->cc),
             'sensitive' => $this->sensitive,
 
             // "atomUri" => "https://mastodon.uy/users/j3j5/statuses/109316859449385938",

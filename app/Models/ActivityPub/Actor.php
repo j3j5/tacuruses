@@ -39,6 +39,10 @@ use Parental\HasChildren;
  * @property-read int|null $liked_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read int|null $notes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property-read int|null $shares_count
  * @method static \Illuminate\Database\Eloquent\Builder|Actor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Actor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Actor query()
@@ -102,6 +106,16 @@ class Actor extends Model
     }
 
     public function notes() : HasMany
+    {
+        return $this->allNotes()->whereNotNull('published_at');
+    }
+
+    public function drafts() : HasMany
+    {
+        return $this->allNotes()->whereNull('published_at');
+    }
+
+    public function allNotes() : HasMany
     {
         return $this->hasMany(Note::class);
     }

@@ -6,14 +6,17 @@ use ActivityPhp\Type;
 use ActivityPhp\Type\Core\Collection;
 use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Services\ActivityPub\Context;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
 use RuntimeException;
@@ -111,6 +114,21 @@ use function Safe\preg_match;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @method static Builder|LocalNote whereNoteType($value)
  * @method static Builder|LocalNote whereReplyToId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $replies
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @property Visibility $visibility
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $directReplies
+ * @property-read int|null $direct_replies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
+ * @method static Builder|LocalNote whereVisibility($value)
  * @mixin \Eloquent
  */
 class LocalNote extends Note
@@ -120,7 +138,7 @@ class LocalNote extends Note
 
     public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
 
-    protected $fillable = ['note_type'];
+    protected $fillable = ['type', 'note_type'];
 
     /** @var array<string, string> */
     protected $casts = [
@@ -133,6 +151,7 @@ class LocalNote extends Note
         'bto' => 'array',
         'cc' => 'array',
         'bcc' => 'array',
+        'visibility' => Visibility::class,
         // Implemented manually to force array return
         // 'attachments' => 'array',
         // 'tags' => 'array',
@@ -268,13 +287,10 @@ class LocalNote extends Note
             'id' => $this->activityId,
             'actor' => $this->actor->url,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
-            'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
-            ],
-            'cc' => [
-                $this->actor->followers_url,
-            ],
             'object' => $this->getAPNote()->toArray(),
+            'to' => Arr::wrap($this->to),
+            'cc' => Arr::wrap($this->cc),
+
         ]);
 
         return $create;
@@ -305,9 +321,29 @@ class LocalNote extends Note
         return $this;
     }
 
-    public function scopeByActivityId(Builder $query, string $activityId) : Builder
+    public function fillRecipients() : self
     {
-        return $query->where('id', $this->getIdFromActivityId($activityId));
+        switch ($this->visibility) {
+            case Visibility::PUBLIC:
+                $this->to = [Context::ACTIVITY_STREAMS_PUBLIC];
+                $this->cc = [$this->actor->followersUrl];
+                break;
+            case Visibility::UNLISTED:
+                $this->to = [$this->actor->followersUrl];
+                $this->cc = [Context::ACTIVITY_STREAMS_PUBLIC];
+                break;
+            case Visibility::PRIVATE:
+                // Only followers
+                $this->to = [$this->actor->followersUrl];
+                $this->cc = [];
+                break;
+            case Visibility::DIRECT:
+                // Only mentioned users?
+            default:
+                throw new Exception('Unsupported visibility type for note');
+        }
+
+        return $this;
     }
 
     protected function getIdFromActivityId(string $activityId) : string
@@ -317,6 +353,11 @@ class LocalNote extends Note
             throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
         }
         return $matches['noteId'];
+    }
+
+    public function scopeByActivityId(Builder $query, string $activityId) : Builder
+    {
+        return $query->where('id', $this->getIdFromActivityId($activityId));
     }
 
     public function scopePublished(Builder $query) : Builder

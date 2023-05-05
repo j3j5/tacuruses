@@ -1,12 +1,12 @@
 <?php
 
+use App\Enums\Visibility;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class() extends Migration {
     /**
      * Run the migrations.
      *
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('content');
             $table->json('contentMap')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-summary
-            $table->text('summary')->nullable()->comment("On Mastodon, this field contains the visible way when sensitive is true");
+            $table->text('summary')->nullable()->comment('On Mastodon, this field contains the visible way when sensitive is true');
             $table->json('summaryMap')->nullable();
             $table->string('type')->comment('Type of object, Note, Article...');
             // Mastodon-specific
@@ -50,6 +50,7 @@ return new class extends Migration
             $table->timestamp('startTime')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-endtime
             $table->timestamp('endTime')->nullable();
+            $table->string('visibility')->default(Visibility::PRIVATE)->comment('visibility of the note, check enum Visibility');
             $table->json('attachments')->nullable();
             $table->json('tags')->nullable();
             $table->json('repliesRaw')->nullable(); // remote only

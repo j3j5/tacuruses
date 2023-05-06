@@ -14,7 +14,10 @@ class PostStatus extends Controller
         // Post Status
         /** @var \App\Models\ActivityPub\LocalNote $note */
         $note = CreateNewNote::dispatchSync($request->validated());
-        if (!$request->boolean('draft') && (!$request->filled('scheduled_at')) || $request->date('scheduled_at')->isFuture()) {
+        if (
+            !$request->boolean('draft') && (!$request->filled('scheduled_at')) ||
+            ($request->date('scheduled_at') && $request->date('scheduled_at')->isFuture())
+        ) {
             $note->publish();
         }
 

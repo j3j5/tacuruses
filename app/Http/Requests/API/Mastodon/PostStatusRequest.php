@@ -34,7 +34,7 @@ class PostStatusRequest extends FormRequest
             'spoiler_text' => 'string',
             'visibility' => [new Enum(Visibility::class)],
             'language' => 'string|size:2',
-            // 'scheduled_at' => 'date|after:+5minutes'
+            'scheduled_at' => 'date|after:+5minutes',
             'draft' => 'boolean',
         ];
     }

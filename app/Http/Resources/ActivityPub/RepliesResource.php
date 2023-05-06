@@ -35,7 +35,7 @@ class RepliesResource extends JsonResource
         $page->id = route('note.replies', [$this->actor, $this, 'page' => 1]);
         $page->next = route('note.replies', [$this->actor, $this, 'page' => 1]);
         $page->partOf = route('note.replies', [$this->actor, $this]);
-        $page->items = $this->replies->map(fn (Note $note) : MastodonNote => $note->getAPNote())->toArray();
+        $page->items = $this->directReplies->map(fn (Note $note) : MastodonNote => $note->getAPNote())->toArray();
 
         $collection->first = $page;
 

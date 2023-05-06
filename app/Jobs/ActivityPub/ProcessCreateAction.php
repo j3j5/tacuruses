@@ -141,6 +141,10 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             LocalActorMentioned::dispatch($actor, $note);
         });
 
+        if ($localRecipients->isEmpty()) {
+            return;
+        }
+
         // TODO: Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding
         //
 

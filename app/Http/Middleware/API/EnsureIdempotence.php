@@ -23,7 +23,7 @@ class EnsureIdempotence
             return $next($request);
         }
 
-        $key = $request->header('Idempotency-Key');
+        $key = (string) $request->header('Idempotency-Key', Str::random());
 
         if (Cache::has($key)) {
             return JsonResponse::fromJsonString(Cache::get($key));

@@ -134,6 +134,7 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         DB::commit();
 
         $localRecipients = $this->getLocalRecipients();
+
         // Attach the mention to all local recipients
         $localRecipients->each(function (LocalActor $actor) use ($note) : void {
             $actor->mentions()->attach($note);
@@ -144,7 +145,7 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         //
 
         // Accept the creation, any of the receivers can sign the accept in the name of the instance
-        SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel);
+        SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel); /** @phpstan-ignore-line */
     }
 
     /**
@@ -193,6 +194,10 @@ class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         // TODO: Base64-decode the signatureValue and verify it against the public key in signature[creator].
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor>
+     */
     private function getLocalRecipients() : Collection
     {
         $recipients = array_merge(

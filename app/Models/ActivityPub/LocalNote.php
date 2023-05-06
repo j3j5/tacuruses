@@ -305,15 +305,15 @@ class LocalNote extends Note
         switch ($this->visibility) {
             case Visibility::PUBLIC:
                 $this->to = [Context::ACTIVITY_STREAMS_PUBLIC];
-                $this->cc = [$this->actor->followersUrl];
+                $this->cc = [$this->actor->followers_url];
                 break;
             case Visibility::UNLISTED:
-                $this->to = [$this->actor->followersUrl];
+                $this->to = [$this->actor->followers_url];
                 $this->cc = [Context::ACTIVITY_STREAMS_PUBLIC];
                 break;
             case Visibility::PRIVATE:
                 // Only followers
-                $this->to = [$this->actor->followersUrl];
+                $this->to = [$this->actor->followers_url];
                 $this->cc = [];
                 break;
             case Visibility::DIRECT:

@@ -9,31 +9,28 @@ use App\Http\Resources\ActivityPub\ProfileResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\ActivityPub\LocalActor $user
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @return \Illuminate\Http\Resources\Json\JsonResource|\Illuminate\Contracts\View\View
      */
-    public function __invoke(Request $request, LocalActor $user)
+    public function __invoke(Request $request, LocalActor $user) : ProfileResource|View
     {
         if ($request->wantsJson()) {
-            return $this->activityProfile($user);
+            return new ProfileResource($user);
         }
+
         return $this->profile($user);
     }
 
     /**
      *
-     * @param \App\Models\ActivityPub\LocalActor $actor
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @return \Illuminate\Contracts\View\View
      */
-    private function profile(LocalActor $actor)
+    private function profile(LocalActor $actor) : View
     {
         $actor->load(['notes' => fn ($query) => $query->take(5)->latest()]);
         $actor->loadCount([
@@ -44,17 +41,11 @@ class ProfileController extends Controller
             'likes',
             'shares',
             // 'replies',
-        ])->transform(fn (LocalNote $note) => $note->setRelation('actor', $actor));
+        ])->transform(
+            fn (LocalNote $note) => $note->setRelation('actor', $actor)
+        );
+
         return view('bots.profile', compact(['actor']));
     }
 
-    /**
-     *
-     * @param \App\Models\ActivityPub\LocalActor $user
-     * @return \App\Http\Resources\ProfileResource
-     */
-    private function activityProfile(LocalActor $user)
-    {
-        return new ProfileResource($user);
-    }
 }

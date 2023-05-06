@@ -16,7 +16,6 @@ class NoteController extends Controller
     /**
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @return \App\Http\Resources\NoteResource|\Illuminate\Contracts\View\View
      */
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : NoteResource | View
     {

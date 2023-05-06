@@ -7,20 +7,20 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use ActivityPhp\Type\Core\OrderedCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityPub\OutboxCollection;
-use App\Models\ActivityPub\Actor;
+use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OutboxController extends Controller
 {
-    public function __invoke(Request $request, Actor $actor) : JsonResponse|OutboxCollection
+    public function __invoke(Request $request, LocalActor $actor) : JsonResponse|OutboxCollection
     {
         $perPage = 20;
         $ownNotes = $actor->notes()->latest()->select('id');
         $shares = $actor->shared()->latest()->select('target_id as id');
+        /** @phpstan-ignore-next-line */
         $noteIds = $ownNotes->union($shares)->fastPaginate($perPage);
 
         $notes = Note::with(['actor'])

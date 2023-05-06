@@ -21,6 +21,7 @@ class OutboxResource extends JsonResource
      */
     public function toArray($request)
     {
+        /** @phpstan-ignore-next-line */
         return $this->getAPActivity()->toArray();
     }
 }

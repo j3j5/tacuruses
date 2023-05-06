@@ -142,24 +142,7 @@ class RemoteNote extends Note
     /** Shares */
     public function getAPActivity() : Announce
     {
-        /*
-        {
-            "id": "https://masto.remote-dev.j3j5.uy/users/admin/statuses/109968314274969290/activity",
-            "type": "Announce",
-            "actor": "https://masto.remote-dev.j3j5.uy/users/admin",
-            "published": "2023-03-05T02:28:31Z",
-            "to": [
-                "https://www.w3.org/ns/activitystreams#Public"
-            ],
-            "cc": [
-                "https://bots.remote-dev.j3j5.uy/testbot2",
-                "https://masto.remote-dev.j3j5.uy/users/admin/followers"
-            ],
-            "object": "https://bots.remote-dev.j3j5.uy/testbot2/20317650118905856"
-        }
-        */
-
-        /** @var \App\Domain\ActivityPub\Mastodon\Create $create */
+        /** @var \ActivityPhp\Type\Extended\Activity\Announce $create */
         $create = Type::create('Announce', [
             'id' => $this->activityId . '/activity',
             '@context' => [

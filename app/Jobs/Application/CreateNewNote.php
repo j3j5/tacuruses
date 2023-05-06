@@ -26,8 +26,6 @@ class CreateNewNote
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle() : LocalNote
     {

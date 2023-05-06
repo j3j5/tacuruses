@@ -26,16 +26,7 @@ class NoteActivityController extends Controller
     {
         $context = ['@context' => [
             Context::ACTIVITY_STREAMS,
-            [
-                'ostatus' => 'http://ostatus.org#',
-                'atomUri' => 'ostatus:atomUri',
-                'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
-                'conversation' => 'ostatus:conversation',
-                'sensitive' => 'as:sensitive',
-                'toot' => 'http://joinmastodon.org/ns#',
-                'votersCount' => 'toot:votersCount',
-                'Hashtag' => 'as:Hashtag',
-            ],
+            Context::$status,
         ]];
 
         $activity = $note->getAPActivity();

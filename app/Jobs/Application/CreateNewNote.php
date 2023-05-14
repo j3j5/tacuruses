@@ -5,8 +5,10 @@ namespace App\Jobs\Application;
 use App\Enums\Visibility;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use App\Models\Media;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 
 class CreateNewNote
 {
@@ -49,9 +51,10 @@ class CreateNewNote
         $note->fillRecipients();
         // $note->language = $this->actor->language;
         // MEDIA!!
-        // 'media_ids' => 'array|required_unless:status',
 
         $note->save();
+
+        Media::whereIn('id', Arr::get($this->data, 'media_ids', ''))->update(['note_id' => $note->id]);
 
         return $note;
     }

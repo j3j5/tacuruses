@@ -37,7 +37,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/federation.php'));
 
             Route::middleware('mastodon-api')
-                ->prefix('/api/v1')
                 ->group(base_path('routes/mastodon-api.php'));
         });
 

@@ -8,6 +8,8 @@ use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
+use App\Http\Resources\ActivityPub\AttachmentResource;
+use App\Models\Media;
 use App\Services\ActivityPub\Context;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Parental\HasParent;
@@ -156,6 +159,11 @@ class LocalNote extends Note
         return $this->hasMany(Note::class, 'replyTo_id');
     }
 
+    public function mediaAttachments() : HasMany
+    {
+        return $this->hasMany(Media::class);
+    }
+
     public function likeActors() : HasManyThrough
     {
         return $this->hasManyThrough(
@@ -239,8 +247,8 @@ class LocalNote extends Note
     public function attachments() : Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) : array => $value === null ? [] : json_decode($value),
-            set: fn (?array $value) => $value !== null ? json_encode($value) : null
+            get: fn (?string $value) : AnonymousResourceCollection => $this->mediaAttachments === null ? AttachmentResource::collection([]) : AttachmentResource::collection($this->mediaAttachments),
+            set: fn ($value) => null
         );
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Mastodon\PostMedia;
 use App\Http\Controllers\API\Mastodon\PostStatus;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->post('/statuses', PostStatus::class);
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::prefix('/api/v1')->group(function () {
+        Route::post('/statuses', PostStatus::class);
+    });
+
+    Route::prefix('/api/v2')->group(function () {
+        Route::post('/media', PostMedia::class);
+    });
+
+});

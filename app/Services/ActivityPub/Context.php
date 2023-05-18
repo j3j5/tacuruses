@@ -14,14 +14,14 @@ class Context
         // 'inReplyToAtomUri' => 'ostatus:inReplyToAtomUri',
         // 'conversation' => 'ostatus:conversation',
         'sensitive' => 'as:sensitive',
-        // 'toot' => 'http://joinmastodon.org/ns#',
+        'toot' => 'http://joinmastodon.org/ns#',
         // 'votersCount' => 'toot:votersCount',
         'Hashtag' => 'as:Hashtag',
         'Emoji' => 'toot:Emoji',
-        // 'blurhash' => 'toot:blurhash',
-        // 'focalPoint' => [
-            // '@container' => '@list',
-            // '@id' => 'toot:focalPoint',
-        // ],
+        'blurhash' => 'toot:blurhash',
+        'focalPoint' => [
+            '@container' => '@list',
+            '@id' => 'toot:focalPoint',
+        ],
     ];
 }

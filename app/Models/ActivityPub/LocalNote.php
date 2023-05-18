@@ -50,7 +50,7 @@ use function Safe\preg_match;
  * @property string|null $location
  * @property \Illuminate\Support\Carbon|null $startTime
  * @property \Illuminate\Support\Carbon|null $endTime
- * @property array $attachments
+ * @property AnonymousResourceCollection $attachments
  * @property array $tags
  * @property string|null $repliesRaw
  * @property array|null $source original representation of the content
@@ -70,6 +70,8 @@ use function Safe\preg_match;
  * @property-read int|null $like_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read int|null $likes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Media> $mediaAttachments
+ * @property-read int|null $media_attachments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
  * @property-read int|null $peers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors

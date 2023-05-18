@@ -2,8 +2,7 @@
 
 namespace App\Http\Requests\API\Mastodon;
 
-use App\Enums\Visibility;
-use Illuminate\Validation\Rules\Enum;
+use App\Domain\Application\Note;
 
 class PostStatusRequest extends ApiRequest
 {
@@ -15,18 +14,15 @@ class PostStatusRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            'actor' => 'required',
-            'status' => 'string|required_unless:media_ids,null',
-            'media_ids' => 'array|required_without:status',
-            'in_reply_to_id' => 'string|exists:notes,id',
-            'sensitive' => 'boolean',
-            'spoiler_text' => 'string',
-            'visibility' => [new Enum(Visibility::class)],
-            'language' => 'string|size:2',
-            'scheduled_at' => 'date|after:+5minutes',
-            'draft' => 'boolean',
-        ];
+        return Note::$rules;
+    }
+
+    public function getDTO() : Note
+    {
+        return new Note(
+            actor: $this->user(),
+            attributes: $this->validated()
+        );
     }
 
 }

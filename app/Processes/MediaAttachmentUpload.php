@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Processes;
 
+use App\Jobs\Application\Media\SetAsProcessed;
 use App\Jobs\Application\Media\StoreOriginalMedia;
 
 final class MediaAttachmentUpload extends Process
@@ -13,5 +14,6 @@ final class MediaAttachmentUpload extends Process
         // StoreThumbnail::class,
         // ProcessFileSizes::class,
         // CalculateHash::class,
+        SetAsProcessed::class,
     ];
 }

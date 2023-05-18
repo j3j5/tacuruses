@@ -13,13 +13,10 @@ class PostMedia extends Controller
     public function __construct(
         private readonly MediaAttachmentUpload $process,
     ) {
-        info('reached construcctor');
     }
 
     public function __invoke(PostMediaRequest $request) : MediaResource
     {
-        info('starting media upload process');
-
         $media = $this->process->run($request->getDTO());
 
         return new MediaResource($media->getModel());

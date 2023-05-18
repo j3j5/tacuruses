@@ -14,7 +14,6 @@ class PostMediaRequest extends ApiRequest
      */
     public function rules()
     {
-        info('validating media upload');
         return Media::$rules;
     }
 

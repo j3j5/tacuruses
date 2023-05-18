@@ -3,7 +3,6 @@
 namespace App\Http\Resources\ActivityPub;
 
 use ActivityPhp\Type;
-use App\Traits\Resources\ActivityPubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

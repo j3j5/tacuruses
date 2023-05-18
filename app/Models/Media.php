@@ -38,4 +38,11 @@ class Media extends Model
             // get: fn () => Arr::get($this->meta, 'original.height', Arr::get(getimagesize($this->remote_url), 1))
         );
     }
+
+    public function hash() : Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ?? 'UDRW0cIT~q-;t8WAM{V@_3V@D%kC4To0%LR*'
+        );
+    }
 }

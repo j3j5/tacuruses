@@ -12,6 +12,13 @@ use Illuminate\Support\Fluent;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
+/**
+ *
+ * @property \Illuminate\Http\UploadedFile $file
+ * @property ?\Illuminate\Http\UploadedFile $thumbnail
+ * @property ?string $description
+ * @property ?string $focus
+ */
 class Media extends Fluent
 {
     public static array $rules = [
@@ -24,9 +31,18 @@ class Media extends Fluent
 
     private ModelsMedia $model;
 
-    public function __construct(private LocalActor $actor, $attributes = [])
+    /**
+     *
+     * @param \App\Models\ActivityPub\LocalActor $actor
+     * @param array $attributes
+     * @phpstan-param array{file: \Illuminate\Http\UploadedFile, thumbnail?: \Illuminate\Http\UploadedFile, description?: string, focus?: string}  $attributes
+     * @throws \RuntimeException
+     * @return void
+     */
+    public function __construct(private LocalActor $actor, array $attributes)
     {
         try {
+            /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);
         } catch (ValidationException $e) {
             throw new RuntimeException('Invalid attributes for Media', 0, $e);

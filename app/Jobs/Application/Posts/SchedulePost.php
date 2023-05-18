@@ -12,7 +12,7 @@ final class SchedulePost
     /**
      * Execute the job.
      */
-    public function handle(Note $noteDto, Closure $next)
+    public function handle(Note $noteDto, Closure $next) : mixed
     {
         if ($noteDto->scheduled_at) {
             $note = $noteDto->getModel();

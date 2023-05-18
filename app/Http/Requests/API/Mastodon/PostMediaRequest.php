@@ -19,8 +19,10 @@ class PostMediaRequest extends ApiRequest
 
     public function getDTO() : Media
     {
+        /** @var \App\Models\ActivityPub\LocalActor $actor   */
+        $actor = $this->user();
         return new Media(
-            actor: $this->user(),
+            actor: $actor,
             attributes: $this->validated()
         );
     }

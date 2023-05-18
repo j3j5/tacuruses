@@ -74,7 +74,7 @@ class Media extends Model
     public function width() : Attribute
     {
         return Attribute::make(
-            get: fn () : string|int => 1200
+            get: fn () : string => '1200'
             // get: fn () => Arr::get($this->meta, 'original.width', Arr::get(getimagesize($this->remote_url), 0))
         );
     }
@@ -82,7 +82,7 @@ class Media extends Model
     public function height() : Attribute
     {
         return Attribute::make(
-            get: fn () : string|int => 780
+            get: fn () : string => '780'
             // get: fn () => Arr::get($this->meta, 'original.height', Arr::get(getimagesize($this->remote_url), 1))
         );
     }

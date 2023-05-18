@@ -19,8 +19,10 @@ class PostStatusRequest extends ApiRequest
 
     public function getDTO() : Note
     {
+        /** @var \App\Models\ActivityPub\LocalActor $actor   */
+        $actor = $this->user();
         return new Note(
-            actor: $this->user(),
+            actor: $actor,
             attributes: $this->validated()
         );
     }

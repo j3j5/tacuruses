@@ -13,7 +13,7 @@ final class CreateNewPost
     /**
      * Execute the job.
      */
-    public function handle(Note $noteDto, Closure $next)
+    public function handle(Note $noteDto, Closure $next) : mixed
     {
         $note = new LocalNote(['type' => 'Note']);
         $note->actor_id = $noteDto->getActor()->id;

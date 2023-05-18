@@ -6,13 +6,27 @@ namespace App\Domain\Application;
 
 use App\Enums\Visibility;
 use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\Note as ModelsNote;
+use App\Models\ActivityPub\LocalNote;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
+/**
+ *
+ * @property \App\Models\ActivityPub\LocalActor $actor
+ * @property ?string $status
+ * @property ?array $media_ids
+ * @property ?array $media
+ * @property ?string $in_reply_to_id
+ * @property ?bool $sensitive
+ * @property ?string $spoiler_text
+ * @property ?string $visibility
+ * @property ?string $language
+ * @property ?string $scheduled_at
+ * @property ?bool $draft
+ */
 class Note extends Fluent
 {
     public static array $rules = [
@@ -32,13 +46,14 @@ class Note extends Fluent
         'draft' => 'boolean',
     ];
 
-    private ModelsNote $model;
+    private LocalNote $model;
 
-    public function __construct(private LocalActor $actor, $attributes = [])
+    public function __construct(private LocalActor $actor, array $attributes)
     {
         self::$rules['visibility'] = [new Enum(Visibility::class)];
 
         try {
+            /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);
         } catch (ValidationException $e) {
             throw new RuntimeException('Invalid attributes for Media', 0, $e);
@@ -47,14 +62,14 @@ class Note extends Fluent
         parent::__construct($attributes);
     }
 
-    public function setModel(ModelsNote $model) : self
+    public function setModel(LocalNote $model) : self
     {
         $this->model = $model;
 
         return $this;
     }
 
-    public function getModel() : ModelsNote
+    public function getModel() : LocalNote
     {
         return $this->model;
     }

@@ -28,3 +28,5 @@ Makefile
 _ide_helper.php
 config/debugbar.php
 *.diff
+deploy.php
+

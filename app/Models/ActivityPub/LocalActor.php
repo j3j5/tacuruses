@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 use Parental\HasParent;
@@ -162,14 +163,34 @@ class LocalActor extends Actor implements
     public function avatar() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => !empty($value) ? Storage::cloud()->url($value) : asset('/img/default_avatar.svg'),
+            get: function ($value) : string {
+                if(empty($value)) {
+                    return asset('/img/default_avatar.svg');
+                }
+
+                if (Str::startsWith($value, 'http')) {
+                    return $value;
+                }
+
+                return Storage::cloud()->url($value);
+            }
         );
     }
 
     public function header() : Attribute
     {
         return Attribute::make(
-            get: fn ($value) : string => !empty($value) ? Storage::cloud()->url($value) : asset('/img/default_avatar.svg'),
+            get: function ($value) : string {
+                if(empty($value)) {
+                    return asset('/img/default_header.svg');
+                }
+
+                if (Str::startsWith($value, 'http')) {
+                    return $value;
+                }
+
+                return Storage::cloud()->url($value);
+            }
         );
     }
 

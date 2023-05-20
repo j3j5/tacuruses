@@ -50,7 +50,7 @@ return new class() extends Migration {
             $table->timestamp('startTime')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-endtime
             $table->timestamp('endTime')->nullable();
-            $table->string('visibility')->default(Visibility::PRIVATE)->comment('visibility of the note, check enum Visibility');
+            $table->string('visibility')->default(Visibility::PRIVATE->value)->comment('visibility of the note, check enum Visibility');
             $table->json('attachments')->nullable();
             $table->json('tags')->nullable();
             $table->json('repliesRaw')->nullable(); // remote only

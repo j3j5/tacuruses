@@ -107,8 +107,8 @@ class RemoteActor extends Actor
         $this->header = Arr::get($data, 'image.url');
         $this->inbox = $data['inbox'];
         $this->outbox = Arr::get($data, 'outbox');
-        $this->following_url = $data['following'];
-        $this->followers_url = $data['followers'];
+        $this->following_url = Arr::get($data, 'following');
+        $this->followers_url = Arr::get($data, 'followers');
         $this->sharedInbox = Arr::get($data, 'endpoints.sharedInbox');
         $this->publicKeyId = Arr::get($data, 'publicKey.id');
         $this->publicKey = Arr::get($data, 'publicKey.publicKeyPem');

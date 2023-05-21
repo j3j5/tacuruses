@@ -8,5 +8,5 @@
     title="{{ $actor->name }} ({{ $actor->full_username }})"
     @endif
     alt="Avatar of {{ $actor->full_username }}"
-    onerror="this.onerror=null;this.src='{{ $fallback }}'"
+    onerror="this.onerror=null; this.src='{{ $fallback }}'"
 >

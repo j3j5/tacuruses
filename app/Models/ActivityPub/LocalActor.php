@@ -142,7 +142,7 @@ class LocalActor extends Actor implements
 
     public function following() : HasMany
     {
-        return $this->hasMany(Follow::class, 'target_id');
+        return $this->hasMany(Follow::class, 'actor_id');
     }
 
     public function likes() : HasManyThrough

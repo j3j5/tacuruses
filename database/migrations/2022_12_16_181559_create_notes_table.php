@@ -26,7 +26,7 @@ return new class() extends Migration {
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
             $table->timestamp('published_at')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-content
-            $table->text('content');
+            $table->text('content')->nullable();
             $table->json('contentMap')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-summary
             $table->text('summary')->nullable()->comment('On Mastodon, this field contains the visible way when sensitive is true');

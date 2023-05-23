@@ -169,18 +169,18 @@ class Note extends Model
                     return Purify::clean($value);
                 }
 
-                if (count($this->content_map) === 1) {
-                    $content = Arr::first($this->content_map);
-                } elseif (count($this->content_map) > 1) {
+                if (count($this->contentMap) === 1) {
+                    $content = Arr::first($this->contentMap);
+                } elseif (count($this->contentMap) > 1) {
                     $content = Arr::get(
-                        $this->content_map,
+                        $this->contentMap,
                         $this->actor->language,
-                        Arr::first($this->content_map)
+                        Arr::first($this->contentMap)
                     );
                 } else {
                     return '';
                 }
-
+                // TODO: add support for other content-types like, markdown...
                 return Purify::clean($content);
             }
         );
@@ -191,7 +191,7 @@ class Note extends Model
         return Attribute::make(
             get: fn (?string $value) : array => $value === null
                 ? [$this->actor->language => $this->content]
-                : json_decode($value),
+                : json_decode($value, true),
             set: fn (?array $value) => $value !== null
                 ? json_encode($value)
                 : null

@@ -20,9 +20,10 @@ use Laravel\Sanctum\HasApiTokens;
 
 use Parental\HasParent;
 use RuntimeException;
-
 use function Safe\parse_url;
+
 use function Safe\preg_match;
+use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
 
 /**
  * App\Models\ActivityPub\LocalActor
@@ -123,6 +124,7 @@ class LocalActor extends Actor implements
     protected $casts = [
         'alsoKnownAs' => 'array',
         'properties' => 'array',
+        'bio' => PurifyHtmlOnGet::class . ':mastodon',
     ];
 
     /**

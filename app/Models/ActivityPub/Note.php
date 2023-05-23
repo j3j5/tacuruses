@@ -14,9 +14,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 use Parental\HasChildren;
-
 use function Safe\json_decode;
+
 use function Safe\json_encode;
+use Stevebauman\Purify\Facades\Purify;
 
 /**
  * App\Models\ActivityPub\Note
@@ -157,6 +158,43 @@ class Note extends Model
         return Attribute::make(
             get: fn (?string $value) : array => $value === null ? [] : json_decode($value),
             set: fn (?array $value) => $value !== null ? json_encode($value) : null
+        );
+    }
+
+    public function content() : Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): string {
+                if ($value !== null) {
+                    return Purify::clean($value);
+                }
+
+                if (count($this->content_map) === 1) {
+                    $content = Arr::first($this->content_map);
+                } elseif (count($this->content_map) > 1) {
+                    $content = Arr::get(
+                        $this->content_map,
+                        $this->actor->language,
+                        Arr::first($this->content_map)
+                    );
+                } else {
+                    return '';
+                }
+
+                return Purify::clean($content);
+            }
+        );
+    }
+
+    public function contentMap() : Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) : array => $value === null
+                ? [$this->actor->language => $this->content]
+                : json_decode($value),
+            set: fn (?array $value) => $value !== null
+                ? json_encode($value)
+                : null
         );
     }
 

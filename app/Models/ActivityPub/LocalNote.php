@@ -137,6 +137,7 @@ class LocalNote extends Note
         'bcc' => 'array',
         'visibility' => Visibility::class,
         // Implemented manually to force array return
+        // 'contentMap' => 'array',
         // 'attachments' => 'array',
         // 'tags' => 'array',
     ];
@@ -223,18 +224,6 @@ class LocalNote extends Note
     {
         return Attribute::make(
             get: fn () : string => $this->url
-        );
-    }
-
-    public function contentMap() : Attribute
-    {
-        return Attribute::make(
-            get: fn (?string $value) : array => $value === null
-                ? [$this->actor->language => $this->content]
-                : json_decode($value),
-            set: fn (?array $value) => $value !== null
-                ? json_encode($value)
-                : null
         );
     }
 

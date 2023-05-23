@@ -16,12 +16,15 @@ final class CreateNewPost
     public function handle(Note $noteDto, Closure $next) : mixed
     {
         $note = new LocalNote(['type' => 'Note']);
-        $note->actor_id = $noteDto->getActor()->id;
+        $actor = $noteDto->getActor();
+        $note->actor_id = $actor->id;
         $note->setRelation('actor', $noteDto->getActor());
 
-        $note->content = $noteDto->get('content', '');
-        if (empty($note->content)) {
-            $note->content = $noteDto->get('status', '');
+        $content = $noteDto->get('content', $noteDto->get('status', ''));
+        if ($content !== '') {
+            $note->contentMap = [
+                $actor->language => $content,
+            ];
         }
 
         $note->replyTo_id = $noteDto->get('replyTo_id');

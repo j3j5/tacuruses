@@ -3,6 +3,7 @@
 namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\Actor;
+use Http\Client\Exception\RequestException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 
@@ -22,6 +23,8 @@ class GetActorByKeyId
 
     /**
      * Execute the job.
+     *
+     * @throws \Http\Client\Exception\RequestException
      */
     public function handle() : Actor
     {
@@ -29,8 +32,13 @@ class GetActorByKeyId
             return $this->findLocalKey();
         } catch (ModelNotFoundException) {
         }
-        // We already tried for publicKeyId, so not an issue that it won't match
-        $actor = FindActorInfo::dispatchSync($this->keyId, false);
+
+        try {
+            // We already tried for publicKeyId, so not an issue that it won't match
+            $actor = FindActorInfo::dispatchSync($this->keyId, false);
+        } catch(RequestException $e) {
+            throw $e;
+        }
 
         return $actor;
     }

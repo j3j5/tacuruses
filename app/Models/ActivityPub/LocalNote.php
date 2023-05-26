@@ -37,7 +37,7 @@ use function Safe\preg_match;
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
- * @property string|null $contentMap
+ * @property array $contentMap
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
  * @property string|null $summaryMap
  * @property bool $sensitive Mastodon-specific; content warning

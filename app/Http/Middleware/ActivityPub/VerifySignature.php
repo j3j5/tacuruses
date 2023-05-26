@@ -102,8 +102,8 @@ class VerifySignature
             ->implode("\n");
 
         // 3. Fetch the keyId and resolve to an actor’s publicKey.
-        /** @var \App\Models\ActivityPub\Actor $actor */
         try {
+            /** @var \App\Models\ActivityPub\Actor $actor */
             $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
         } catch(RequestException $e) {
             Log::info($sigParameters['keyId'] . ' returned ' . $e->getCode() . ': ' . $e->getMessage());

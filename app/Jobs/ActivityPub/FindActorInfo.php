@@ -48,7 +48,14 @@ class FindActorInfo
         // Retrieve actor info from instance and store it on the DB
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::acceptJson()->get($this->actorId);
-        $actorData = $response->throw()->json();
+        if ($response->failed()) {
+            Log::info($this->actorId . ' could not be retrieved', [
+                'code' => $response->status(),
+                'response' => $response->body(),
+            ]);
+            abort(201, 'Actor cannot be found, keep moving');
+        }
+        $actorData = $response->json();
         $validator = Validator::make($actorData, [
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],

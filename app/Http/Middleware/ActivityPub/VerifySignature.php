@@ -5,7 +5,6 @@ namespace App\Http\Middleware\ActivityPub;
 use App\Jobs\ActivityPub\GetActorByKeyId;
 use Carbon\Carbon;
 use Closure;
-use Http\Client\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -102,13 +101,8 @@ class VerifySignature
             ->implode("\n");
 
         // 3. Fetch the keyId and resolve to an actor’s publicKey.
-        try {
-            /** @var \App\Models\ActivityPub\Actor $actor */
-            $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
-        } catch(RequestException $e) {
-            Log::info($sigParameters['keyId'] . ' returned ' . $e->getCode() . ': ' . $e->getMessage());
-            abort(201, 'Actor cannot be found, keep moving');
-        }
+        /** @var \App\Models\ActivityPub\Actor $actor */
+        $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
         $publicKey = $actor->publicKey;
 
         // Verify the actor's public key is the same than the action's actor

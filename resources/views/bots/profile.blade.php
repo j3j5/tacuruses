@@ -17,7 +17,7 @@
                 {{-- <span class="inline-block pl-2 pb-2 ml-2">{{ '@' . $actor->username }}</span> --}}
             </div>
             <div class="p-2 m-2">
-                <h1>{{ $actor->bio }}</h1>
+                <h1>{!! $actor->bio !!}</h1>
             </div>
 
             <div class="flex border-solid border-b-2 border-gray-300">

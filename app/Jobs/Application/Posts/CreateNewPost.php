@@ -27,6 +27,7 @@ final class CreateNewPost
             ];
         }
 
+        // For local replies
         $note->replyTo_id = $noteDto->get('replyTo_id');
         if (empty($note->replyTo_id)) {
             $note->replyTo_id = $noteDto->get('in_reply_to_id');

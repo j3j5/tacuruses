@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -162,6 +163,11 @@ class LocalNote extends Note
         return $this->hasMany(Note::class, 'replyTo_id');
     }
 
+    public function replyingTo() : HasOne
+    {
+        return $this->hasOne(Note::class, 'id', 'replyTo_id');
+    }
+
     public function mediaAttachments() : HasMany
     {
         return $this->hasMany(Media::class);
@@ -239,6 +245,23 @@ class LocalNote extends Note
     {
         return Attribute::make(
             get: fn (?string $value) : AnonymousResourceCollection => $this->mediaAttachments === null ? AttachmentResource::collection([]) : AttachmentResource::collection($this->mediaAttachments),
+            set: fn ($value) => null
+        );
+    }
+
+    public function inReplyTo() : Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value) : ?string {
+                if ($value !== null) {
+                    return $value;
+                }
+
+                if ($this->replyTo_id) {
+                    return route('note.show', [$this->replyingTo->actor, $this->replyingTo]);
+                }
+                return null;
+            },
             set: fn ($value) => null
         );
     }

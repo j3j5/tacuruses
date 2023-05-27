@@ -12,7 +12,7 @@ final class AddAttachments
     /**
      * Execute the job.
      */
-    public function handle(Note $noteDto, Closure $next) : mixed
+    public function handle(Note $noteDto, Closure $next) : Note
     {
         // MEDIA!!
         if ($noteDto->media_ids) {

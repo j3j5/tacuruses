@@ -13,7 +13,7 @@ final class CreateNewPost
     /**
      * Execute the job.
      */
-    public function handle(Note $noteDto, Closure $next) : mixed
+    public function handle(Note $noteDto, Closure $next) : Note
     {
         $note = new LocalNote(['type' => 'Note']);
         $actor = $noteDto->getActor();
@@ -38,7 +38,6 @@ final class CreateNewPost
         $note->visibility = $noteDto->get('visibility', Visibility::PRIVATE);
         $note->fillRecipients();
         // $note->language = $noteDto->getActor()->language;
-
         $note->save();
 
         $noteDto->setModel($note);

@@ -18,7 +18,7 @@ final class ParseHashtags
     /**
      * Execute the job.
      */
-    public function handle(Note $noteDto, Closure $next) : mixed
+    public function handle(Note $noteDto, Closure $next) : Note
     {
         $model = $noteDto->getModel();
         $tags = [];

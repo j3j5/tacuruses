@@ -46,6 +46,8 @@ final class ParseHashtags
         $model->tags = array_merge($model->tags, $tags);
         $model->save();
 
+        $noteDto->setModel($model);
+
         return $next($noteDto);
     }
 

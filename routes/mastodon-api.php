@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Mastodon\LookupAccount;
 use App\Http\Controllers\API\Mastodon\PostMedia;
 use App\Http\Controllers\API\Mastodon\PostStatus;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/media', PostMedia::class);
     });
 
+});
+
+Route::prefix('/api/v1')->group(function () {
+    Route::prefix('/accounts')->group(function () {
+        Route::get('/lookup', LookupAccount::class);
+    });
 });

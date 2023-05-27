@@ -10,6 +10,7 @@ use App\Http\Controllers\ActivityPub\Actors\NoteController;
 use App\Http\Controllers\ActivityPub\Actors\NoteRepliesController;
 use App\Http\Controllers\ActivityPub\Actors\OutboxController;
 use App\Http\Controllers\ActivityPub\Actors\ProfileController;
+use App\Http\Controllers\ActivityPub\Actors\TagController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
 use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
@@ -43,15 +44,17 @@ Route::middleware(['no.cookies'])->group(function () {
     });
 
     Route::get('/{actor}/outbox', OutboxController::class)->name('actor.outbox');
-});
 
-// Federation actors
-Route::get('/{actor}', ProfileController::class)->name('actor.show');
-Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
-Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
-Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');
-Route::get('/{actor}/{note}/replies', NoteRepliesController::class)->name('note.replies');
-Route::get('/{actor}/{note}', NoteController::class)->name('note.show');
+    // Federation actors
+    Route::get('/{actor}', ProfileController::class)->name('actor.show');
+    Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
+    Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
+    Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');
+    Route::get('/{actor}/{note}/replies', NoteRepliesController::class)->name('note.replies');
+    Route::get('/{actor}/{note}', NoteController::class)->name('note.show');
+
+    Route::get('/tags/{tag}', TagController::class)->name('tag.show');
+});
 
 Route::fallback(function (Request $request) {
     info('fallback', ['request' => $request]);

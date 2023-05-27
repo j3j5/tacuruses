@@ -20,7 +20,7 @@ final class CreateNewPost
         $note->actor_id = $actor->id;
         $note->setRelation('actor', $noteDto->getActor());
 
-        $content = $noteDto->get('content', $noteDto->get('status', ''));
+        $content = $noteDto->get('status', '');
         if ($content !== '') {
             $note->contentMap = [
                 $actor->language => $content,

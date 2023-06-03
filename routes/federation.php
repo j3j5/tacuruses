@@ -51,7 +51,9 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
     Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');
     Route::get('/{actor}/{note}/replies', NoteRepliesController::class)->name('note.replies');
-    Route::get('/{actor}/{note}', NoteController::class)->name('note.show');
+    Route::get('/{actor}/{note}', NoteController::class)->middleware('legacy')->name('legacy.note.show');
+    // Add the `/p` to mimick Pixelfed urls so Tusky (and others?) open in-app
+    Route::get('/p/{actor}/{note}', NoteController::class)->name('note.show');
 
     Route::get('/tags/{tag}', TagController::class)->name('tag.show');
 });

@@ -27,6 +27,7 @@
         "laravel/horizon": "^5.15",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.7",
+        "nojimage/twitter-text-php": "^3.2",
         "opcodesio/log-viewer": "^2.3",
         "phpseclib/phpseclib": "^3.0",
         "roave/security-advisories": "dev-latest",

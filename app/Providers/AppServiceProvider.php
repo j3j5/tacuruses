@@ -10,8 +10,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-
 use function Safe\strtotime;
+
+use Twitter\Text\Autolink;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,19 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(ContractsSnowflake::class, fn ($app) => $app->make('snowflake'));
+
+        $this->app->bind(Autolink::class, function ($app) {
+            $autolink = Autolink::create();
+            // Replace Twitter's URLs with my own
+            $autolink->setUrlBaseUser(config('app.url') . '/');
+            $autolink->setUrlBaseList(config('app.url') . '/');
+            $autolink->setUrlBaseHash(config('app.url') . '/tags/');
+            $autolink->setUrlBaseCash(config('app.url') . '/tags/');
+            $autolink->setToAllLinkClasses('post-url');
+            $autolink->setUsernameIncludeSymbol(true);
+
+            return $autolink;
+        });
 
         Blade::directive('icon', function (string $expression) {
             $args = explode(', ', $expression);

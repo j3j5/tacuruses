@@ -6,10 +6,24 @@ namespace App\Jobs\Application\Posts;
 
 use App\Domain\Application\Note;
 use Closure;
+use Twitter\Text\Autolink;
 
 final class ParseLinks
 {
-    private const REGEX = '%(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?%iu';
+    /**
+     * Constructor
+     * @param \Twitter\Text\Autolink $linker
+     * @return void
+     */
+    public function __construct(private Autolink $linker)
+    {
+        $this->linker->setExternal(true);
+        $this->linker->setNoFollow(true);
+        $this->linker->setRel('noreferrer', true);
+        $this->linker->setRel('noopener', true);
+
+        $this->linker->setURLClass($this->linker->getURLClass() . ' external-url');
+    }
 
     /**
      * Execute the job.
@@ -26,9 +40,7 @@ final class ParseLinks
                 // Content is HTML, ignore and let them handle their own links
                 continue;
             }
-
-            $replacement = '<a class="" href="${0}" target="_blank" rel="noreferer noopener">${0}</a>';
-            $contentMap[$lang] = preg_replace(self::REGEX, $replacement, $content);
+            $contentMap[$lang] = $this->linker->autoLinkURLs($content);
 
         }
         $model->contentMap = $contentMap;

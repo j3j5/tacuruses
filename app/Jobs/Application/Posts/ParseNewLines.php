@@ -12,8 +12,6 @@ final class ParseNewLines
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(Note $noteDto, Closure $next) : Note
     {

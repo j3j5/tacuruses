@@ -7,7 +7,6 @@ namespace App\Jobs\Application\Posts;
 use App\Domain\Application\Note;
 use Closure;
 use Twitter\Text\Autolink;
-use Twitter\Text\Extractor;
 
 final class ParseMentions
 {
@@ -16,7 +15,7 @@ final class ParseMentions
      * @param \Twitter\Text\Autolink $linker
      * @return void
      */
-    public function __construct(private Autolink $linker, private Extractor $extractor)
+    public function __construct(private Autolink $linker)
     {
         $this->linker->setExternal(false);
         $this->linker->setNoFollow(false);
@@ -26,8 +25,6 @@ final class ParseMentions
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(Note $noteDto, Closure $next) : Note
     {

@@ -28,9 +28,9 @@ use Stevebauman\Purify\Facades\Purify;
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
- * @property string|null $contentMap
+ * @property array|null $contentMap
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
- * @property string|null $summaryMap
+ * @property array|null $summaryMap
  * @property bool $sensitive Mastodon-specific; content warning
  * @property string $to array of recipients
  * @property string|null $bto array of recipients of the blind carbon copy
@@ -111,7 +111,9 @@ class Note extends Model
         'sensitive' => 'boolean',
         'published_at' => 'datetime',
         'visibility' => Visibility::class,
+        'summaryMap' => 'array',
         // Implemented manually to force array return
+        // 'contentMap' => 'array',
         // 'attachments' => 'array',
         // 'tags' => 'array',
     ];
@@ -166,21 +168,26 @@ class Note extends Model
         return Attribute::make(
             get: function (?string $value): string {
                 if ($value !== null) {
+                    /** @phpstan-ignore-next-line */
                     return Purify::clean($value);
+                }
+
+                if(!is_array($this->contentMap) || count($this->contentMap) === 0) {
+                    return '';
                 }
 
                 if (count($this->contentMap) === 1) {
                     $content = Arr::first($this->contentMap);
-                } elseif (count($this->contentMap) > 1) {
-                    $content = Arr::get(
-                        $this->contentMap,
-                        $this->actor->language,
-                        Arr::first($this->contentMap)
-                    );
-                } else {
-                    return '';
                 }
+
+                $content = Arr::get(
+                    $this->contentMap,
+                    $this->actor->language,
+                    Arr::first($this->contentMap)
+                );
+
                 // TODO: add support for other content-types like, markdown...
+                /** @phpstan-ignore-next-line */
                 return Purify::clean($content);
             }
         );

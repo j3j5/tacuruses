@@ -17,6 +17,7 @@ class LegacyCheck
     public function handle(Request $request, Closure $next)
     {
         if ($request->routeIs('legacy.note.show')) {
+            /** @phpstan-ignore-next-line */
             $newUrl = route('note.show', $request->route()->parameters());
             return redirect($newUrl, 301);
         }

@@ -257,7 +257,7 @@ class LocalNote extends Note
                     return $value;
                 }
 
-                if ($this->replyTo_id) {
+                if ($this->replyTo_id && $this->replyingTo instanceof Note) {
                     return route('note.show', [$this->replyingTo->actor, $this->replyingTo]);
                 }
                 return null;

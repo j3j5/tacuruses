@@ -55,6 +55,10 @@ class Note extends Fluent
     {
         self::$rules['visibility'] = [new Enum(Visibility::class)];
 
+        if (!isset($attributes['actor'])) {
+            $attributes['actor'] = $actor;
+        }
+
         try {
             /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);

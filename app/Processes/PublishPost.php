@@ -10,6 +10,7 @@ use App\Jobs\Application\Posts\CreateNewPost;
 use App\Jobs\Application\Posts\ParseHashtags;
 use App\Jobs\Application\Posts\ParseLinks;
 use App\Jobs\Application\Posts\ParseMentions;
+use App\Jobs\Application\Posts\ParseNewLines;
 use App\Jobs\Application\Posts\PublishPost as PostsPublishPost;
 use App\Jobs\Application\Posts\SchedulePost;
 use RuntimeException;
@@ -19,6 +20,7 @@ final class PublishPost extends Process
     protected array $tasks = [
         CreateNewPost::class,
         AddAttachments::class,
+        ParseNewLines::class,
         ParseLinks::class,
         ParseHashtags::class,
         ParseMentions::class,

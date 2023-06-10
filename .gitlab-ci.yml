@@ -50,6 +50,29 @@ Larastan:
     - Composer
   needs: ["Composer"]
 
+PHPUnit:
+  stage: test
+  before_script:
+    - php -v
+    - php vendor/bin/phpunit --version
+  script:
+    - php -d xdebug.mode=coverage vendor/bin/phpunit --config=phpunit.xml.dist --coverage-text --coverage-cobertura=cobertura-coverage.xml --log-junit report.xml
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  artifacts:
+    paths:
+      - storage/logs # for debugging
+      - storage/_reports # for debugging
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura-coverage.xml
+    expire_in: 1 days
+    when: always
+  dependencies:
+    - Composer
+  needs: ["Composer"]
+
 Security Check:
   stage: test
   before_script:

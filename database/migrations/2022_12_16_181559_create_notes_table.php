@@ -25,6 +25,7 @@ return new class() extends Migration {
             $table->string('activityId')->nullable();
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
             $table->timestamp('published_at')->nullable();
+            $table->text('original_content')->nullable()->comment('Store the submitted content before processing');
             // https://www.w3.org/TR/activitystreams-vocabulary/#dfn-content
             $table->text('content')->nullable();
             $table->json('contentMap')->nullable();

@@ -64,6 +64,7 @@ class PostStatusTest extends TestCase
 
         $expected = $status;
         $this->assertSame($expected, $note->content);
+        $this->assertNotNull($note->published_at);
     }
 
     /**
@@ -90,6 +91,7 @@ class PostStatusTest extends TestCase
         $anchor = '<a class="post-url external-url" href="https://example.com" rel="external nofollow noreferrer noopener" target="_blank">https://example.com</a>';
         $expected = '<p>' . str_replace($url, $anchor, $status) . '</p>';
         $this->assertSame($expected, $note->content);
+        $this->assertNotNull($note->published_at);
     }
 
         /**
@@ -117,5 +119,6 @@ class PostStatusTest extends TestCase
         $anchor = '<a href="' . $hashtagUrl . '" title="#' . $hashtag . '" class="post-url hashtag" target="_blank" rel="noreferrer noopener">#' . $hashtag . '</a>';
         $expected = '<p>' . str_replace("#$hashtag", $anchor, $status) . '</p>';
         $this->assertSame($expected, $note->content);
+        $this->assertNotNull($note->published_at);
     }
 }

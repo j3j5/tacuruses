@@ -26,6 +26,7 @@ use RuntimeException;
  * @property ?string $language
  * @property ?string $scheduled_at
  * @property ?bool $draft
+ * @property bool $plain_text
  */
 class Note extends Fluent
 {
@@ -58,7 +59,12 @@ class Note extends Fluent
             /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);
         } catch (ValidationException $e) {
-            throw new RuntimeException('Invalid attributes for Media', 0, $e);
+            throw new RuntimeException('Invalid attributes for Note', 0, $e);
+        }
+
+        $attributes['plain_text'] = false;
+        if (strip_tags($attributes['status']) === $attributes['status']) {
+            $attributes['plain_text'] = true;
         }
 
         parent::__construct($attributes);

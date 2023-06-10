@@ -36,7 +36,7 @@ final class ParseLinks
 
         $contentMap = $model->contentMap;
         foreach ($contentMap as $lang => $content) {
-            if (strip_tags($content) !== $content) {
+            if (!$noteDto->plain_text) {
                 // Content is HTML, ignore and let them handle their own links
                 continue;
             }

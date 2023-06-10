@@ -24,10 +24,9 @@ final class ParseNewLines
                 continue;
             }
             $paragraphs = explode("\n", $content);
-            if ($paragraphs === false) {
-                continue;
-            }
-            $contentMap[$lang] = collect($paragraphs)->map(fn (string $p) => "<p>$p</p>")->implode("\n");
+            $contentMap[$lang] = collect($paragraphs)
+                ->map(fn (string $p) => $p === '' ? '<br>' : "<p>$p</p>")
+                ->implode("\n");
         }
         $model->contentMap = $contentMap;
         $model->save();

@@ -24,6 +24,7 @@ final class CreateNewPost
 
         $content = $noteDto->get('status', '');
         if ($content !== '') {
+            $note->original_content = $content;
             $note->contentMap = [
                 $actor->language => $content,
             ];

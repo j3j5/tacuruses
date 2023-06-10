@@ -13,6 +13,7 @@ use App\Jobs\Application\Posts\ParseMentions;
 use App\Jobs\Application\Posts\ParseNewLines;
 use App\Jobs\Application\Posts\PublishPost as PostsPublishPost;
 use App\Jobs\Application\Posts\SchedulePost;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 final class PublishPost extends Process
@@ -40,6 +41,12 @@ final class PublishPost extends Process
         if (!$note instanceof Note) {
             throw new RuntimeException('Invalid param for PublishPost process. An Application\\Note was expected');
         }
-        return parent::run($note);
+
+        $attempts = 3;
+        DB::transaction(function () use ($note) {
+            $note = parent::run($note);
+        }, $attempts);
+        DB::commit();
+        return $note;
     }
 }

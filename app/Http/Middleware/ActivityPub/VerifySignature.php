@@ -46,13 +46,13 @@ class VerifySignature
 
         if (!$request->hasHeader('Date')) {
             Log::warning('No date present on header while validating signature. Aborting in prod.');
-            abort_if(app()->environment('production'), 403, 'Missing date');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Missing date');
         }
 
         $date = $request->header('Date');
         if (Carbon::parse($date)->diffInHours() > 2) {
             Log::warning('Given date differs with current date too much. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
-            abort_if(app()->environment('production'), 403, 'Missing date');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Missing date');
         }
 
         // For delete activities, the signature doesn't really matter, we'll check
@@ -67,7 +67,7 @@ class VerifySignature
         $parts = explode(',', $signature);
         if (!is_array($parts)) {
             Log::warning('The signature is not well formed. Aborting in prod.', ['signature' => $signature]);
-            abort_if(app()->environment('production'), 403, 'Wrong Signature');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Wrong Signature');
         }
         $sigParameters = [];
         $pattern = '/(?<key>\w+)="(?<value>.+)"/';
@@ -79,7 +79,7 @@ class VerifySignature
 
         if (!isset($sigParameters['keyId'], $sigParameters['headers'], $sigParameters['signature'])) {
             Log::warning('The signature seems to be missing parts', ['sigParameters' => $sigParameters]);
-            abort_if(app()->environment('production'), 403, 'Wrong Signature');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Wrong Signature');
         }
 
         // 2. Construct the signature string from the value of headers.
@@ -96,7 +96,7 @@ class VerifySignature
                     $headerDigest = $request->header('digest');
                     if ($digest !== $headerDigest) {
                         Log::notice('Digest does not match. Aborting in prod.', ['given' => $headerDigest, 'calculated' => $digest]);
-                        abort_if(app()->environment('production'), 403, 'Digest does not match');
+                        abort_if(app()->environment(['production', 'testing']), 403, 'Digest does not match');
                     }
                     $headers[$header] = $digest;
                     break;
@@ -121,7 +121,7 @@ class VerifySignature
                 'actor' => $actor,
                 'request' => $request->toArray(),
             ]);
-            abort_if(app()->environment('production'), 403, 'Actors do not match');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Actors do not match');
         }
 
         Log::debug('Algorithm is ' . $sigParameters['algorithm']);
@@ -140,7 +140,7 @@ class VerifySignature
 
         if ($verified !== 1) {
             Log::warning('Unable to verify given signature');
-            abort_if(app()->environment('production'), 403, 'Unable to verify given signature');
+            abort_if(app()->environment(['production', 'testing']), 403, 'Unable to verify given signature');
         }
 
         Log::debug('Signature is VERIFIED!');

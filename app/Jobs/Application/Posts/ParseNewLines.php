@@ -23,10 +23,7 @@ final class ParseNewLines
                 // Content is HTML, ignore and let them handle their own links
                 continue;
             }
-            $paragraphs = explode("\n", $content);
-            $contentMap[$lang] = collect($paragraphs)
-                ->map(fn (string $p) => $p === '' ? '<br>' : "<p>$p</p>")
-                ->implode("\n");
+            $contentMap[$lang] = nl2br($content, false);
         }
         $model->contentMap = $contentMap;
         $model->save();

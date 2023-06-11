@@ -22,7 +22,7 @@ class ParsePostsTest extends TestCase
         $this->process = app(PublishPost::class);
     }
 
-    public function test_new_lines_on_plain_text_statuses_get_converted_to_paragraphs()
+    public function test_new_lines_on_plain_text_statuses_get_converted_to_brs()
     {
         $actor = LocalActor::factory()->create();
         $sentences = $this->faker->sentences();
@@ -35,7 +35,7 @@ class ParsePostsTest extends TestCase
         );
         $note = $this->process->run($dto);
 
-        $this->assertSame(collect($sentences)->map(fn (string $sentence) => "<p>$sentence</p>")->implode("\n"), $note->getModel()->content);
+        $this->assertSame('<p>' . nl2br($status, false) . '</p>', $note->getModel()->content);
     }
 
     public function test_html_content_with_new_lines_does_not_get_changed()

@@ -35,7 +35,7 @@ class ParsePostsTest extends TestCase
         );
         $note = $this->process->run($dto);
 
-        $this->assertSame('<p>' . nl2br($status, false) . '</p>', $note->getModel()->content);
+        $this->assertSame('<p>' . str_replace(PHP_EOL, '', nl2br($status, false)) . '</p>', $note->getModel()->content);
     }
 
     public function test_html_content_with_new_lines_does_not_get_changed()

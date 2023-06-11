@@ -23,7 +23,7 @@ final class ParseNewLines
                 // Content is HTML, ignore and let them handle their own links
                 continue;
             }
-            $contentMap[$lang] = nl2br($content, false);
+            $contentMap[$lang] = str_replace(PHP_EOL, '', nl2br($content, false));
         }
         $model->contentMap = $contentMap;
         $model->save();

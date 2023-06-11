@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Jobs\ActivityPub\GetActorByKeyId;
+use App\Jobs\ActivityPub\ProcessDeleteAction;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
@@ -51,6 +53,14 @@ class VerifySignature
         if (Carbon::parse($date)->diffInHours() > 2) {
             Log::warning('Given date differs with current date too much. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
             abort_if(app()->environment('production'), 403, 'Missing date');
+        }
+
+        // For delete activities, the signature doesn't really matter, we'll check
+        // later on the job whether the user actually exists on its activityID location
+        // and act based on that, we don't really care who is notifying us about it
+        if ($request->json('type') === 'Delete') {
+            ProcessDeleteAction::dispatch(Type::create('Delete', $request->json()->all()));
+            return response()->activityJson();
         }
 
         // 1. Split Signature: into its separate parameters.

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 {
@@ -30,6 +31,9 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 
     public function handle() : void
     {
+        if (!is_string($this->action->actor)) {
+            throw new RuntimeException('Unsupported Delete action: ' . $this->action->toJson());
+        }
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::acceptJson()->get($this->action->actor);
         if ($response->status() !== 410) {

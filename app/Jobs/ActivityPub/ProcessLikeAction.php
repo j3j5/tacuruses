@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Like as ExtendedActivityLike;
@@ -14,7 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RuntimeException;
 
-class ProcessLikeAction implements ShouldQueue
+final class ProcessLikeAction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\ActivityAnnounce;
@@ -15,7 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendAnnounceAcceptToActor implements ShouldQueue
+final class SendAnnounceAcceptToActor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;

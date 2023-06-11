@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Undo;
@@ -15,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
-class ProcessUndoAction implements ShouldQueue
+final class ProcessUndoAction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\Actor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class GetActorByKeyId
+final class GetActorByKeyId
 {
     use Dispatchable;
 

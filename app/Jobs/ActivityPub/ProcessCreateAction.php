@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Object\Article;
@@ -31,7 +33,7 @@ use RuntimeException;
 use function Safe\json_encode;
 use function Safe\preg_match;
 
-class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
+final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\Actor;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
  *
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon: array<string,string>, image: array<string,string>, inbox: string, outbox: string, following: string, followers: string, endpoints: array<string,string>, publicKey: array<string,string> }
  */
-class FindActorInfo
+final class FindActorInfo
 {
     use Dispatchable, SerializesModels;
 

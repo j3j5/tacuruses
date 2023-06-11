@@ -22,11 +22,12 @@ class ParsePostsTest extends TestCase
         $this->process = app(PublishPost::class);
     }
 
-    public function test_new_lines_on_plain_text_statuses_get_converted_to_brs()
+    public function test_plain_text_note_with_hashtag_and_link()
     {
         $actor = LocalActor::factory()->create();
-        $sentences = $this->faker->sentences();
-        $status = implode("\n", $sentences);
+        $hashtag = 'humblebrag';
+        $url = 'https://example.com/example/link';
+        $status = 'just setting up my fedibot' . PHP_EOL . "#$hashtag $url";
         $dto = new Note(
             actor: $actor,
             attributes: [
@@ -35,10 +36,19 @@ class ParsePostsTest extends TestCase
         );
         $note = $this->process->run($dto);
 
-        $this->assertSame('<p>' . str_replace(PHP_EOL, '', nl2br($status, false)) . '</p>', $note->getModel()->content);
+        $hashtagAnchor = '<a href="https://example.com/tags/' . $hashtag . '" title="#' . $hashtag . '" class="post-url hashtag" target="_blank" rel="noreferrer noopener">#' . $hashtag . '</a>';
+        $urlAnchor = '<a class="post-url external-url" href="' . $url . '" rel="external nofollow noreferrer noopener" target="_blank">' . $url . '</a>';
+        $expected = '<p>just setting up my fedibot'
+            . '<br>'
+            . $hashtagAnchor
+            . ' '
+            . $urlAnchor
+            . '</p>';
+
+        $this->assertSame($expected, $note->getModel()->content);
     }
 
-    public function test_html_content_with_new_lines_does_not_get_changed()
+    public function test_html_note_with_hashtag_and_link()
     {
         $actor = LocalActor::factory()->create();
         $status = '<p>' . implode("\n", $this->faker->sentences()) . '</p>';

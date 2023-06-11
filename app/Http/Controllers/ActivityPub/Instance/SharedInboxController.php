@@ -21,13 +21,12 @@ class SharedInboxController extends Controller
      */
     public function __invoke(Request $request) : JsonResponse
     {
-        // info(__CLASS__, ['request' => $request]);
         /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
         $action = $request->json();
 
         /** @var \App\Models\ActivityPub\Actor $actor */
         $actor = $request->actorModel;
-        // // Remove the actor from request
+        // Remove the actor from request
         $action->remove('actorModel');
 
         /** @var string $type */

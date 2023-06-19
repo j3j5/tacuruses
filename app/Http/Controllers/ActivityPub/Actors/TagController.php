@@ -20,6 +20,6 @@ class TagController extends Controller
             ]);
         }
 
-        return view('bots.tag', compact('tag'));
+        return view('actors.tag', compact('tag'));
     }
 }

@@ -33,6 +33,6 @@ class NoteController extends Controller
     private function viewNote(LocalNote $note) : View
     {
         $peers = $note->peers()->inRandomOrder()->take(10)->get();
-        return view('bots.note', compact(['note', 'peers']));
+        return view('actors.note', compact(['note', 'peers']));
     }
 }

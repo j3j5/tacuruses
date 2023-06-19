@@ -45,7 +45,7 @@ class ProfileController extends Controller
             fn (LocalNote $note) => $note->setRelation('actor', $actor)
         );
 
-        return view('bots.profile', compact(['actor']));
+        return view('actors.profile', compact(['actor']));
     }
 
 }

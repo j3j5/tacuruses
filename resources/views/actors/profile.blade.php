@@ -31,7 +31,7 @@
 
             <div class="mt-2 pt-2 pb-2 w-full">
             @foreach ($actor->notes->loadMissing('peers') as $note)
-                @include('bots._note', ['peers' => $note->peers, 'avatar_size' => 'w-10'])
+                @include('actors._note', ['peers' => $note->peers, 'avatar_size' => 'w-10'])
             @endforeach
             </div>
         </div>

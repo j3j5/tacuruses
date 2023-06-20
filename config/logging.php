@@ -117,6 +117,12 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'slowqueries' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/slow-queries.log'),
+            'level' => 'debug',
+        ],
     ],
 
 ];

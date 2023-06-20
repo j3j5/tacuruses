@@ -148,4 +148,18 @@ return [
 
     ],
 
+     /*
+    |--------------------------------------------------------------------------
+    | Query logging
+    |--------------------------------------------------------------------------
+    |
+    | A few config keys to handle query logging. You can choose to log all
+    | queries, only the slow ones or none as well as defining what a slow
+    | query is (default is 2s).
+    |
+    */
+    'log_all_queries' => env('DB_LOG_ALL_QUERIES', false),
+    'log_slow_queries' => env('DB_LOG_SLOW_QUERIES', false),
+    'slow_query_time' => env('DB_SLOW_QUERY_TIME', 2),
+    'enable_query_backtrace' => env('DB_ENABLE_QUERY_BACKTRACE', false),
 ];

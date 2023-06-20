@@ -6,10 +6,15 @@ use App\Contracts\Snowflake as ContractsSnowflake;
 use Godruoyi\Snowflake\LaravelSequenceResolver;
 use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+
 use function Safe\strtotime;
 
 use Twitter\Text\Autolink;
@@ -86,5 +91,59 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(!$this->app->isProduction());
         Model::preventSilentlyDiscardingAttributes(!$this->app->isProduction());
         Model::preventAccessingMissingAttributes(!$this->app->isProduction());
+
+        DB::listen(function (QueryExecuted $query) {
+            if (config('database.log_all_queries')) {
+                $level = 'debug';
+            }
+            if (config('database.log_slow_queries') && $query->time >= config('database.slow_query_time')) {
+                $level = 'notice';
+            }
+
+            if (isset($level)) {
+                $message = $query->time / 1000 . 's; ';
+                $message .= preg_replace(array_pad([], count($query->bindings), '/\?/'), $query->bindings, $query->sql, 1);
+
+                if (config('database.enable_query_backtrace')) {
+                    $message .= $this->createStackTrace();
+                }
+
+                Log::channel('slowqueries')->$level($message);
+            }
+        });
+
     }
+
+    /**
+     * The first six elements on the stack trace are:
+     *  #0 app/Providers/AppServiceProvider.php(108): App\Providers\AppServiceProvider->createStackTrace
+     *  #1 vendor/laravel/framework/src/Illuminate/Events/Dispatcher.php(421): App\Providers\AppServiceProvider->App\Providers\{closure}
+     *  #2 vendor/laravel/framework/src/Illuminate/Events/Dispatcher.php(249): Illuminate\Events\Dispatcher->Illuminate\Events\{closure}
+     *  #3 vendor/laravel/framework/src/Illuminate/Database/Connection.php(996): Illuminate\Events\Dispatcher->dispatch
+     *  #4 vendor/laravel/framework/src/Illuminate/Database/Connection.php(778): Illuminate\Database\Connection->event
+     *  #5 vendor/laravel/framework/src/Illuminate/Database/Connection.php(731): Illuminate\Database\Connection->logQuery
+     *  #6 vendor/laravel/framework/src/Illuminate/Database/Connection.php(422): Illuminate\Database\Connection->run
+     * @return string
+     */
+    private function createStackTrace() : string
+    {
+        $backtrace = collect(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
+            ->skip(6)   // the first six are related to the event all the way here
+            ->values()
+            ->map(function (array $element, int $index) : string {
+                // dump($element);
+                $line = "#$index ";
+                if (isset($element['file'], $element['line'])) {
+                    $line .= "{$element['file']}({$element['line']}): ";
+                }
+                if (isset($element['class'], $element['type'], $element['function'])) {
+                    $line .= "{$element['class']}{$element['type']}{$element['function']}";
+                }
+                return  $line;
+            })->implode(PHP_EOL);
+        $stacktrace = PHP_EOL . '[stacktrace]' . PHP_EOL . $backtrace . PHP_EOL;
+
+        return $stacktrace;
+    }
+
 }

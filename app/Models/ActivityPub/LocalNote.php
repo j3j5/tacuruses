@@ -121,7 +121,7 @@ class LocalNote extends Note
     use HasFactory;
     use HasParent;
 
-    public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?<noteId>\d+)$#';
+    public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?:p/)?(?<noteId>\d+)$#';
 
     protected $fillable = ['type', 'note_type'];
 

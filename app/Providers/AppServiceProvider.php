@@ -8,13 +8,13 @@ use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
+use function Safe\preg_replace;
 use function Safe\strtotime;
 
 use Twitter\Text\Autolink;
@@ -136,9 +136,10 @@ class AppServiceProvider extends ServiceProvider
                 if (isset($element['file'], $element['line'])) {
                     $line .= "{$element['file']}({$element['line']}): ";
                 }
-                if (isset($element['class'], $element['type'], $element['function'])) {
-                    $line .= "{$element['class']}{$element['type']}{$element['function']}";
+                if (isset($element['class'], $element['type'])) {
+                    $line .= "{$element['class']}{$element['type']}";
                 }
+                $line .= $element['function'];
                 return  $line;
             })->implode(PHP_EOL);
         $stacktrace = PHP_EOL . '[stacktrace]' . PHP_EOL . $backtrace . PHP_EOL;

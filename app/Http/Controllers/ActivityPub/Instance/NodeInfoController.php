@@ -77,8 +77,7 @@ class NodeInfoController extends Controller
         return response()->json([
             'links' => [
                 [
-                    // 'href' => config('federation.nodeinfo.url'),
-                    'href' => 'https://bots.remote-dev.j3j5.uy/nodeinfo/2.0',
+                    'href' => config('federation.homepage', config('app.url')),
                     'rel' => 'http://nodeinfo.diaspora.software/ns/schema/2.0',
                 ],
             ],

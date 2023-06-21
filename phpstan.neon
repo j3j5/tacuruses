@@ -22,6 +22,7 @@ parameters:
     stubFiles:
         - resources/stubs/AbstractActivity.stub
         - resources/stubs/AbstractActor.stub
+        - resources/stubs/AbstractActorCore.stub
         - resources/stubs/AbstractObject.stub
         - resources/stubs/Activity.stub
         - resources/stubs/Collection.stub
@@ -30,3 +31,5 @@ parameters:
         - resources/stubs/Image.stub
         - resources/stubs/Link.stub
         - resources/stubs/ObjectType.stub
+        - resources/stubs/OrderedCollection.stub
+        - resources/stubs/OrderedCollectionPage.stub

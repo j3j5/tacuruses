@@ -3,10 +3,6 @@
 namespace ActivityPhp\Type;
 
 /**
- * @template \TKey
- */
-
-/**
  * \ActivityPhp\Type\AbstractObject is an abstract class for all
  * Activity Streams Core Types.
  *
@@ -34,9 +30,9 @@ abstract class AbstractObject
     /**
      * Affect a value to a property or an extended property
      *
-     * @template T<TKey, TValue>
-     * @param  TKey $value
-     * @return \ActivityPhp\Type\AbstractObject|array<\ActivityPhp\Type\AbstractObject>|TKey
+     * @template T
+     * @param array<mixed, mixed>|T $value
+     * @return \ActivityPhp\Type\AbstractObject|array<\ActivityPhp\Type\AbstractObject>|T
      */
     private function transform($value);
 
@@ -59,7 +55,6 @@ abstract class AbstractObject
      */
     public function getProperties();
 
-
     /**
      * Get a list of all properties and their values
      * as an associative array.
@@ -67,7 +62,6 @@ abstract class AbstractObject
      * @return array<string, mixed>
      */
     public function toArray(): array;
-
 
     /**
      * Get a JSON
@@ -115,8 +109,8 @@ abstract class AbstractObject
      *
      * @param string $name
      * @param array<int|string, mixed>|null $arguments
-     * @return self|null|mixed
      * @throws \Exception
+     * @return self|null|mixed
      */
     public function __call(string $name, ?array $arguments = []);
 }

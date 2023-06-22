@@ -297,6 +297,7 @@ class LocalActor extends Actor implements
         $person = $this->getActorArray();
 
         $type = 'Service'; // TODO: move to the DB
+        /** @phpstan-ignore-next-line */
         return Type::create($type, array_merge($context, $person));
     }
 

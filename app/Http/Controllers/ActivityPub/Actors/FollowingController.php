@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Http\Resources\ActivityPub\FollowCollection;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
@@ -13,6 +14,11 @@ use Illuminate\Http\Request;
 
 class FollowingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     /**
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException

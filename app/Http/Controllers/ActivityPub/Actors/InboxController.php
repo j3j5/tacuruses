@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
@@ -25,6 +26,11 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InboxController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     /**
      *
      * @param \Illuminate\Http\Request $request

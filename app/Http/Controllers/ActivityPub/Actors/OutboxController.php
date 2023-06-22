@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type\Core\OrderedCollection;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Http\Resources\ActivityPub\OutboxCollection;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
@@ -15,6 +16,11 @@ use Illuminate\Http\Request;
 
 class OutboxController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|OutboxCollection
     {
         $perPage = 20;

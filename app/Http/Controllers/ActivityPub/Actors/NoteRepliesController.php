@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use ActivityPhp\Type\Core\Collection;
 use ActivityPhp\Type\Core\CollectionPage;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Http\Resources\ActivityPub\RepliesResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -14,6 +15,11 @@ use Illuminate\Http\Request;
 
 class NoteRepliesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : RepliesResource|JsonResponse
     {
         if ($request->has('page')) {

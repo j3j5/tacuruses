@@ -10,8 +10,9 @@ Composer:
     - php -v
     - composer -V
     - composer check-platform-reqs
+    - composer config cache-files-dir .composer-cache
   script:
-    - composer install --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
     # Just to make sure they work
     - php artisan config:cache
     - php artisan route:cache
@@ -20,6 +21,13 @@ Composer:
       - vendor
     expire_in: 1 days
     when: always
+  cache:
+    key:
+      files:
+        - composer.lock
+    paths:
+      - .composer-cache/
+  needs: []
 
 NPM:
   stage: dependencies

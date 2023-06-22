@@ -99,6 +99,7 @@ PHPUnit:
     when: always
   dependencies:
     - Composer
+    - NPM
   needs: ["Composer", "NPM"]
 
 Security Check:

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ActivityPub\ProfileResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -17,10 +17,10 @@ class ProfileController extends Controller
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function __invoke(Request $request, LocalActor $user) : ProfileResource|View
+    public function __invoke(Request $request, LocalActor $user) : JsonResponse|View
     {
         if ($request->wantsJson()) {
-            return new ProfileResource($user);
+            return response()->activityJson($user->getAPActor()->toArray());
         }
 
         return $this->profile($user);
@@ -47,5 +47,4 @@ class ProfileController extends Controller
 
         return view('actors.profile', compact(['actor']));
     }
-
 }

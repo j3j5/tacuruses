@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ActivityPub\NoteResource;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -17,7 +17,7 @@ class NoteController extends Controller
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : NoteResource | View
+    public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : JsonResponse | View
     {
         if ($request->wantsJson()) {
             return $this->jsonNote($note);
@@ -25,9 +25,9 @@ class NoteController extends Controller
         return $this->viewNote($note);
     }
 
-    private function jsonNote(LocalNote $note) : NoteResource
+    private function jsonNote(LocalNote $note) : JsonResponse
     {
-        return new NoteResource($note);
+        return response()->activityJson($note->getAPNote()->toArray());
     }
 
     private function viewNote(LocalNote $note) : View

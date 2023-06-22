@@ -2,6 +2,9 @@
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use App\Domain\ActivityPub\Mastodon\AbstractActor;
+use App\Services\ActivityPub\Context;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -287,11 +290,19 @@ class LocalActor extends Actor implements
         );
     }
 
-    public function getActorArray() : array
+    public function getAPActor() : AbstractActor
+    {
+        $context = ['@context' => Context::$actor];
+
+        $person = $this->getActorArray();
+
+        $type = 'Service'; // TODO: move to the DB
+        return Type::create($type, array_merge($context, $person));
+    }
+
+    private function getActorArray() : array
     {
         $person = [
-            // 'type' => 'Person',
-            'type' => 'Service', // Bot
             'id' => $this->activityId,
             'preferredUsername' => $this->username,
             'url' => $this->url,
@@ -315,7 +326,6 @@ class LocalActor extends Actor implements
             'tag' => [],
             'attachment' => Arr::wrap($this->properties),
             'discoverable' => true,
-            // When the bot joined the fediverse (or it was created)
             // Crypto to sign messages
             'publicKey' => [
                 'id' => $this->key_id,
@@ -332,13 +342,16 @@ class LocalActor extends Actor implements
             'outbox' => $this->outbox,
             'following' => $this->following_url,
             'followers' => $this->followers_url,
-            'manuallyApprovesFollowers' => false,
+            'manuallyApprovesFollowers' => false,   // TODO: Move to the DB
             'endpoints' => [
                 'sharedInbox' => route('shared-inbox'),
             ],
         ];
-
-        return array_merge($person, $metadata, $links);
+        $actor = Type::create(
+            'Service', // store on the db
+            array_merge($person, $metadata, $links)
+        );
+        return $actor->toArray();
     }
 
     public function scopeByActivityId(Builder $query, string $activityId) : void

@@ -39,8 +39,6 @@ class WebfingerController extends Controller
         $webfinger = new WebFinger([
             'subject' => $resource,
             'aliases' => [
-                // 'https://' . request()->getHost() . '/' . $user->username
-                // 'https://' . request()->getHost() . '/@' . $user->username,
                 // TODO: Add support for aliases on said user object
                 // $user->getAliases(),
             ],
@@ -48,16 +46,12 @@ class WebfingerController extends Controller
                 [
                     'rel' => 'http://webfinger.net/rel/profile-page',
                     'type' => 'text/html',
-                    'href' => "https://bots.remote-dev.j3j5.uy/@{$user->username}",
+                    'href' => route('actor.show', [$user]),
                 ],
                 [
                     'rel' => 'self',
                     'type' => 'application/activity+json',
                     'href' => route('actor.show', [$user]),
-                ],
-                [
-                    'rel' => 'http://ostatus.org/schema/1.0/subscribe',
-                    'template' => "https://$hostname/authorize_interaction?uri={uri}",
                 ],
             ],
         ]);

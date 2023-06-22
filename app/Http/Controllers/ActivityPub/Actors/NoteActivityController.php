@@ -29,13 +29,8 @@ class NoteActivityController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor, LocalNote $note) : JsonResponse
     {
-        $context = ['@context' => [
-            Context::ACTIVITY_STREAMS,
-            Context::$status,
-        ]];
-
         $activity = $note->getAPActivity();
 
-        return response()->activityJson(array_merge($context, $activity->toArray()));
+        return response()->activityJson($activity->toArray());
     }
 }

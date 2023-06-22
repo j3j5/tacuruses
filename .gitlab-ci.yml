@@ -20,6 +20,26 @@ Composer:
       - vendor
     expire_in: 1 days
     when: always
+
+NPM:
+  stage: dependencies
+  before_script:
+    - node -v
+    - npm -v
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - npm run prod
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 days
+    when: always
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
   needs: []
 
 PHP-CS-Fixer:
@@ -71,7 +91,7 @@ PHPUnit:
     when: always
   dependencies:
     - Composer
-  needs: ["Composer"]
+  needs: ["Composer", "NPM"]
 
 Security Check:
   stage: test

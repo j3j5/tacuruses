@@ -93,6 +93,7 @@ class RemoteNote extends Note
 
     /** @var array<string, string> */
     protected $casts = [
+        'id' => 'integer',
         'sensitive' => 'boolean',
         'to' => 'array',
         'cc' => 'array',

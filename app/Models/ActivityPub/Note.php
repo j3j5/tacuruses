@@ -108,6 +108,7 @@ class Note extends Model
 
     /** @var array<string, string> */
     protected $casts = [
+        'id' => 'integer',
         'sensitive' => 'boolean',
         'published_at' => 'datetime',
         'visibility' => Visibility::class,

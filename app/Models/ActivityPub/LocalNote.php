@@ -127,6 +127,7 @@ class LocalNote extends Note
 
     /** @var array<string, string> */
     protected $casts = [
+        'id' => 'integer',
         'sensitive' => 'boolean',
         'startTime' => 'datetime',
         'endTime' => 'datetime',

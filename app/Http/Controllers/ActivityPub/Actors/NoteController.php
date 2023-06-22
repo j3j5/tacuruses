@@ -32,7 +32,7 @@ class NoteController extends Controller
 
     private function viewNote(LocalNote $note) : View
     {
-        $peers = $note->peers()->inRandomOrder()->take(10)->get();
+        $peers = $note->peers()->latest()->take(10)->get()->shuffle();
         return view('actors.note', compact(['note', 'peers']));
     }
 }

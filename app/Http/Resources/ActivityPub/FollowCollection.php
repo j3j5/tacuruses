@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Traits\Resources\ActivityPubResource;
@@ -27,6 +28,7 @@ class FollowCollection extends ResourceCollection
     public static $wrap = null;
 
     public LocalActor $user;
+    public bool $following = false;
 
     /**
      * Transform the resource collection into an array.
@@ -38,18 +40,28 @@ class FollowCollection extends ResourceCollection
     {
         $prev = $this->resource->previousPageUrl();
         $next = $this->resource->nextPageUrl();
-        return [
+
+        $collection = Type::create('OrderedCollectionPage', [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->resource->url($this->resource->currentPage()),
-            'type' => 'OrderedCollectionPage',
-            'totalItems' => $this->resource->count(),
-            'next' => $this->when(!empty($next), $next),
+            'totalItems' => $this->resource->total(),
+            'first' => $this->when($this->resource->hasPages(), $this->resource->url(0)),
+            'last' => $this->when($this->resource->hasPages(), $this->resource->url($this->resource->lastPage())),
             'prev' => $this->when(!empty($prev), $prev),
-            'partOf' => route('actor.followers', [$this->user]),
+            'current' => $this->when($this->resource->hasPages(), $this->resource->url($this->resource->currentPage())),
+            'next' => $this->when(!empty($next), $next),
+            'partOf' => $this->following
+                ? route('actor.following', [$this->user])
+                : route('actor.followers', [$this->user]),
             'orderedItems' => $this->collection->map(
-                fn (FollowResource $follow) => $follow->getId()
+                function (FollowResource $resource) : string {
+                    $resource->following = $this->following;
+                    return $resource->getId();
+                }
             ),
-        ];
+        ]);
+
+        return $collection->toArray();
     }
 
     /**

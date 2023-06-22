@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ActivityPub\Actors;
 
+use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Http\Resources\ActivityPub\FollowCollection;
@@ -14,6 +15,8 @@ use Illuminate\Http\Request;
 
 class FollowersController extends Controller
 {
+    public const PER_PAGE = 20;
+
     public function __construct()
     {
         $this->middleware(OnlyRequestsWantJson::class);
@@ -26,21 +29,23 @@ class FollowersController extends Controller
      */
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|FollowCollection
     {
-        $perPage = 20;
-        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator */
-        $followers = $actor->followers()->paginate($perPage);
+        /** @var \Illuminate\Pagination\LengthAwarePaginator */
+        $followers = $actor->followers()->with('actor')->paginate(self::PER_PAGE);
 
-        if ($request->missing(['page']) && $followers->total() > $perPage) {
-            return response()->activityJson([
+        if ($request->missing(['page']) && $followers->total() > self::PER_PAGE) {
+            // When quering the id (w/o page), if there is more than one page,
+            // we only return the reference, but the actual items come
+            // on OrderedCollectionPages
+            return response()->activityJson(Type::create('OrderedCollection', [
                 '@context' => Context::ACTIVITY_STREAMS,
                 'id' => $actor->followers_url,
-                'type' => 'OrderedCollection',
                 'totalItems' => $followers->total(),
                 'first' => $followers->url(0),
                 // First items, order by desc (the last item on this collection is the first ever published)
                 'last' => $followers->url($followers->lastPage()),
-            ]);
+            ])->toArray());
         }
+
         $collection = new FollowCollection($followers);
         $collection->user = $actor;
         return $collection;

@@ -13,8 +13,12 @@ class FollowResource extends JsonResource
 {
     use ActivityPubResource;
 
+    public bool $following = false;
+
     public function getId() : string
     {
-        return $this->resource->actor->activityId;
+        return $this->following
+            ? $this->resource->target->activityId
+            : $this->resource->actor->activityId;
     }
 }

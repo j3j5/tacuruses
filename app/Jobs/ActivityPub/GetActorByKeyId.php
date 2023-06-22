@@ -28,18 +28,15 @@ final class GetActorByKeyId
     public function handle() : Actor
     {
         try {
-            return $this->findLocalKey();
+            // Try to find the actor on the DB by publicKeyId (FindActorInfo tries on activityId)
+            return Actor::where('publicKeyId', $this->keyId)->firstOrFail();
         } catch (ModelNotFoundException) {
         }
 
-        // We already tried for publicKeyId, so not an issue that it won't match
+        // We already tried for publicKeyId, so not an issue that it won't match the activityId
         $actor = FindActorInfo::dispatchSync($this->keyId, false);
 
         return $actor;
     }
 
-    private function findLocalKey() : Actor
-    {
-        return Actor::where('publicKeyId', $this->keyId)->firstOrFail();
-    }
 }

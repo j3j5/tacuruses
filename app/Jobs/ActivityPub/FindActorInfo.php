@@ -57,6 +57,7 @@ final class FindActorInfo
             ]);
             abort(201, 'Actor cannot be found, keep moving');
         }
+
         $actorData = $response->json();
         $validator = Validator::make($actorData, [
             'id' => ['required', 'string'],

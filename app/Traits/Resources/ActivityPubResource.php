@@ -23,6 +23,6 @@ trait ActivityPubResource
      */
     public function withResponse($request, $response)
     {
-        $response->header('Content-Type', 'application/activity+json; charset=utf-8');
+        $response->header('Content-Type', 'application/activity+json; charset=UTF-8');
     }
 }

@@ -23,7 +23,7 @@ class MacroServiceProvider extends ServiceProvider
             return response()->json(
                 $data,
                 $status,
-                ['Content-Type' => 'application/activity+json; charset=utf-8'],
+                ['Content-Type' => 'application/activity+json; charset=UTF-8'],
                 JSON_HEX_TAG | JSON_UNESCAPED_SLASHES
             );
         });
@@ -35,7 +35,7 @@ class MacroServiceProvider extends ServiceProvider
             return response()->json(
                 $data,
                 $status,
-                ['Content-Type' => 'application/jrd+json; charset=utf-8'],
+                ['Content-Type' => 'application/jrd+json; charset=UTF-8'],
                 JSON_HEX_TAG | JSON_UNESCAPED_SLASHES
             );
         });

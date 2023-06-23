@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['no.cookies'])->group(function () {
     // Federation Instance
-    Route::get('/.well-known/webfinger/', WebfingerController::class);
+    Route::get('/.well-known/webfinger/', WebfingerController::class)->name('webfinger');
     Route::get('/.well-known/nodeinfo/', [NodeInfoController::class, 'wellKnown']);
     Route::get('/.well-known/host-meta/', HostMetaController::class);
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);

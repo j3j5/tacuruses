@@ -6,52 +6,64 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Server\Http\WebFinger;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Models\ActivityPub\LocalActor;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use function Safe\preg_match;
 
 class WebfingerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     public function __invoke(Request $request) : JsonResponse
     {
         $resource = $request->input('resource');
 
         if (0 === preg_match('/^acct:(.+)/i', $resource, $match)) {
-            abort(400, 'Wrong resource');
+            return response()->json(['message' => 'Wrong resource'], Response::HTTP_BAD_REQUEST);
         }
 
         $handle = $match[1];
 
         if (2 !== count($handleParts = explode('@', $handle))) {
-            abort(400, 'Wrong account format');
+            return response()->json(['message' => 'Wrong account format'], Response::HTTP_BAD_REQUEST);
         }
 
         $hostname = $handleParts[1];
         if ($request->getHost() !== $hostname) {
-            abort(404, 'host not found');
+            return response()->json(['message' => 'Unknown host'], Response::HTTP_NOT_FOUND);
         }
 
         $preferredUsername = $handleParts[0];
-        $user = LocalActor::where('username', $preferredUsername)->firstOrFail();
+        try {
+            $actor = LocalActor::where('username', $preferredUsername)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
 
         $webfinger = new WebFinger([
             'subject' => $resource,
             'aliases' => [
-                // TODO: Add support for aliases on said user object
+                route('actor.show', [$actor]),
                 // $user->getAliases(),
             ],
             'links' => [
                 [
                     'rel' => 'http://webfinger.net/rel/profile-page',
                     'type' => 'text/html',
-                    'href' => route('actor.show', [$user]),
+                    'href' => route('actor.show', [$actor]),
                 ],
                 [
                     'rel' => 'self',
                     'type' => 'application/activity+json',
-                    'href' => route('actor.show', [$user]),
+                    'href' => route('actor.show', [$actor]),
                 ],
             ],
         ]);

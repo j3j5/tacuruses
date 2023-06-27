@@ -8,6 +8,7 @@ use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Response;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +29,7 @@ final class FindActorInfo
      */
     public function __construct(private readonly string $actorId, private readonly bool $tryLocal = true)
     {
-        //
+        Validator::validate(['actorId' => $actorId], ['actorId' => 'required|url']);
     }
 
     /**
@@ -55,7 +56,7 @@ final class FindActorInfo
                 'code' => $response->status(),
                 'response' => $response->body(),
             ]);
-            abort(201, 'Actor cannot be found, keep moving');
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Actor cannot be found');
         }
 
         $actorData = $response->json();

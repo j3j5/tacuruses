@@ -7,6 +7,7 @@ namespace App\Jobs\ActivityPub;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Validator;
 
 final class GetActorByKeyId
 {
@@ -19,7 +20,8 @@ final class GetActorByKeyId
      */
     public function __construct(private readonly string $keyId)
     {
-        //
+        Validator::validate(['keyId' => $keyId], ['keyId' => 'required|url']);
+
     }
 
     /**

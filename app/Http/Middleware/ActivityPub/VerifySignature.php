@@ -8,8 +8,10 @@ use App\Jobs\ActivityPub\ProcessDeleteAction;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+
 use function Safe\base64_decode;
 use function Safe\openssl_verify;
 use function Safe\preg_match;
@@ -28,12 +30,11 @@ class VerifySignature
         Log::debug('Validating signature for', ['request' => $request]);
 
         if (!$request->hasHeader('Signature')) {
-            $errorMsg = 'No signature found';
+            $errorMsg = 'Missing signature';
             Log::debug($errorMsg, ['headers' => $request->headers]);
-            abort(401, $errorMsg);
+            abort(Response::HTTP_UNAUTHORIZED, $errorMsg);
         }
 
-        // // See https://docs.joinmastodon.org/spec/security/#http-verify
         $signature = $request->header('Signature');
         if (!is_string($signature)) {
             $errorMsg = 'Multiple signatures found';
@@ -41,18 +42,26 @@ class VerifySignature
                 'headers' => $request->headers,
                 'signature' => $signature,
             ]);
-            abort(401, $errorMsg);
+            abort(Response::HTTP_UNAUTHORIZED, $errorMsg);
         }
 
         if (!$request->hasHeader('Date')) {
             Log::warning('No date present on header while validating signature. Aborting in prod.');
-            abort_if(app()->environment(['production', 'testing']), 403, 'Missing date');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Missing date');
         }
 
         $date = $request->header('Date');
-        if (Carbon::parse($date)->diffInHours() > 2) {
-            Log::warning('Given date differs with current date too much. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
-            abort_if(app()->environment(['production', 'testing']), 403, 'Missing date');
+
+        // Only accept requests maximum 5 mins "from the future"
+        if (Carbon::parse($date)->isFuture() && Carbon::parse($date)->diffInMinutes() > 5) {
+            Log::warning('Given date is in the future, dates are way out of sync. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Date is on the future');
+        }
+
+        // Check requests aren't older than 12 hours
+        if (Carbon::parse($date)->diffInMinutes() > 12 * 60) {
+            Log::warning('Given date is older than 12 hours. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Request date is too old');
         }
 
         // For delete activities, the signature doesn't really matter, we'll check
@@ -64,11 +73,12 @@ class VerifySignature
             return response()->activityJson();
         }
 
+        // See https://docs.joinmastodon.org/spec/security/#http-verify
         // 1. Split Signature: into its separate parameters.
         $parts = explode(',', $signature);
         if (!is_array($parts)) {
             Log::warning('The signature is not well formed. Aborting in prod.', ['signature' => $signature]);
-            abort_if(app()->environment(['production', 'testing']), 403, 'Wrong Signature');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Wrong signature 1');
         }
         $sigParameters = [];
         $pattern = '/(?<key>\w+)="(?<value>.+)"/';
@@ -80,8 +90,29 @@ class VerifySignature
 
         if (!isset($sigParameters['keyId'], $sigParameters['headers'], $sigParameters['signature'])) {
             Log::warning('The signature seems to be missing parts', ['sigParameters' => $sigParameters]);
-            abort_if(app()->environment(['production', 'testing']), 403, 'Wrong Signature');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Wrong signature 2');
         }
+
+        // Calculate and compare the request's digest
+        $digest = base64_encode(hash('sha256', $request->getContent(), true));
+        $headerDigest = $request->header('digest');
+        $arrayDigest = explode('=', $headerDigest, 2);
+        if (!is_array($arrayDigest) || count($arrayDigest) !== 2) {
+            Log::notice('Invalid digest. Aborting in prod.', ['given' => $headerDigest]);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Digest does not match');
+        }
+        [$hashFunction, $hash] = $arrayDigest;
+
+        if (mb_strtolower($hashFunction) !== 'sha-256') {
+            Log::notice('Invalid hash function used on digest.', ['given' => $headerDigest, 'calculated' => $digest]);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Invalid hash digest. Use SHA-256');
+        }
+
+        if ($hash !== $digest) {
+            Log::notice('Digest does not match. Aborting in prod.', ['given' => $hash, 'calculated' => $digest]);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Digest does not match');
+        }
+        $digest = 'SHA-256=' . $digest;
 
         // 2. Construct the signature string from the value of headers.
         $sigHeadersNames = explode(' ', $sigParameters['headers']);
@@ -93,12 +124,6 @@ class VerifySignature
                     $headers[$header] = 'post /' . $request->path();
                     break;
                 case 'digest':
-                    $digest = 'SHA-256=' . base64_encode(hash('sha256', $request->getContent(), true));
-                    $headerDigest = $request->header('digest');
-                    if ($digest !== $headerDigest) {
-                        Log::notice('Digest does not match. Aborting in prod.', ['given' => $headerDigest, 'calculated' => $digest]);
-                        abort_if(app()->environment(['production', 'testing']), 403, 'Digest does not match');
-                    }
                     $headers[$header] = $digest;
                     break;
                 default:
@@ -112,21 +137,24 @@ class VerifySignature
             ->implode("\n");
 
         // 3. Fetch the keyId and resolve to an actor’s publicKey.
+
         /** @var \App\Models\ActivityPub\Actor $actor */
         $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
         $publicKey = $actor->publicKey;
 
         // Verify the actor's public key is the same than the action's actor
         if (Arr::get($request->toArray(), 'actor') !== $actor->activityId) {
-            Log::warning('Actor\'s key and actor on action do not match. Aborting in prod', [
+            Log::warning("Actor's key and actor on action do not match. Aborting in prod", [
                 'actor' => $actor,
                 'request' => $request->toArray(),
             ]);
-            abort_if(app()->environment(['production', 'testing']), 403, 'Actors do not match');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Actors do not match');
         }
 
-        Log::debug('Algorithm is ' . $sigParameters['algorithm']);
-        $algo = match ($sigParameters['algorithm']) {
+        $algorithm = $sigParameters['algorithm'] ?? '';
+        Log::debug('Algorithm is "' . $algorithm . '"');
+
+        $algo = match ($algorithm) {
             // @see https://www.php.net/manual/en/openssl.signature-algos.php
             'rsa-sha256' => OPENSSL_ALGO_SHA256,
             default => OPENSSL_ALGO_SHA256,
@@ -141,7 +169,7 @@ class VerifySignature
 
         if ($verified !== 1) {
             Log::warning('Unable to verify given signature');
-            abort_if(app()->environment(['production', 'testing']), 403, 'Unable to verify given signature');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Unable to verify given signature');
         }
 
         Log::debug('Signature is VERIFIED!');

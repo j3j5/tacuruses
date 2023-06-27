@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,12 @@ use Illuminate\Support\Facades\Log;
 
 class SharedInboxController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(OnlyRequestsWantJson::class);
+    }
+
     /**
      *
      * @param \Illuminate\Http\Request $request

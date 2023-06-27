@@ -4,7 +4,7 @@ return [
     'homepage' => env('FEDI_HOMEPAGE'),
     'software_name' => env('FEDI_APP_NAME', 'j3j5-bots'),
     'software_version' => env('FEDI_APP_VERSION', '1.0'),
-
+    'user-agent' => env('FEDI_UA', 'j3j5-bots'),
     'contact_email' => env('FEDI_CONTACT_EMAIL', ''),
 
     'languages' => [

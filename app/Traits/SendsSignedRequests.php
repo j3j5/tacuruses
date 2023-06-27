@@ -31,7 +31,7 @@ trait SendsSignedRequests
             $body,
             [
                 'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
-                'User-Agent' => config('activitypub.user-agent'),
+                'User-Agent' => config('federation.user-agent'),
             ]
         );
 

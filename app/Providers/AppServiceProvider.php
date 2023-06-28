@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use Monolog\Processor\MemoryPeakUsageProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
+use Monolog\Processor\UidProcessor;
 
 use function Safe\preg_replace;
 use function Safe\strtotime;
@@ -23,20 +25,9 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        /** @phpstan-ignore-next-line */
-        $this->app->config->set('correlation', Str::uuid()->toString());
-
-        /** @phpstan-ignore-next-line */
-        $this->app->log->pushProcessor(static function (array $record) {
-            $record['extra']['correlation'] = config('correlation', '');
-            return $record;
-        });
-
         $this->app->singleton('snowflake', function ($app) {
             return (new Snowflake($app->config->get('snowflake.datacenter_id'), $app->config->get('snowflake.worker_id')))
                 ->setStartTimeStamp(strtotime($app->config->get('snowflake.epoch')) * 1000)
@@ -69,34 +60,33 @@ class AppServiceProvider extends ServiceProvider
                 </use></svg>\';
             ?>';
         });
-    }
 
-    public function addLogId(string $id) : void
-    {
-        /** @phpstan-ignore-next-line */
-        $this->app->log->pushProcessor(static function (array $record) use ($id) {
-            $record['message'] = "[$id] {$record['message']}";
-            return $record;
-        });
+        $this->app->log->pushProcessor(new UidProcessor(16));
+        $this->app->log->pushProcessor(new MemoryUsageProcessor());
+        $this->app->log->pushProcessor(new MemoryPeakUsageProcessor());
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         JsonResource::withoutWrapping();
-        Model::preventLazyLoading(!$this->app->isProduction());
-        Model::preventSilentlyDiscardingAttributes(!$this->app->isProduction());
-        Model::preventAccessingMissingAttributes(!$this->app->isProduction());
 
+        Model::preventSilentlyDiscardingAttributes();
+        Model::preventAccessingMissingAttributes();
+        Model::preventLazyLoading(!$this->app->isProduction());
+
+        // Add support for logging (slow) DB queries
         DB::listen(function (QueryExecuted $query) {
             if (config('database.log_all_queries')) {
                 $level = 'debug';
             }
-            if (config('database.log_slow_queries') && $query->time >= config('database.slow_query_time')) {
+
+            if (
+                (isset($level) || config('database.log_slow_queries')) &&
+                $query->time >= config('database.slow_query_time')
+            ) {
                 $level = 'notice';
             }
 
@@ -128,10 +118,9 @@ class AppServiceProvider extends ServiceProvider
     private function createStackTrace() : string
     {
         $backtrace = collect(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
-            ->skip(6)   // the first six are related to the event all the way here
+            ->skip(6)   // the first six are related to the DB event all the way here, see above
             ->values()
             ->map(function (array $element, int $index) : string {
-                // dump($element);
                 $line = "#$index ";
                 if (isset($element['file'], $element['line'])) {
                     $line .= "{$element['file']}({$element['line']}): ";
@@ -140,6 +129,7 @@ class AppServiceProvider extends ServiceProvider
                     $line .= "{$element['class']}{$element['type']}";
                 }
                 $line .= $element['function'];
+
                 return  $line;
             })->implode(PHP_EOL);
         $stacktrace = PHP_EOL . '[stacktrace]' . PHP_EOL . $backtrace . PHP_EOL;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\API\Mastodon;
+namespace Tests\Feature\Http\Controllers\API\Mastodon;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -94,7 +94,7 @@ class PostStatusTest extends TestCase
         $this->assertNotNull($note->published_at);
     }
 
-        /**
+    /**
      * A basic feature test posting plain text.
      *
      * @return void

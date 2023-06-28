@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\Federation;
+namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
-use App\Http\Controllers\ActivityPub\Actors\FollowingController;
+use App\Http\Controllers\ActivityPub\Actors\FollowersController;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
@@ -11,7 +11,7 @@ use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class FollowingTest extends TestCase
+class FollowersTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -22,12 +22,12 @@ class FollowingTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
-                ->for($remoteActor, 'actor')
-                ->for($localActor, 'target')
+                ->for($remoteActor, 'target')
+                ->for($localActor, 'actor')
                 ->create();
         }
 
-        $response = $this->get(route('actor.following', [$localActor]));
+        $response = $this->get(route('actor.followers', [$localActor]));
         $response->assertNotFound();
     }
 
@@ -38,20 +38,22 @@ class FollowingTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
-                ->for($localActor, 'actor')
-                ->for($remoteActor, 'target')
+                ->for($localActor, 'target')
+                ->for($remoteActor, 'actor')
                 ->create();
         }
 
-        $response = $this->get(route('actor.following', [$localActor]), [
+        $response = $this->get(route('actor.followers', [$localActor]), [
             'Accept' => 'application/activity+json',
         ]);
 
         $expected = Type::create('OrderedCollectionPage', [
             '@context' => Context::ACTIVITY_STREAMS,
-            'id' => route('actor.following', [$localActor, 'page' => 1]),
+            'id' => route('actor.followers', [$localActor, 'page' => 1]),
             'totalItems' => count($follows),
-            'partOf' => route('actor.following', [$localActor]),
+            // 'next' => $this->when(!empty($next), $next),
+            // 'prev' => $this->when(!empty($prev), $prev),
+            'partOf' => route('actor.followers', [$localActor]),
             'orderedItems' => $remoteActors->map(
                 fn (RemoteActor $remoteActor) : string => $remoteActor->activityId
             )->toArray(),
@@ -62,29 +64,30 @@ class FollowingTest extends TestCase
             ->assertExactJson($expected->toArray());
     }
 
-    public function test_requests_for_when_following_is_multipage()
+    public function test_requests_for_when_followers_is_multipage()
     {
-        $remoteActors = RemoteActor::factory()->count(FollowingController::PER_PAGE + random_int(1, 5))->create();
+        $remoteActors = RemoteActor::factory()->count(FollowersController::PER_PAGE + random_int(1, 5))->create();
         $localActor = LocalActor::factory()->create();
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
-                ->for($localActor, 'actor')
-                ->for($remoteActor, 'target')
+                ->for($localActor, 'target')
+                ->for($remoteActor, 'actor')
                 ->create();
         }
 
-        $response = $this->get(route('actor.following', [$localActor]), [
+        $response = $this->get(route('actor.followers', [$localActor]), [
             'Accept' => 'application/activity+json',
         ]);
 
         $expected = [
             '@context' => Context::ACTIVITY_STREAMS,
-            'id' => $localActor->following_url,
+            'id' => $localActor->followers_url,
             'type' => 'OrderedCollection',
             'totalItems' => count($follows),
-            'first' => route('actor.following', [$localActor, 'page' => 1]),
-            'last' => route('actor.following', [$localActor, 'page' => 2]),
+            'first' => route('actor.followers', [$localActor, 'page' => 1]),
+            // First items, order by desc (the last item on this collection is the first ever published)
+            'last' => route('actor.followers', [$localActor, 'page' => 2]),
             'items' => [],
             'orderedItems' => [],
         ];
@@ -94,35 +97,35 @@ class FollowingTest extends TestCase
             ->assertExactJson($expected);
     }
 
-    public function test_requests_different_page_for_following()
+    public function test_requests_different_page_for_followers()
     {
         $extra = random_int(1, 5);
-        $remoteActors = RemoteActor::factory()->count(FollowingController::PER_PAGE + $extra)->create();
+        $remoteActors = RemoteActor::factory()->count(FollowersController::PER_PAGE + $extra)->create();
         $localActor = LocalActor::factory()->create();
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
-                ->for($localActor, 'actor')
-                ->for($remoteActor, 'target')
+                ->for($remoteActor, 'actor')
+                ->for($localActor, 'target')
                 ->create();
         }
 
-        $response = $this->get(route('actor.following', [$localActor, 'page' => 2]), [
+        $response = $this->get(route('actor.followers', [$localActor, 'page' => 2]), [
             'Accept' => 'application/activity+json',
         ]);
 
         $expected = [
             '@context' => Context::ACTIVITY_STREAMS,
-            'id' => $localActor->following_url . '?page=2',
+            'id' => $localActor->followers_url . '?page=2',
             'type' => 'OrderedCollectionPage',
             'totalItems' => count($follows),
-            'first' => route('actor.following', [$localActor, 'page' => 1]),
-            'last' => route('actor.following', [$localActor, 'page' => 2]),
-            'prev' => route('actor.following', [$localActor, 'page' => 1]),
-            'current' => route('actor.following', [$localActor, 'page' => 2]),
-            'partOf' => route('actor.following', [$localActor]),
+            'first' => route('actor.followers', [$localActor, 'page' => 1]),
+            'last' => route('actor.followers', [$localActor, 'page' => 2]),
+            'prev' => route('actor.followers', [$localActor, 'page' => 1]),
+            'current' => route('actor.followers', [$localActor, 'page' => 2]),
+            'partOf' => route('actor.followers', [$localActor]),
             'items' => [],
-            'orderedItems' => $remoteActors->skip(FollowingController::PER_PAGE)->map(
+            'orderedItems' => $remoteActors->skip(FollowersController::PER_PAGE)->map(
                 fn (RemoteActor $remoteActor) : string => $remoteActor->activityId
             )->values(),
         ];

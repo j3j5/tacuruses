@@ -1,14 +1,15 @@
 <?php
 
-namespace Tests\Feature\Federation;
+namespace Tests\Feature\Http\Middleware\ActivityPub\Federation;
 
 use App\Http\Middleware\ActivityPub\VerifySignature;
-use App\Services\ActivityPub\Signer;
+use App\Services\ActivityPub\NewSigner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use phpseclib3\Crypt\RSA;
+use phpseclib3\Crypt\RSA\PrivateKey;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -46,7 +47,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => Str::random(),
-            'Date' => now()->addMinutes(10)->format(Signer::DATE_FORMAT),
+            'Date' => now()->addMinutes(10)->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [];
@@ -61,7 +62,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => Str::random(),
-            'Date' => now()->subHours(13)->format(Signer::DATE_FORMAT),
+            'Date' => now()->subHours(13)->format(NewSigner::DATE_FORMAT),
         ];
         $data = [];
         $response = $this->post(route('shared-inbox'), $data, $headers);
@@ -75,7 +76,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => Str::random(),
-            'Date' => now()->format(Signer::DATE_FORMAT),
+            'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [];
@@ -90,7 +91,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="https://example.com/actor#main-key",headers="(request-target) host date",signature="Y2FiYWIxNGRiZDk4ZA=="',
-            'Date' => now()->format(Signer::DATE_FORMAT),
+            'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [];
@@ -107,7 +108,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="ABC",headers="(request-target) host date digest",signature="Y2FiYW...IxNGRiZDk4ZA=="',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(Signer::DATE_FORMAT),
+            'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [
@@ -138,7 +139,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="' . $keyId . '",headers="(request-target) host date digest",signature="Y2FiYW...IxNGRiZDk4ZA=="',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(Signer::DATE_FORMAT),
+            'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [
@@ -192,7 +193,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="' . $keyId . '",headers="(request-target) host date digest",signature="' . $signature . '"',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(Signer::DATE_FORMAT),
+            'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
         $data = [
@@ -216,7 +217,7 @@ class HttpSignaturesTest extends TestCase
     public function test_request_with_valid_signature()
     {
         // Create fake route
-        Route::post('testing-middleware-route', fn () => ' all good!')
+        Route::post('testing-middleware-route', fn () => 'all good!')
             ->middleware(VerifySignature::class);
 
         $key = RSA::createKey();
@@ -262,17 +263,20 @@ class HttpSignaturesTest extends TestCase
             ],
             'to' => 'https://fedi.example/users/username',
         ];
-        $headers = $this->sign($key->toString('PKCS1'), $keyId, url('/testing-middleware-route'), json_encode($data), $headers);
+        $headers = $this->sign($key, $keyId, url('/testing-middleware-route'), json_encode($data), $headers);
+        dd($key->toString('PKCS1'), $key->getPublicKey()->toString('PKCS1'), $headers);
         $response = $this->postJson(url('/testing-middleware-route'), $data, $headers);
 
         $response->assertOk();
     }
 
-    private function sign(string $privateKey, string $keyId, string $url, ?string $body = null, array $extraHeaders = []) : array
+    private function sign(PrivateKey $privateKey, string $keyId, string $url, ?string $body = null, array $extraHeaders = []) : array
     {
         $digest = null;
         if ($body !== null) {
-            $digest = base64_encode(hash('sha256', $body, true));
+            // TODO: algo should be dynamic
+            $hashAlgo = 'sha256';
+            $digest = base64_encode(hash($hashAlgo, $body, true));
         }
         $headers = $this->headersToSign($url, $digest);
         $headers = array_merge($headers, $extraHeaders);
@@ -281,9 +285,8 @@ class HttpSignaturesTest extends TestCase
             ' ',
             array_map('strtolower', array_keys($headers))
         );
-        $key = openssl_pkey_get_private($privateKey);
-        openssl_sign($stringToSign, $signature, $key, OPENSSL_ALGO_SHA256);
-        $signature = base64_encode($signature);
+        /** @var \phpseclib3\Crypt\RSA\PrivateKey $key */
+        $signature = base64_encode($privateKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1)->sign($stringToSign));
         $signatureHeader = 'keyId="' . $keyId . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;
@@ -300,7 +303,7 @@ class HttpSignaturesTest extends TestCase
 
         $headers = [
             '(request-target)' => 'post ' . $path,
-            'Date' => now('UTC')->format(Signer::DATE_FORMAT),
+            'Date' => now('UTC')->format(NewSigner::DATE_FORMAT),
             'Host' => parse_url($url, PHP_URL_HOST),
             'Content-Type' => 'application/activity+json',
         ];

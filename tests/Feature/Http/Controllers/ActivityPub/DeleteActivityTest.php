@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Federation;
+namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Models\ActivityPub\RemoteActor;

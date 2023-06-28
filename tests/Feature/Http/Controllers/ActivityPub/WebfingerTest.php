@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Federation;
+namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Foundation\Testing\RefreshDatabase;

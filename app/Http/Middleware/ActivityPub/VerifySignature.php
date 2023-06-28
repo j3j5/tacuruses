@@ -11,9 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Crypt\RSA\PublicKey;
+use RuntimeException;
 
 use function Safe\base64_decode;
-use function Safe\openssl_verify;
 use function Safe\preg_match;
 
 class VerifySignature
@@ -154,20 +157,14 @@ class VerifySignature
         $algorithm = $sigParameters['algorithm'] ?? '';
         Log::debug('Algorithm is "' . $algorithm . '"');
 
-        $algo = match ($algorithm) {
-            // @see https://www.php.net/manual/en/openssl.signature-algos.php
-            'rsa-sha256' => OPENSSL_ALGO_SHA256,
-            default => OPENSSL_ALGO_SHA256,
-        };
+        $key = PublicKeyLoader::load($publicKey);
+        if (!$key instanceof PublicKey) {
+            throw new RuntimeException('Public key does not seem valid');
+        }
+        $key = $key->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
-        $verified = openssl_verify(
-            $stringToBeSigned,
-            base64_decode($sigParameters['signature']),
-            $publicKey,
-            $algo
-        );
-
-        if ($verified !== 1) {
+        // Verify the calculated signature using the public key and the original signature
+        if (!$key->verify($stringToBeSigned, base64_decode($sigParameters['signature']))) {
             Log::warning('Unable to verify given signature');
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Unable to verify given signature');
         }

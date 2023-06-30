@@ -60,10 +60,9 @@ final class SendLikeAcceptToActor implements ShouldQueue
             ],
         ];
         $this->sendSignedPostRequest(
-            signer: $signer,
+            actorSigning: $this->targetActor,
             data: $accept,
-            inbox: $this->actor->inbox,
-            actorSigning: $this->targetActor
+            url: $this->actor->inbox,
         );
 
         $this->like->markAsAccepted();

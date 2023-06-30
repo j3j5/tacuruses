@@ -50,10 +50,9 @@ final class SendCreateAcceptToActor implements ShouldQueue
             ],
         ];
         $this->sendSignedPostRequest(
-            signer: $signer,
-            data: $accept,
-            inbox: $this->create->target->actor->inbox,
             actorSigning: $this->actor,
+            data: $accept,
+            url: $this->create->target->actor->inbox,
         );
 
         $this->create->markAsAccepted();

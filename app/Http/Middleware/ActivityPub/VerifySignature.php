@@ -17,6 +17,8 @@ use phpseclib3\Crypt\RSA;
 use phpseclib3\Crypt\RSA\PublicKey;
 use RuntimeException;
 
+use function Safe\preg_match;
+
 class VerifySignature
 {
 
@@ -52,13 +54,10 @@ class VerifySignature
         }
 
         $signature = $request->header('Signature');
-        if (!is_string($signature)) {
-            $errorMsg = 'Multiple signatures found';
-            Log::info($errorMsg, [
-                'headers' => $request->headers,
-                'signature' => $signature,
-            ]);
-            $signature = Arr::first($signature);
+        if ($signature === null) {
+            $errorMsg = 'Missing signature 2';
+            Log::debug($errorMsg, ['headers' => $request->headers]);
+            abort(Response::HTTP_UNAUTHORIZED, $errorMsg);
         }
 
         if (!$request->hasHeader('Date')) {
@@ -69,7 +68,7 @@ class VerifySignature
         $keyIdRegex = '/keyId="(?<keyId>.+?)",/';
         if(!preg_match($keyIdRegex, $signature, $sigParameters)) {
             Log::warning('Unable to find keyId on given signature', ['signature' => $signature]);
-            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Could not find keyId on signature');
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Wrong signature format');
         }
         /** @var \App\Models\ActivityPub\Actor $actor */
         $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
@@ -91,6 +90,8 @@ class VerifySignature
         if ($publicKey instanceof PublicKey) {
             $publicKey = $publicKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
         }
+
+        $verified = false;
         try {
             $verified = $this->verifier->verifyRequest($request, $publicKey);
         } catch(RuntimeException $e) {

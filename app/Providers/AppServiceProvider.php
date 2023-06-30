@@ -61,8 +61,11 @@ class AppServiceProvider extends ServiceProvider
             ?>';
         });
 
+        /** @phpstan-ignore-next-line */
         $this->app->log->pushProcessor(new UidProcessor(16));
+        /** @phpstan-ignore-next-line */
         $this->app->log->pushProcessor(new MemoryUsageProcessor());
+        /** @phpstan-ignore-next-line */
         $this->app->log->pushProcessor(new MemoryPeakUsageProcessor());
     }
 

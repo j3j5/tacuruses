@@ -84,8 +84,14 @@ final class NewSigner
     public function setPrivateKey(string|PrivateKey $privateKey, string $password = null) : self
     {
         if (is_string($privateKey)) {
+            /** @phpstan-ignore-next-line */
             $privateKey = PublicKeyLoader::load($privateKey, $password ?? false);
+            // In case a public key is provided
+            if (!$privateKey instanceof PrivateKey) {
+                throw new RuntimeException('Invalid key provided');
+            }
         }
+
         $this->privateKey = $privateKey;
 
         if ($this->privateKey instanceof RSA) {
@@ -130,6 +136,7 @@ final class NewSigner
             }
         }
 
+        /** @var array<string, string[]> */
         $headers = [
             'date' => $request->getHeader('Date'),
             'host' => $request->getHeader('Host'),
@@ -147,7 +154,7 @@ final class NewSigner
             ->prepend($headersToSign['(request-target)'], '(request-target)');
 
         $stringToSign = $headers
-            ->map(fn (string|array $value, string $name) => mb_strtolower($name) . ': ' . $value)
+            ->map(fn (string $value, string $name) => mb_strtolower($name) . ': ' . $value)
             ->implode("\n");
 
         $signedHeaders = $headers->keys()

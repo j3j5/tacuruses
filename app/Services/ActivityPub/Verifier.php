@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\Common\PublicKey;
 use RuntimeException;
 
+use function Safe\base64_decode;
+use function Safe\preg_match;
+
 final class Verifier
 {
     /**

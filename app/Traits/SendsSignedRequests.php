@@ -4,7 +4,8 @@ namespace App\Traits;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
-use App\Services\ActivityPub\Signer;
+use App\Services\ActivityPub\NewSigner;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,33 +13,48 @@ use RuntimeException;
 
 trait SendsSignedRequests
 {
-    private function sendSignedRequest(
-        Signer $signer,
+    /**
+     *
+     * @param \App\Models\ActivityPub\LocalActor $actorSigning
+     * @param string $url
+     * @param array $data
+     * @throws \RuntimeException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \phpseclib3\Exception\NoKeyLoadedException
+     * @throws \Exception
+     * @throws \Illuminate\Http\Client\RequestException
+     * @return \Illuminate\Http\Client\Response
+     */
+    private function sendSignedPostRequest(
         LocalActor $actorSigning,
-        array $request,
-        string $inbox
+        string $url,
+        array $data,
     ) : Response {
-        if (!is_string(($inbox)) || empty($inbox)) {
-            throw new RuntimeException('Actor\'s inbox url is empty');
+        if (empty($url)) {
+            throw new RuntimeException('URL cannot be empty');
         }
 
-        $body = json_encode($request, JSON_THROW_ON_ERROR);
-        // Make HTTP post back to the server of the actor
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
+            'User-Agent' => config('federation.user-agent'),
+        ];
 
-        $headers = $signer->sign(
-            $actorSigning,
-            $inbox,
-            $body,
-            [
-                'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
-                'User-Agent' => config('federation.user-agent'),
-            ]
-        );
+        /** @var \App\Services\ActivityPub\NewSigner $signer */
+        $signer = app(NewSigner::class);
+        $signer->setDigestAlgo('sha256')
+            ->setKeyId($actorSigning->key_id)
+            ->setPrivateKey($actorSigning->private_key);
 
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::withHeaders($headers)->post($inbox, $request);
+        $response = Http::withHeaders($headers)->withMiddleware(
+            Middleware::mapRequest([$signer, 'signRequest'])
+        )->post($url, $data);
+
         if ($response->failed()) {
-            Log::warning('Request failed. Response:', [$response]);
+            Log::warning('Request failed', ['response' => $response]);
             $response->throw();
         }
 

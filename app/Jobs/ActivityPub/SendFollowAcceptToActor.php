@@ -59,9 +59,9 @@ final class SendFollowAcceptToActor implements ShouldQueue
             ],
         ];
 
-        $this->sendSignedRequest(
+        $this->sendSignedPostRequest(
             signer: $signer,
-            request: $accept,
+            data: $accept,
             inbox: $this->actor->inbox,
             actorSigning: $this->targetActor
         );

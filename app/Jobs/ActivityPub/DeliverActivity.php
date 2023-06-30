@@ -40,9 +40,9 @@ final class DeliverActivity implements ShouldQueue, ShouldBeUnique
      */
     public function handle(Signer $signer)
     {
-        $response = $this->sendSignedRequest(
+        $response = $this->sendSignedPostRequest(
             signer: $signer,
-            request: $this->activity->toArray(),
+            data: $this->activity->toArray(),
             inbox: $this->inbox,
             actorSigning: $this->actor,
         );

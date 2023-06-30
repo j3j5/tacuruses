@@ -11,7 +11,6 @@ use function Safe\parse_url;
 
 class Signer
 {
-    public const DATE_FORMAT = 'D, d M Y H:i:s \G\M\T';
 
     public function sign(LocalActor $user, string $url, ?string $body = null, array $extraHeaders = []) : array
     {
@@ -45,7 +44,7 @@ class Signer
 
         $headers = [
             '(request-target)' => 'post ' . $path,
-            'Date' => now('UTC')->format(self::DATE_FORMAT),
+            'Date' => now('UTC')->format('D, d M Y H:i:s \G\M\T'),
             'Host' => parse_url($url, PHP_URL_HOST),
             'Content-Type' => 'application/activity+json',
         ];

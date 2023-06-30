@@ -10,7 +10,6 @@ use App\Traits\SendsSignedRequests;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
-use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
 
 class SendsSignedRequestsTest extends TestCase
@@ -92,19 +91,44 @@ r2IS3loMUzHCLoGy88Qu1r0WjzKz+pTBN1sD2Upch/wYF9A+VPE=
             ],
         ]);
 
-        // $key = RSA::createKey();
-        // Http::preventStrayRequests();
-        // Http::fake([
-        //     $actor->inbox => Http::response('foobar', 200),
-        // ]);
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => 'https://example.com/actor',
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
+
+        Http::preventStrayRequests();
+        Http::fake();
+
         $response = $trait->sendSignedPostRequest(
             actorSigning: $actor,
-            data: $activity->toArray(),
+            data: $data,
             url: $actor->inbox,
             // signer: app(Signer::class),
             // actorSigning: $this->actor,
         );
+        /*
+                [ // tests/Feature/Http/Middleware/ActivityPub/HttpSignaturesTest.php:267
+                    "Date" => "Wed, 28 Jun 2023 21:38:01 GMT",
+                    "Host" => "example.com",
+                    "Content-Type" => "application/activity+json; profile="http://www.w3.org/ns/activitystreams"",
+                    "Digest" => "SHA-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=",
+                    "Accept" => "application/activity+json",
+                    "Signature" => "keyId="https://example.com/actor#main-key"
+                                    ,headers="(request-target) date host content-type digest accept"
+                                    ,algorithm="rsa-sha256"
+                                    ,signature="H4OUtJbd7+9umkhwcUojgxgUIcPD3GerHvo1Z3YNTC34j6lvujTgFoboOENEOlc2hA9yGpPNPzz5A29UaDT/lDeAMCCoFzh9AkZXMAaT41CSep94j9a9eFY6DyR5qhiRqWaybYbYvOBXqxbICxjucduRBL9q31IcmsiatI76xYr61BVK29is2nrX68TQHITzSzbPTRaN2FEvYscJG8hBjHLyofoIVzer6cIf+o4R5HLxgsdMGCl5DHjcR/ksn0tCV3qYWgeREjMxiKPGZrlZSbfiIUqT980XjhXgTMXTgTF4fuufEAaMEGsEkOKADGxi3BBs1Bi+ug53SseqjdFjLw==""
+                ] */
 
-        dd($response);
+        $sentHeaders = $response->transferStats->getRequest()->getHeaders();
+
+        $this->assertArrayHasKey('Digest', $sentHeaders);
+        $this->assertArrayHasKey('Signature', $sentHeaders);
+        $this->assertArrayNotHasKey('(request-target)', $sentHeaders);
     }
 }

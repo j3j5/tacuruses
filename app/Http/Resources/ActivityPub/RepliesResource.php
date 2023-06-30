@@ -7,6 +7,7 @@ use ActivityPhp\Type\Core\CollectionPage;
 use App\Domain\ActivityPub\Mastodon\Note as MastodonNote;
 use App\Models\ActivityPub\Note;
 use App\Services\ActivityPub\Context;
+use App\Traits\Resources\ActivityPubResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -14,6 +15,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class RepliesResource extends JsonResource
 {
+    use ActivityPubResource;
+
     /**
      * Transform the resource into an array.
      *

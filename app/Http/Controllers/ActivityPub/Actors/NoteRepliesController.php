@@ -26,16 +26,16 @@ class NoteRepliesController extends Controller
             return new RepliesResource($note);
         }
 
-        $context = ['@context' => Context::ACTIVITY_STREAMS];
         $collection = new Collection();
-        $collection->set('id', route('note.replies', [$note->actor, $this]));
+        $collection->set('@context', Context::ACTIVITY_STREAMS);
+        $collection->set('id', route('note.replies', [$actor, $note]));
         $page = new CollectionPage();
-        $page->set('id', route('note.replies', [$note->actor, $this, 'page' => 1]));
-        $page->set('next', route('note.replies', [$note->actor, $this, 'page' => 1]));
-        $page->set('partOf', route('note.replies', [$note->actor, $this]));
+        $page->set('id', route('note.replies', [$actor, $note, 'page' => 1]));
+        $page->set('next', route('note.replies', [$actor, $note, 'page' => 1]));
+        $page->set('partOf', route('note.replies', [$actor, $note]));
         $page->set('items', []);
         $collection->set('first', $page);
 
-        return response()->activityJson(array_merge($context, $collection->toArray()));
+        return response()->activityJson($collection->toArray());
     }
 }

@@ -6,16 +6,47 @@ use App\Http\Middleware\ActivityPub\VerifySignature;
 use App\Services\ActivityPub\NewSigner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use phpseclib3\Crypt\Common\PrivateKey;
 use phpseclib3\Crypt\RSA;
-use phpseclib3\Crypt\RSA\PrivateKey;
 use RuntimeException;
 use Tests\TestCase;
 
 class HttpSignaturesTest extends TestCase
 {
     use RefreshDatabase;
+
+    private array $actorResponse = [
+        '@context' => [
+            'https://www.w3.org/ns/activitystreams',
+            'https://w3id.org/security/v1',
+        ],
+        'id' => 'https://example.com/users/actor',
+        'type' => 'Person',
+        'name' => 'The Actor',
+        'following' => 'https://example.com/users/actor/following',
+        'followers' => 'https://example.com/users/actor/followers',
+        'inbox' => 'https://example.com/users/actor/inbox',
+        'outbox' => 'https://example.com/users/actor/outbox',
+        'preferredUsername' => 'actor',
+        'publicKey' => [
+            'id' => 'https://example.com/users/actor#main-key',
+            'owner' => 'https://example.com/users/actor',
+            'publicKeyPem' => "-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAuHmi4pMej19A/rYOJ43w4jqspF0Rgbeu2/F0cA6+GTJ2zalRtkFV\nCZO9D5a9vBl2FkllSUK+V2p8RBDjXyHHPVv5+tuEZ0fBOBMNQ6UGHtRpGrYoYCUl\nM5h4pLFqF/EUA5rOsfSiJ8pTkHBL7P1zENk65Ab9zbQb/ucSMM9XUHTivg3WlQgZ\npJonQMqn/ERnFxPktxtkjU7N+g/0h77tMrWzsvTT6RegMI9QJAEQl2HuakLQ5m+C\nl8gM7F/k+r07FpNjO8klPAj741j7Tow5jUD1piFpu7k3rndjXNmpsr6LQqzAqUnt\nYeELtaGKTQ9El0g3uUWLB/F75g98KMw5EQIDAQAB\n-----END RSA PUBLIC KEY-----",
+        ],
+        'url' => 'https://example.com/@actor',
+        'endpoints' => [
+            'sharedInbox' => 'https://hachyderm.io/inbox',
+        ],
+    ];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
 
     public function test_requests_without_signature_are_unauthorized()
     {
@@ -44,13 +75,26 @@ class HttpSignaturesTest extends TestCase
 
     public function test_requests_in_the_future_are_unauthorized()
     {
+        $keyId = 'https://example.com/users/actor#main-key';
+        Http::fake([
+            $keyId => $this->actorResponse,
+        ]);
         $headers = [
             'Accept' => 'application/activity+json',
-            'Signature' => Str::random(),
+            'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
             'Date' => now()->addMinutes(10)->format(NewSigner::DATE_FORMAT),
         ];
 
-        $data = [];
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => 'https://example.com/users/actor',
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
         $response = $this->post(route('shared-inbox'), $data, $headers);
 
         $response->assertUnauthorized()
@@ -59,12 +103,25 @@ class HttpSignaturesTest extends TestCase
 
     public function test_requests_in_the_past_are_unauthorized()
     {
+        $keyId = 'https://example.com/users/actor#main-key';
+        Http::fake([
+            $keyId => $this->actorResponse,
+        ]);
         $headers = [
             'Accept' => 'application/activity+json',
-            'Signature' => Str::random(),
+            'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
             'Date' => now()->subHours(13)->format(NewSigner::DATE_FORMAT),
         ];
-        $data = [];
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => 'https://example.com/users/actor',
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
         $response = $this->post(route('shared-inbox'), $data, $headers);
 
         $response->assertUnauthorized()
@@ -73,13 +130,26 @@ class HttpSignaturesTest extends TestCase
 
     public function test_requests_wrong_signature_format_are_unauthorized()
     {
+        $keyId = 'https://example.com/users/actor#main-key';
+        Http::fake([
+            $keyId => $this->actorResponse,
+        ]);
         $headers = [
             'Accept' => 'application/activity+json',
-            'Signature' => Str::random(),
+            'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
             'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
-        $data = [];
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => 'https://example.com/users/actor',
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
         $response = $this->post(route('shared-inbox'), $data, $headers);
 
         $response->assertUnauthorized()
@@ -88,13 +158,26 @@ class HttpSignaturesTest extends TestCase
 
     public function test_requests_missing_digest_are_unauthorized()
     {
+        $keyId = 'https://example.com/users/actor#main-key';
+        Http::fake([
+            $keyId => $this->actorResponse,
+        ]);
         $headers = [
             'Accept' => 'application/activity+json',
-            'Signature' => 'keyId="https://example.com/actor#main-key",headers="(request-target) host date",signature="Y2FiYWIxNGRiZDk4ZA=="',
+            'Signature' => 'keyId="' . $keyId . '",",headers="(request-target) host date",signature="Y2FiYWIxNGRiZDk4ZA=="',
             'Date' => now()->format(NewSigner::DATE_FORMAT),
         ];
 
-        $data = [];
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => 'https://example.com/users/actor',
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
         $response = $this->post(route('shared-inbox'), $data, $headers);
 
         $response->assertUnauthorized()
@@ -113,7 +196,7 @@ class HttpSignaturesTest extends TestCase
 
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'actor' => 'https://example.com/actor',
+            'actor' => 'https://example.com/users/actor',
             'type' => 'Create',
             'object' => [
                 'type' => 'Note',
@@ -129,7 +212,7 @@ class HttpSignaturesTest extends TestCase
 
     public function test_requests_from_non_existent_actor()
     {
-        $keyId = 'https://example.com/actor#main-key';
+        $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
             $keyId => Http::response('', 404),
         ]);
@@ -144,7 +227,7 @@ class HttpSignaturesTest extends TestCase
 
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'actor' => 'https://example.com/actor',
+            'actor' => 'https://example.com/users/actor',
             'type' => 'Create',
             'object' => [
                 'type' => 'Note',
@@ -198,7 +281,7 @@ class HttpSignaturesTest extends TestCase
 
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'actor' => 'https://example.com/actor',
+            'actor' => 'https://example.com/users/actor',
             'type' => 'Create',
             'object' => [
                 'type' => 'Note',
@@ -220,32 +303,14 @@ class HttpSignaturesTest extends TestCase
         Route::post('testing-middleware-route', fn () => 'all good!')
             ->middleware(VerifySignature::class);
 
-        $key = RSA::createKey();
+        $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
-        $actorId = 'https://example.com/actor';
-        $keyId = $actorId . '#main-key';
-        $actorInfo = [
-            'id' => $actorId,
-            'type' => 'Person',
-            'preferredUsername' => fake()->userName(),
-            'name' => fake()->name(),
-            // 'summary' => '',
-            'url' => fake()->url(),
-            'icon.url' => fake()->imageUrl(),
-            'image.url' => fake()->imageUrl(),
-            'inbox' => fake()->url(),
-            'endpoints' => [
-                'sharedInbox' => fake()->url(),
-            ],
-            'publicKey' => [
-                'id' => $keyId,
-                'publicKeyPem' => $key->getPublicKey()->toString('PKCS1'),
-            ],
-        ];
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $key->getPublicKey()->toString('PKCS1');
 
         Http::fake([
-            $actorId => Http::response($actorInfo, 200),
-            $keyId => Http::response($actorInfo, 200),
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
         ]);
 
         $headers = [
@@ -255,7 +320,7 @@ class HttpSignaturesTest extends TestCase
 
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'actor' => $actorId,
+            'actor' => $actorInfo['id'],
             'type' => 'Create',
             'object' => [
                 'type' => 'Note',
@@ -263,8 +328,8 @@ class HttpSignaturesTest extends TestCase
             ],
             'to' => 'https://fedi.example/users/username',
         ];
-        $headers = $this->sign($key, $keyId, url('/testing-middleware-route'), json_encode($data), $headers);
-        dd($key->toString('PKCS1'), $key->getPublicKey()->toString('PKCS1'), $headers);
+
+        $headers = $this->sign($key, $actorInfo['publicKey']['id'], url('/testing-middleware-route'), json_encode($data), $headers);
         $response = $this->postJson(url('/testing-middleware-route'), $data, $headers);
 
         $response->assertOk();
@@ -285,8 +350,8 @@ class HttpSignaturesTest extends TestCase
             ' ',
             array_map('strtolower', array_keys($headers))
         );
-        /** @var \phpseclib3\Crypt\RSA\PrivateKey $key */
-        $signature = base64_encode($privateKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1)->sign($stringToSign));
+        Log::debug('Strign to sign: "' . PHP_EOL . PHP_EOL . $stringToSign . '"' . PHP_EOL);
+        $signature = base64_encode($privateKey->sign($stringToSign));
         $signatureHeader = 'keyId="' . $keyId . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
         unset($headers['(request-target)']);
         $headers['Signature'] = $signatureHeader;

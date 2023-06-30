@@ -64,7 +64,7 @@ final class FindActorInfo
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],
             'preferredUsername' => ['required', 'string'],
-            'name' => ['string'],
+            'name' => ['required', 'string'],
             'summary' => ['string'],
             'url' => ['required', 'string', 'url'],
             'icon.url' => ['string', 'url'],

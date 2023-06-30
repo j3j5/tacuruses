@@ -297,6 +297,44 @@ class HttpSignaturesTest extends TestCase
             ]);
     }
 
+    public function test_request_with_invalid_signature()
+    {
+        $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $key->getPublicKey()->toString('PKCS1');
+
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
+        ];
+
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => $actorInfo['id'],
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
+
+        $headers = $this->sign($key, $actorInfo['publicKey']['id'], route('shared-inbox'), json_encode($data), $headers);
+        $headers['Signature'] = mb_substr($headers['Signature'], 0, -2) . '"';
+        $response = $this->postJson(route('shared-inbox'), $data, $headers);
+
+        $response->assertUnauthorized()
+            ->assertJsonFragment([
+                'message' => 'Unable to verify given signature',
+            ]);
+    }
+
     public function test_request_with_valid_signature()
     {
         // Create fake route

@@ -4,3 +4,4 @@
 - Implement basic moderation tools (suspend, mute, block), per user and per domain level
 - Add RSS support
 - Add notification support
+- Add support for message expiration (deletion)

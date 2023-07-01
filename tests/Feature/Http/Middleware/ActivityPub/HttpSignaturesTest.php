@@ -3,7 +3,7 @@
 namespace Tests\Feature\Http\Middleware\ActivityPub\Federation;
 
 use App\Http\Middleware\ActivityPub\VerifySignature;
-use App\Services\ActivityPub\NewSigner;
+use App\Services\ActivityPub\Signer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -82,7 +82,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
-            'Date' => now()->addMinutes(10)->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->addMinutes(10)->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -110,7 +110,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
-            'Date' => now()->subHours(13)->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->subHours(13)->format(Signer::DATE_FORMAT),
         ];
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
@@ -137,7 +137,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
-            'Date' => now()->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -165,7 +165,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="' . $keyId . '",",headers="(request-target) host date",signature="Y2FiYWIxNGRiZDk4ZA=="',
-            'Date' => now()->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -191,7 +191,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="ABC",headers="(request-target) host date digest",signature="Y2FiYW...IxNGRiZDk4ZA=="',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -222,7 +222,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="' . $keyId . '",headers="(request-target) host date digest",signature="Y2FiYW...IxNGRiZDk4ZA=="',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -276,7 +276,7 @@ class HttpSignaturesTest extends TestCase
             'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
             'Signature' => 'keyId="' . $keyId . '",headers="(request-target) host date digest",signature="' . $signature . '"',
             'Digest' => 'sha-256=pWStGHZKWqcsZ6kCY5eoCTfJNg06J7Ad6+lcQEVDsxc=',
-            'Date' => now()->format(NewSigner::DATE_FORMAT),
+            'Date' => now()->format(Signer::DATE_FORMAT),
         ];
 
         $data = [
@@ -406,7 +406,7 @@ class HttpSignaturesTest extends TestCase
 
         $headers = [
             '(request-target)' => 'post ' . $path,
-            'Date' => now('UTC')->format(NewSigner::DATE_FORMAT),
+            'Date' => now('UTC')->format(Signer::DATE_FORMAT),
             'Host' => parse_url($url, PHP_URL_HOST),
             'Content-Type' => 'application/activity+json',
         ];

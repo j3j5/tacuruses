@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
-use App\Services\ActivityPub\NewSigner;
+use App\Services\ActivityPub\Signer;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -42,8 +42,8 @@ trait SendsSignedRequests
             'User-Agent' => config('federation.user-agent'),
         ];
 
-        /** @var \App\Services\ActivityPub\NewSigner $signer */
-        $signer = app(NewSigner::class);
+        /** @var \App\Services\ActivityPub\Signer $signer */
+        $signer = app(Signer::class);
         $signer->setDigestAlgo('sha256')
             ->setKeyId($actorSigning->key_id)
             ->setPrivateKey($actorSigning->private_key);

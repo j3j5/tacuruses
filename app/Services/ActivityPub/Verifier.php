@@ -9,8 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\Common\PublicKey;
 use RuntimeException;
-
 use function Safe\base64_decode;
+
+use Safe\Exceptions\UrlException;
 use function Safe\preg_match;
 
 final class Verifier
@@ -117,7 +118,11 @@ final class Verifier
 
         $algorithm = $sigParameters['algorithm'] ?? '';
         Log::debug('Algorithm is "' . $algorithm . '"');
-        /** @var \phpseclib3\Crypt\RSA\PublicKey $key */
-        return $key->verify($stringToBeSigned, base64_decode($sigParameters['signature'], true));
+        try {
+            $binarySignature = base64_decode($sigParameters['signature'], true);
+        } catch (UrlException) {
+            return false;
+        }
+        return $key->verify($stringToBeSigned, $binarySignature);
     }
 }

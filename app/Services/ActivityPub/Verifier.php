@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Services\ActivityPub;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\Common\PublicKey;
+use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 use function Safe\base64_decode;
 
@@ -26,19 +26,19 @@ final class Verifier
      * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
      * @throws \Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException
      */
-    public function verifyRequest(Request $request, PublicKey $key) : bool
+    public function verifyRequest(RequestInterface $request, PublicKey $key) : bool
     {
-        $signature = $request->header('Signature');
+        $signature = $request->getHeaderLine('Signature');
         if (!is_string($signature)) {
             $errorMsg = 'Multiple signatures found';
             Log::debug($errorMsg, [
-                'headers' => $request->headers,
+                'headers' => $request->getHeaders(),
                 'signature' => $signature,
             ]);
             throw new RuntimeException($errorMsg);
         }
 
-        $date = $request->header('Date');
+        $date = $request->getHeaderLine('Date');
 
         // Only accept requests maximum 5 mins "from the future"
         if (Carbon::parse($date)->isFuture() && Carbon::parse($date)->diffInMinutes() > 5) {
@@ -73,8 +73,8 @@ final class Verifier
         }
 
         // Calculate and compare the request's digest
-        $digest = base64_encode(hash('sha256', $request->getContent(), true));
-        $headerDigest = $request->header('Digest', '');
+        $digest = base64_encode(hash('sha256', (string) $request->getBody(), true));
+        $headerDigest = $request->getHeaderLine('Digest');
         $arrayDigest = explode('=', $headerDigest, 2);
         if (!is_array($arrayDigest) || count($arrayDigest) !== 2) {
             Log::notice('Invalid digest. Aborting in prod.', ['given' => $headerDigest]);
@@ -99,13 +99,13 @@ final class Verifier
         foreach ($sigHeadersNames as $header) {
             switch($header) {
                 case '(request-target)':
-                    $headers[$header] = mb_strtolower($request->method()) . ' /' . $request->path();
+                    $headers[$header] = mb_strtolower($request->getMethod()) . ' ' . $request->getRequestTarget();
                     break;
                 case 'digest':
                     $headers[$header] = $digest;
                     break;
                 default:
-                    $headers[$header] = $request->header($header);
+                    $headers[$header] = $request->getHeaderLine($header);
                     break;
             }
         }
@@ -118,6 +118,7 @@ final class Verifier
 
         $algorithm = $sigParameters['algorithm'] ?? '';
         Log::debug('Algorithm is "' . $algorithm . '"');
+
         try {
             $binarySignature = base64_decode($sigParameters['signature'], true);
         } catch (UrlException) {

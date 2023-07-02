@@ -16,8 +16,9 @@ use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 use phpseclib3\Crypt\RSA\PublicKey;
 use RuntimeException;
-
 use function Safe\preg_match;
+
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 class VerifySignature
 {
@@ -30,8 +31,8 @@ class VerifySignature
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
@@ -93,7 +94,8 @@ class VerifySignature
 
         $verified = false;
         try {
-            $verified = $this->verifier->verifyRequest($request, $publicKey);
+            $psrRequest = app(PsrHttpFactory::class)->createRequest($request);
+            $verified = $this->verifier->verifyRequest($psrRequest, $publicKey);
         } catch(RuntimeException $e) {
             Log::warning($e->getMessage());
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, $e->getMessage());

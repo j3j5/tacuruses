@@ -15,9 +15,11 @@ use Illuminate\Support\ServiceProvider;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\UidProcessor;
-
+use Nyholm\Psr7\Factory\Psr17Factory;
 use function Safe\preg_replace;
+
 use function Safe\strtotime;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 use Twitter\Text\Autolink;
 
@@ -47,6 +49,13 @@ class AppServiceProvider extends ServiceProvider
             $autolink->setUsernameIncludeSymbol(true);
 
             return $autolink;
+        });
+
+        $this->app->bind(PsrHttpFactory::class, function ($app) {
+            $psr17Factory = $app->make(Psr17Factory::class);
+            $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+
+            return $psrHttpFactory;
         });
 
         Blade::directive('icon', function (string $expression) {

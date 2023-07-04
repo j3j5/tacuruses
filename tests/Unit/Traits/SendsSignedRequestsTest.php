@@ -5,16 +5,17 @@ namespace Tests\Unit\Traits;
 use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
-use App\Services\ActivityPub\Signer;
+use App\Services\ActivityPub\Verifier;
 use App\Traits\SendsSignedRequests;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
 
 class SendsSignedRequestsTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use WithFaker;
 
     /**
      * A basic unit test example.
@@ -23,7 +24,6 @@ class SendsSignedRequestsTest extends TestCase
      */
     public function test_example()
     {
-        // $actor = LocalActor::factory()->create();
         $actor = $this->getMockBuilder(LocalActor::class)
             ->onlyMethods(['privateKey', 'publicKey'])
             ->getMock();
@@ -107,10 +107,8 @@ r2IS3loMUzHCLoGy88Qu1r0WjzKz+pTBN1sD2Upch/wYF9A+VPE=
 
         $response = $trait->sendSignedPostRequest(
             actorSigning: $actor,
-            data: $data,
             url: $actor->inbox,
-            // signer: app(Signer::class),
-            // actorSigning: $this->actor,
+            data: $data,
         );
         /*
                 [ // tests/Feature/Http/Middleware/ActivityPub/HttpSignaturesTest.php:267
@@ -130,5 +128,11 @@ r2IS3loMUzHCLoGy88Qu1r0WjzKz+pTBN1sD2Upch/wYF9A+VPE=
         $this->assertArrayHasKey('Digest', $sentHeaders);
         $this->assertArrayHasKey('Signature', $sentHeaders);
         $this->assertArrayNotHasKey('(request-target)', $sentHeaders);
+
+        $publicKey = PublicKeyLoader::load($actor->public_key)->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+
+        /** @var \App\Services\ActivityPub\Verifier $verifier */
+        $verifier = app(Verifier::class);
+        $this->assertTrue($verifier->verifyRequest($response->transferStats->getRequest(), $publicKey));
     }
 }

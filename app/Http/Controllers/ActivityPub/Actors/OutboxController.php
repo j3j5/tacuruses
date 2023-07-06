@@ -24,7 +24,7 @@ class OutboxController extends Controller
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|OutboxCollection
     {
         $perPage = 20;
-        $ownNotes = $actor->notes()->latest()->select('id');
+        $ownNotes = $actor->notesWithReplies()->latest()->select('id');
         $shares = $actor->shared()->latest()->select('target_id as id');
         /** @phpstan-ignore-next-line */
         $noteIds = $ownNotes->union($shares)->fastPaginate($perPage);

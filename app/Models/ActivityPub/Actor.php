@@ -112,6 +112,11 @@ class Actor extends Model
 
     public function notes() : HasMany
     {
+        return $this->allNotes()->whereNotNull('published_at')->whereNull('replyTo_id');
+    }
+
+    public function notesWithReplies() : HasMany
+    {
         return $this->allNotes()->whereNotNull('published_at');
     }
 

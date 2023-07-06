@@ -22,12 +22,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Parental\HasParent;
 use RuntimeException;
-
 use function Safe\json_decode;
 use function Safe\json_encode;
+
 use function Safe\preg_match;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
 /**
  * App\Models\ActivityPub\LocalNote
@@ -116,7 +119,7 @@ use function Safe\preg_match;
  * @method static Builder|LocalNote whereVisibility($value)
  * @mixin \Eloquent
  */
-class LocalNote extends Note
+class LocalNote extends Note implements Feedable
 {
     use HasFactory;
     use HasParent;
@@ -346,6 +349,20 @@ class LocalNote extends Note
         }
 
         return $this;
+    }
+
+    public function toFeedItem(): FeedItem
+    {
+        $title = $this->summary ?? Str::limit($this->content, 100);
+
+        return FeedItem::create()
+            ->id($this->actor->username . '/' . $this->id)
+            ->title($title)
+            ->summary($this->content)
+            ->updated($this->updated_at)
+            ->link($this->url)
+            ->authorName($this->actor->name)
+            ->authorEmail($this->actor->canonical_username);
     }
 
     protected function getIdFromActivityId(string $activityId) : string

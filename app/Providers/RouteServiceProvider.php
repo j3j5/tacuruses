@@ -33,6 +33,9 @@ class RouteServiceProvider extends ServiceProvider
         // });
 
         $this->routes(function () {
+            Route::middleware('feeds')
+                ->group(base_path('routes/feeds.php'));
+
             Route::middleware('federation')
                 ->group(base_path('routes/federation.php'));
 

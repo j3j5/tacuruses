@@ -52,6 +52,11 @@ class Kernel extends HttpKernel
             'no.cookies',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'feeds' => [
+            'no.cookies',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
     ];
 
     /**

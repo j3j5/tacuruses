@@ -2,6 +2,7 @@
 
 namespace App\Models\ActivityPub;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -127,5 +128,12 @@ class Actor extends Model
     public function shared() : HasMany
     {
         return $this->hasMany(Share::class);
+    }
+
+    public function canonicalUsername() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => '@' . $this->username . '@' . parse_url($this->activityId, PHP_URL_HOST)
+        );
     }
 }

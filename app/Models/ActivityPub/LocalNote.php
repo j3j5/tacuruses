@@ -356,10 +356,20 @@ class LocalNote extends Note implements Feedable
     {
         $title = $this->summary ?? Str::limit($this->content, 100);
 
+        $content = $this->content;
+        if ($this->mediaAttachments->isNotEmpty()) {
+            $content .= '<p>';
+            $this->mediaAttachments->each(function (Media $media) use (&$content) {
+                $content .= '<img src="' . $media->remote_url . '">' . PHP_EOL;
+            });
+            $content .= '</p>';
+        }
+
         $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
-            ->title($title)
-            ->summary($this->content)
+            ->title(strip_tags($title))
+            ->image($this->actor->avatar_url)
+            ->summary($content)
             ->link($this->url)
             ->authorName($this->actor->name)
             ->authorEmail($this->actor->canonical_username);
@@ -367,6 +377,7 @@ class LocalNote extends Note implements Feedable
         if ($this->updated_at instanceof Carbon) {
             $item->updated($this->updated_at);
         }
+
         return $item;
     }
 

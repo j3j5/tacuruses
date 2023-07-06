@@ -11,6 +11,7 @@ use App\Events\LocalNotePublished;
 use App\Http\Resources\ActivityPub\AttachmentResource;
 use App\Models\Media;
 use App\Services\ActivityPub\Context;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -355,14 +356,18 @@ class LocalNote extends Note implements Feedable
     {
         $title = $this->summary ?? Str::limit($this->content, 100);
 
-        return FeedItem::create()
+        $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
             ->title($title)
             ->summary($this->content)
-            ->updated($this->updated_at)
             ->link($this->url)
             ->authorName($this->actor->name)
             ->authorEmail($this->actor->canonical_username);
+
+        if ($this->updated_at instanceof Carbon) {
+            $item->updated($this->updated_at);
+        }
+        return $item;
     }
 
     protected function getIdFromActivityId(string $activityId) : string

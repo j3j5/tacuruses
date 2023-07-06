@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Parental\HasChildren;
 
+use function Safe\parse_url;
+
 /**
  * App\Models\ActivityPub\Actor
  *
@@ -34,6 +36,7 @@ use Parental\HasChildren;
  * @property string $followers_url
  * @property string $following_url
  * @property string|null $outbox
+ * @property string $canonical_username
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $allNotes
  * @property-read int|null $all_notes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts
@@ -138,7 +141,7 @@ class Actor extends Model
     public function canonicalUsername() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => '@' . $this->username . '@' . parse_url($this->activityId, PHP_URL_HOST)
+            get: fn () : string => '@' . $this->username . '@' . parse_url($this->activityId, PHP_URL_HOST) /** @phpstan-ignore-line */
         );
     }
 }

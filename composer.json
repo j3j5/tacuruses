@@ -33,6 +33,7 @@
         "phpseclib/phpseclib": "^3.0",
         "roave/security-advisories": "dev-latest",
         "sentry/sentry-laravel": "^3.5",
+        "spatie/laravel-feed": "^4.2",
         "srwiez/thumbhash": "^1.1",
         "stevebauman/purify": "^6.0",
         "symfony/html-sanitizer": "^6.2",

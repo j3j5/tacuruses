@@ -15,10 +15,10 @@ class ActorController extends Controller
     public function __invoke(Request $request, LocalActor $actor) : Feed
     {
         $feedSize = 10;
-        $items = $actor->notes()->latest()->take($feedSize)->get()
-            ->map(
-                fn ($note) => $note->setRelation('actor', $actor)
-            );
+        $items = $actor->notes()->latest()->take($feedSize)->get();
+        $items = $items->load(['mediaAttachments'])->map(
+            fn ($note) => $note->setRelation('actor', $actor)
+        );
         $format = 'atom';
         if ($request->routeIs('actor.feed.rss')) {
             $format = 'rss';

@@ -6,6 +6,7 @@ use ActivityPhp\Type;
 use ActivityPhp\Type\Core\Collection;
 use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
+use App\Domain\Feed\FeedItem;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Http\Resources\ActivityPub\AttachmentResource;
@@ -31,7 +32,6 @@ use function Safe\json_encode;
 
 use function Safe\preg_match;
 use Spatie\Feed\Feedable;
-use Spatie\Feed\FeedItem;
 
 /**
  * App\Models\ActivityPub\LocalNote
@@ -356,21 +356,13 @@ class LocalNote extends Note implements Feedable
     {
         $title = $this->summary ?? Str::limit($this->content, 100);
 
-        $content = $this->content;
-        if ($this->mediaAttachments->isNotEmpty()) {
-            $content .= '<p>';
-            $this->mediaAttachments->each(function (Media $media) use (&$content) {
-                $content .= '<img src="' . $media->remote_url . '">' . PHP_EOL;
-            });
-            $content .= '</p>';
-        }
-
         $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
             ->title(strip_tags($title))
             ->image($this->actor->avatar_url)
-            ->summary($content)
+            ->summary($this->content)
             ->link($this->url)
+            ->media($this->mediaAttachments)
             ->authorName($this->actor->name)
             ->authorEmail($this->actor->canonical_username);
 

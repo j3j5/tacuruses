@@ -5,3 +5,4 @@
 - Add notification support
 - Add support for message expiration (deletion)
 - Add support for message updates (receive and create)
+- Fix width and height on media models

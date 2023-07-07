@@ -2,7 +2,7 @@
 /* Using an echo tag here so the `<? ... ?>` won't get parsed as short tags */
 '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL
 ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
     <channel>
         <atom:link href="{{ url($meta['link']) }}" rel="self" type="application/rss+xml" />
         <title>{!! \Spatie\Feed\Helpers\Cdata::out($meta['title'] ) !!}</title>
@@ -28,6 +28,11 @@
                 <pubDate>{{ $item->timestamp() }}</pubDate>
                 @foreach($item->category as $category)
                     <category>{{ $category }}</category>
+                @endforeach
+                @foreach($item->media as $media)
+                <media:content url="{{ $media->remote_url }}" type="{{ $media->content_type ?? 'image/jpeg' }}" @if($media->filesize)fileSize="{{ $media->filesize }}"@endif medium="image">
+                    <media:description type="plain">{{ $media->description }}</media:description>
+                </media:content>
                 @endforeach
             </item>
         @endforeach

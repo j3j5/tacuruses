@@ -42,6 +42,10 @@
             @foreach($item->category as $category)
             <category term="{{ $category }}" />
             @endforeach
+            @foreach($item->media as $media)
+            <media:description>{{ $media->description }}</media:description>
+            <media:content url="{{ $media->remote_url }}" type="{{ $media->content_type ?? 'image/jpeg' }}" />
+            @endforeach
             <updated>{{ $item->timestamp() }}</updated>
         </entry>
     @endforeach

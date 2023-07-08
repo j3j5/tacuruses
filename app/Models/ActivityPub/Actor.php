@@ -36,7 +36,8 @@ use function Safe\parse_url;
  * @property string $followers_url
  * @property string $following_url
  * @property string|null $outbox
- * @property string $canonical_username
+ * @property-read string $domain
+ * @property-read string $canonical_username
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $allNotes
  * @property-read int|null $all_notes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts

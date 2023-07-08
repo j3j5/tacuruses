@@ -26,7 +26,7 @@ class ActorController extends Controller
         return new Feed(
             $actor->name . ' feed',
             $items,
-            $request->url(),
+            route('actor.show', [$actor]),
             "feed::$format",
             $actor->bio ?? '',
             $actor->language,

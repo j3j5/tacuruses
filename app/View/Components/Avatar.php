@@ -21,7 +21,7 @@ class Avatar extends Component
         $this->actor = $actor;
         $this->fallback = asset('/img/default_avatar.svg');
         if ($actor instanceof RemoteActor) {
-            $this->fallback = 'https://source.boringavatars.com/marble/200/' . $actor->full_username;
+            $this->fallback = 'https://source.boringavatars.com/marble/200/' . $actor->canonical_username;
         }
     }
 

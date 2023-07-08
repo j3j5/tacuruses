@@ -15,7 +15,7 @@
         <a href="{{ $note->actor->url }}">
             <div class="font-bold pb-1 {{ $name_class ?? 'text-xl' }}">{{ $note->actor->name }}</div>
             <div class="text-base text-slate-500">
-                {{ $note->actor->full_username }}
+                <span>{{'@' . $actor->username }}</span><span class="opacity-0">@</span><span class="p-1 bg-slate-200 rounded">{{ $actor->domain }}</span>
             </div>
         </a>
     </header>

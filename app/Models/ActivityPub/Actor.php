@@ -138,10 +138,17 @@ class Actor extends Model
         return $this->hasMany(Share::class);
     }
 
+    public function domain() : Attribute
+    {
+        return Attribute::make(
+            get: fn () : string => parse_url($this->activityId, PHP_URL_HOST) /** @phpstan-ignore-line */
+        );
+    }
+
     public function canonicalUsername() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => '@' . $this->username . '@' . parse_url($this->activityId, PHP_URL_HOST) /** @phpstan-ignore-line */
+            get: fn () : string => '@' . $this->username . '@' . $this->domain
         );
     }
 }

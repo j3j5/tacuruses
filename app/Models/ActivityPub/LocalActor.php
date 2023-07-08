@@ -23,7 +23,6 @@ use Laravel\Sanctum\HasApiTokens;
 
 use Parental\HasParent;
 use RuntimeException;
-use function Safe\parse_url;
 
 use function Safe\preg_match;
 use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
@@ -231,20 +230,6 @@ class LocalActor extends Actor implements
     {
         return Attribute::make(
             get: fn () : string => route('actor.show', [$this]),
-        );
-    }
-
-    public function domain() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => parse_url(config('app.url'), PHP_URL_HOST), /* @phpstan-ignore-line */
-        );
-    }
-
-    public function fullUsername() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => '@' . $this->username . '@' . $this->domain,
         );
     }
 

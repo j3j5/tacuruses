@@ -11,8 +11,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Parental\HasParent;
 
-use function Safe\parse_url;
-
 /**
  * App\Models\ActivityPub\RemoteActor
  *
@@ -127,20 +125,6 @@ class RemoteActor extends Actor
     {
         return Attribute::make(
             get: fn (?string $value) => $value === null ? 'https://source.boringavatars.com/' : $value,
-        );
-    }
-
-    public function domain() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => parse_url($this->url, PHP_URL_HOST), /* @phpstan-ignore-line */
-        );
-    }
-
-    public function fullUsername() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => '@' . $this->username . '@' . $this->domain,
         );
     }
 

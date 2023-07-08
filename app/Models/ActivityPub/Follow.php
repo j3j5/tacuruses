@@ -29,6 +29,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Follow whereUpdatedAt($value)
+ * @method static \Database\Factories\ActivityPub\FollowFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class Follow extends Model

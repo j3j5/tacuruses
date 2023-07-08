@@ -6,7 +6,6 @@
     {{-- ActivityPub --}}
     {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
     <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$actor]) }}" title="ActivityPub profile">
-    {{-- <link rel="alternate" type="application/atom+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.atom', [$actor]) }}"> --}}
     <link rel="alternate" type="application/rss+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.rss', [$actor]) }}">
 
     {{-- OpenGraph --}}

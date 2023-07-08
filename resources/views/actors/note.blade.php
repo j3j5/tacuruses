@@ -1,19 +1,18 @@
 @extends('layouts.master')
 
 @push('head-meta')
-    <title>{{ $actor->name }} ({{ $actor->canonical_username }}): "{{ strip_tags($note->content) }}"</title>
+    <title>{{ $note->actor->name }} ({{ $note->actor->canonical_username }}): "{{ strip_tags($note->content) }}"</title>
 
 
     {{-- ActivityPub --}}
     {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
-    <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$actor]) }}" title="ActivityPub profile">
-    <link rel="alternate" type="application/atom+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.atom', [$actor]) }}">
-    <link rel="alternate" type="application/rss+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.rss', [$actor]) }}">
+    <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$note->actor]) }}" title="ActivityPub profile">
+    <link rel="alternate" type="application/rss+xml" title="{{ $note->actor->name }} Feed" href="{{ route('actor.feed.rss', [$note->actor]) }}">
 
     {{-- OpenGraph, see https://ogp.me --}}
     <meta name="author" content="{{ $note->actor->canonical_username }}">
     <meta property="og:site_name" content="{{ config('app.name') }}"  />
-    <meta property="og:title" content="{{ $actor->name }} ({{ $actor->canonical_username }}) said "/>
+    <meta property="og:title" content="{{ $note->actor->name }} ({{ $note->actor->canonical_username }}) said "/>
 
     <meta property="og:type" content="article"/>
     <meta property="article:published_time" content="{{ $note->created_at->toIso8601String() }}" />

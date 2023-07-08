@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group.
 |
 */
-Route::prefix('/{actor}')->group(function () {
-    Route::get('/atom', ActorController::class)->name('actor.feed.atom');
-    Route::get('/rss', ActorController::class)->name('actor.feed.rss');
+Route::prefix('/')->group(function () {
+    Route::get('{actor}.rss', ActorController::class)->name('actor.feed.rss');
 });

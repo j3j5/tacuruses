@@ -19,10 +19,7 @@ class ActorController extends Controller
         $items = $items->load(['mediaAttachments'])->map(
             fn ($note) => $note->setRelation('actor', $actor)
         );
-        $format = 'atom';
-        if ($request->routeIs('actor.feed.rss')) {
-            $format = 'rss';
-        }
+        $format = 'rss';
         return new Feed(
             $actor->name . ' feed',
             $items,

@@ -5,17 +5,17 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        @isset($actor)
-        {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
-        <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$actor]) }}" title="ActivityPub profile">
-        <link rel="alternate" type="application/atom+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.atom', [$actor]) }}">
-        <link rel="alternate" type="application/rss+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.rss', [$actor]) }}">
-        @endisset
+        @stack('head-meta')
 
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+        @stack('head-styles')
+
         <script src="{{ mix('js/app.js') }}" defer></script>
+        @stack('head-scripts')
     </head>
     <body class="font-sans text-base antialiased">
         @yield('content')
+
+        @stack('footer-scripts')
     </body>
 </html>

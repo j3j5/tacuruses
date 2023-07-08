@@ -1,5 +1,40 @@
 @extends('layouts.master')
 
+@push('head-meta')
+    <title>{{ config('app.name') }} | {{ $actor->name }} ({{ $actor->canonical_username }})</title>
+
+    {{-- ActivityPub --}}
+    {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
+    <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$actor]) }}" title="ActivityPub profile">
+    {{-- <link rel="alternate" type="application/atom+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.atom', [$actor]) }}"> --}}
+    <link rel="alternate" type="application/rss+xml" title="{{ $actor->name }} Feed" href="{{ route('actor.feed.rss', [$actor]) }}">
+
+    {{-- OpenGraph --}}
+    <meta name="author" content="{{ $actor->canonical_username }}">
+    <meta property="og:site_name" content="{{ config('app.name') }}"  />
+    <meta property="og:title" content="{{ $actor->name }} ({{ $actor->canonical_username }}) profile"/>
+
+    <meta property="og:type" content="profile"/>
+    <meta property="og:profile:first_name" content="{{ $actor->name }}" />
+    {{-- <meta property="og:profile:last_name" content="" /> --}}
+    <meta property="og:profile:username" content="{{ $actor->canonical_username }}" />
+
+    <meta property="description" name="description" content="{{ $actor->bio }}" />
+    <meta property="og:description" content="{{ $actor->bio }}"  />
+    <meta property="og:url" content="{{ route('actor.show', [$actor]) }}"  />
+    <meta property="og:locale" content="{{ $actor->language }}">
+
+    <meta property="og:image" content="{{ $actor->avatar_url }}" />
+    {{-- <meta content="1280" property="og:image:width" /> --}}
+    {{-- <meta content="640" property="og:image:height" /> --}}
+
+
+    {{-- <meta property="og:updated_time" content="" /> --}}
+    {{-- <meta property="article:published_time" content="2009-02-27T10:43:58+00:00" /> --}}
+    {{-- <meta property="article:modified_time" content="2009-02-18T15:16:13+00:00" /> --}}
+@endpush
+
+
 @section('content')
 <div class="w-full flex justify-center m-6">
     <div class="flex-auto relative p-8 max-w-md">

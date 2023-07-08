@@ -50,7 +50,7 @@ class ProfileController extends Controller
             // 'replies',
         ])->transform(
             fn (LocalNote $note) => $note->setRelation('actor', $actor)
-        );
+        )->load('mediaAttachments');
 
         return view('actors.profile', compact(['actor']));
     }

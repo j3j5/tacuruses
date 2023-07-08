@@ -22,6 +22,15 @@
 
     <section class="text-slate-900 text-lg leading-relaxed mt-2 mb-2">
         {!! $note->content !!}
+        @unless($note->mediaAttachments->isEmpty())
+        <div class="grid gap-4 grid-cols-2 grid-rows-2">
+            @foreach ($note->mediaAttachments as $media)
+                <a class="" href="{{ $media->remote_url }}" target="_blank" rel="nofollow noopener">
+                    <img class="p-4" src="{{ $media->remote_url }}" alt="{{ $media->description }}">
+                </a>
+            @endforeach
+        </div>
+        @endunless
     </section>
 
     <section class="flex border-solid border-b-2 border-gray-300">

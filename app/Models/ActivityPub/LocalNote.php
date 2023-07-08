@@ -355,12 +355,31 @@ class LocalNote extends Note implements Feedable
     public function toFeedItem(): FeedItem
     {
         $title = $this->summary ?? Str::limit($this->content, 100);
+        $content = $this->content;
+        foreach ($this->mediaAttachments as $media) {
+            $content .= '
+            <a class="" href="' . $media->remote_url . '" target="_blank" rel="nofollow noopener">
+                <img src="' . $media->remote_url . '" alt="' . $media->description . '">
+            </a>';
+        }
+
+        /*
+        @unless($note->mediaAttachments->isEmpty())
+        <div class="grid gap-4 grid-cols-2 grid-rows-2">
+            @foreach ($note->mediaAttachments as $media)
+                <a class="" href="' . $media->remote_url }}" target="_blank" rel="nofollow noopener">
+                    <img class="p-4" src="{{ $media->remote_url }}" alt="{{ $media->description }}">
+                </a>
+            @endforeach
+        </div>
+        @endunless
+        */
 
         $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
             ->title(strip_tags($title))
             ->image($this->actor->avatar_url)
-            ->summary($this->content)
+            ->summary($content)
             ->link($this->url)
             ->media($this->mediaAttachments)
             ->authorName($this->actor->name)

@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers\API\Mastodon;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use App\Models\Media;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -120,5 +121,37 @@ class PostStatusTest extends TestCase
         $expected = '<p>' . str_replace("#$hashtag", $anchor, $status) . '</p>';
         $this->assertSame($expected, $note->content);
         $this->assertNotNull($note->published_at);
+    }
+
+    public function test_post_status_with_media()
+    {
+        $actor = LocalActor::factory()->create();
+        Sanctum::actingAs(
+            $actor,
+        );
+
+        $status = $this->faker->sentences(random_int(1, 5), true);
+
+        $options = ['media' => []];
+        for ($i = 0; $i < random_int(2, 4); $i++) {
+            $options['media'][] = [
+                'mediaType' => random_int(0, 1) ? 'image/jpeg' : 'image/png',
+                'url' => fake()->imageUrl(),
+                'name' => fake()->sentences(3, true),
+            ];
+        }
+        $response = $this->post(route('mastodon.v1.statuses'), array_merge([
+            'status' => $status,
+        ], $options));
+
+        $response->assertCreated();
+
+        $note = LocalNote::latest()->first();
+        $this->assertSame(count($options['media']), $note->mediaAttachments->count());
+        $note->mediaAttachments->each(function (Media $media, int $index) use ($options) {
+            $this->assertSame($options['media'][$index]['mediaType'], $media->content_type);
+            $this->assertSame($options['media'][$index]['url'], $media->remote_url);
+            $this->assertSame($options['media'][$index]['name'], $media->description);
+        });
     }
 }

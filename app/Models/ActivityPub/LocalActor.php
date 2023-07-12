@@ -108,6 +108,10 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
+ * @property-read string $canonical_username
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
+ * @property-read int|null $notes_with_replies_count
+ * @method static \Database\Factories\ActivityPub\LocalActorFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements

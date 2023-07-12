@@ -85,6 +85,8 @@ use function Safe\json_encode;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereVisibility($value)
  * @property-read array $content_map
+ * @property string|null $original_content
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereOriginalContent($value)
  * @mixin \Eloquent
  */
 class RemoteNote extends Note

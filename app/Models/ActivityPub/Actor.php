@@ -77,6 +77,8 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUsername($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
+ * @property-read int|null $notes_with_replies_count
  * @mixin \Eloquent
  */
 class Actor extends Model

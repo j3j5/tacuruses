@@ -118,6 +118,11 @@ use Spatie\Feed\Feedable;
  * @method static Builder|LocalNote whereType($value)
  * @method static Builder|LocalNote whereUpdatedAt($value)
  * @method static Builder|LocalNote whereVisibility($value)
+ * @property string|null $original_content
+ * @property-read string|null $in_reply_to
+ * @property-read \App\Models\ActivityPub\Note|null $replyingTo
+ * @method static \Database\Factories\ActivityPub\LocalNoteFactory factory($count = null, $state = [])
+ * @method static Builder|LocalNote whereOriginalContent($value)
  * @mixin \Eloquent
  */
 class LocalNote extends Note implements Feedable

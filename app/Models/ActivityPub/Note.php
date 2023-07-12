@@ -88,6 +88,9 @@ use Stevebauman\Purify\Facades\Purify;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereVisibility($value)
+ * @property string|null $original_content
+ * @property-read array $content_map
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereOriginalContent($value)
  * @mixin \Eloquent
  */
 class Note extends Model

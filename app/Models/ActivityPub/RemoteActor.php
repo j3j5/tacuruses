@@ -78,6 +78,10 @@ use Parental\HasParent;
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
+ * @property-read string $canonical_username
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
+ * @property-read int|null $notes_with_replies_count
+ * @method static \Database\Factories\ActivityPub\RemoteActorFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor

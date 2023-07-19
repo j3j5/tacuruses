@@ -2,12 +2,14 @@
 
 namespace App\Listeners;
 
+use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use RuntimeException;
 
 class SendNoteToFollowers implements ShouldQueue
 {
@@ -28,6 +30,10 @@ class SendNoteToFollowers implements ShouldQueue
      */
     public function handle(LocalNotePublished $event) : void
     {
+        if (!in_array($event->note->visibility, [Visibility::PUBLIC, Visibility::UNLISTED, Visibility::PRIVATE])) {
+            throw new RuntimeException('Direct Messages not implemented yet!');
+        }
+
         // Get all remote actors
         $followers = $event->note->actor->followers
             ->map(fn (Follow $follow) => $follow->actor)

@@ -15,7 +15,7 @@ final class PublishPost
      */
     public function handle(Note $noteDto, Closure $next) : mixed
     {
-        if (!(bool) $noteDto->draft) {
+        if (!(bool) $noteDto->draft && (bool) !$noteDto->scheduled_at) {
             $noteDto->getModel()->publish();
         }
 

@@ -112,6 +112,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
  * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\LocalActorFactory factory($count = null, $state = [])
+ * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements

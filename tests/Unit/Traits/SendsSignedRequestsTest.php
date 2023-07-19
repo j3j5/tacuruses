@@ -8,8 +8,8 @@ use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Verifier;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
 
@@ -33,8 +33,8 @@ class SendsSignedRequestsTest extends TestCase
         $actor->key_id = 'https://example.com/actor#main-key';
         $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
-        $actor->private_key = $key->toString('PKCS1');
-        $actor->public_key = $key->getPublicKey()->toString('PKCS1');
+        $actor->privateKey = $key->toString('PKCS1');
+        $actor->publicKey = $key->getPublicKey()->toString('PKCS1');
 
         $trait = new class() {
             use SendsSignedRequests {
@@ -89,13 +89,13 @@ class SendsSignedRequestsTest extends TestCase
                                     ,signature="H4OUtJbd7+9umkhwcUojgxgUIcPD3GerHvo1Z3YNTC34j6lvujTgFoboOENEOlc2hA9yGpPNPzz5A29UaDT/lDeAMCCoFzh9AkZXMAaT41CSep94j9a9eFY6DyR5qhiRqWaybYbYvOBXqxbICxjucduRBL9q31IcmsiatI76xYr61BVK29is2nrX68TQHITzSzbPTRaN2FEvYscJG8hBjHLyofoIVzer6cIf+o4R5HLxgsdMGCl5DHjcR/ksn0tCV3qYWgeREjMxiKPGZrlZSbfiIUqT980XjhXgTMXTgTF4fuufEAaMEGsEkOKADGxi3BBs1Bi+ug53SseqjdFjLw==""
                 ] */
 
-        $sentHeaders = $response->transferStats->getRequest()->getHeaders();
+        Http::assertSent(function (Request $request) {
+            return $request->hasHeader('Digest') &&
+                $request->hasHeader('Signature') &&
+                !$request->hasHeader('(request-target)');
+        });
 
-        $this->assertArrayHasKey('Digest', $sentHeaders);
-        $this->assertArrayHasKey('Signature', $sentHeaders);
-        $this->assertArrayNotHasKey('(request-target)', $sentHeaders);
-
-        $publicKey = PublicKeyLoader::load($actor->public_key)->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        $publicKey = $actor->public_key_object;
 
         /** @var \App\Services\ActivityPub\Verifier $verifier */
         $verifier = app(Verifier::class);

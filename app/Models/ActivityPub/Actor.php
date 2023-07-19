@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Parental\HasChildren;
+use phpseclib3\Crypt\Common\PublicKey as CommonPublicKey;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Crypt\RSA\PublicKey;
+use RuntimeException;
 
 use function Safe\parse_url;
 
@@ -79,6 +84,7 @@ use function Safe\parse_url;
  * @method static \Illuminate\Database\Eloquent\Builder|Actor whereUsername($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
  * @property-read int|null $notes_with_replies_count
+ * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @mixin \Eloquent
  */
 class Actor extends Model
@@ -152,6 +158,24 @@ class Actor extends Model
     {
         return Attribute::make(
             get: fn () : string => '@' . $this->username . '@' . $this->domain
+        );
+    }
+
+    public function publicKeyObject() : Attribute
+    {
+        return Attribute::make(
+            get: function () : CommonPublicKey {
+                $publicKey = PublicKeyLoader::load($this->publicKey);
+                if (!$publicKey instanceof CommonPublicKey) {
+                    throw new RuntimeException('invalid key type');
+                }
+                // Mastodon uses the relaxed padding
+                if ($publicKey instanceof PublicKey) {
+                    $publicKey = $publicKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+                }
+
+                return $publicKey;
+            }
         );
     }
 }

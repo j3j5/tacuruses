@@ -82,6 +82,7 @@ use Parental\HasParent;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
  * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\RemoteActorFactory factory($count = null, $state = [])
+ * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor
@@ -140,7 +141,10 @@ class RemoteActor extends Actor
             return $this;
         }
 
-        Log::debug('dispatching job to deliver the Create activity for a note', ['actor' => $this, 'note' => $note]);
+        Log::debug('dispatching job to deliver the Create activity for a note', [
+            'actor' => $this->withoutRelations(),
+            'note' => $note->withoutRelations(),
+        ]);
 
         DeliverActivity::dispatch($note->actor, $note->getAPActivity(), $inbox);
 

@@ -46,7 +46,7 @@ trait SendsSignedRequests
         $signer = app(Signer::class);
         $signer->setDigestAlgo('sha256')
             ->setKeyId($actorSigning->key_id)
-            ->setPrivateKey($actorSigning->private_key);
+            ->setPrivateKey($actorSigning->privateKey);
 
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::withHeaders($headers)->withMiddleware(

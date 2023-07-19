@@ -3,10 +3,10 @@
 namespace Tests\Feature\Http\Middleware\ActivityPub\Federation;
 
 use App\Http\Middleware\ActivityPub\VerifySignature;
+use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Signer;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use phpseclib3\Crypt\Common\PrivateKey;
@@ -367,6 +367,97 @@ class HttpSignaturesTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_request_with_blind_key_rotation()
+    {
+        // Create fake route
+        Route::post('testing-middleware-route', fn () => 'all good!')
+            ->middleware(VerifySignature::class);
+
+        $oldKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        $newKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+
+        // Store remoteActor with and "old" key
+        RemoteActor::factory()
+            ->withPublicKey($oldKey->getPublicKey()->toString('PKCS1'))
+            ->create([
+                'activityId' => $this->actorResponse['id'],
+                'publicKeyId' => $this->actorResponse['publicKey']['id'],
+            ]);
+
+        // Return the new key when retrieving actor keyId
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $newKey->getPublicKey()->toString('PKCS1');
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
+        ];
+
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => $actorInfo['id'],
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
+
+        // Sign the request with the new key
+        $headers = $this->sign($newKey, $actorInfo['publicKey']['id'], url('/testing-middleware-route'), json_encode($data), $headers);
+        $response = $this->postJson(url('/testing-middleware-route'), $data, $headers);
+
+        $response->assertOk();
+    }
+
+    public function test_request_with_signed_by_different_key_than_locally_cached_and_remotely_returned()
+    {
+        // Create fake route
+        Route::post('testing-middleware-route', fn () => 'all good!')
+            ->middleware(VerifySignature::class);
+
+        $oldKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        $newKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        $thirdKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        $remoteActor = RemoteActor::factory()
+            ->withPublicKey($oldKey->getPublicKey()->toString('PKCS1'))
+            ->create(['activityId' => $this->actorResponse['id']]);
+
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $newKey->getPublicKey()->toString('PKCS1');
+
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
+        ];
+
+        $data = [
+            '@context' => 'https://www.w3.org/ns/activitystreams',
+            'actor' => $actorInfo['id'],
+            'type' => 'Create',
+            'object' => [
+                'type' => 'Note',
+                'content' => 'Hello!',
+            ],
+            'to' => 'https://fedi.example/users/username',
+        ];
+
+        $headers = $this->sign($thirdKey, $actorInfo['publicKey']['id'], url('/testing-middleware-route'), json_encode($data), $headers);
+        $response = $this->postJson(url('/testing-middleware-route'), $data, $headers);
+
+        $response->assertUnauthorized();
+    }
+
     private function sign(PrivateKey $privateKey, string $keyId, string $url, ?string $body = null, array $extraHeaders = []) : array
     {
         $digest = null;
@@ -382,7 +473,6 @@ class HttpSignaturesTest extends TestCase
             ' ',
             array_map('strtolower', array_keys($headers))
         );
-        Log::debug('Strign to sign: "' . PHP_EOL . PHP_EOL . $stringToSign . '"' . PHP_EOL);
         $signature = base64_encode($privateKey->sign($stringToSign));
         $signatureHeader = 'keyId="' . $keyId . '",headers="' . $signedHeaders . '",algorithm="rsa-sha256",signature="' . $signature . '"';
         unset($headers['(request-target)']);

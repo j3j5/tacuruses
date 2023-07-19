@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\ActivityPub;
 
 use ActivityPhp\Type;
+use App\Jobs\ActivityPub\FindActorInfo;
 use App\Jobs\ActivityPub\GetActorByKeyId;
 use App\Jobs\ActivityPub\ProcessDeleteAction;
 use App\Services\ActivityPub\Verifier;
@@ -11,10 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use phpseclib3\Crypt\Common\PublicKey as CommonPublicKey;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Crypt\RSA;
-use phpseclib3\Crypt\RSA\PublicKey;
 use RuntimeException;
 use function Safe\preg_match;
 
@@ -83,27 +80,32 @@ class VerifySignature
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Actors do not match');
         }
 
-        $publicKey = PublicKeyLoader::load($actor->publicKey);
-        if (!$publicKey instanceof CommonPublicKey) {
-            throw new RuntimeException('invalid key type');
-        }
-        // Mastodon uses the relaxed padding
-        if ($publicKey instanceof PublicKey) {
-            $publicKey = $publicKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
-        }
-
         $verified = false;
+        $psrRequest = app(PsrHttpFactory::class)->createRequest($request);
         try {
-            $psrRequest = app(PsrHttpFactory::class)->createRequest($request);
-            $verified = $this->verifier->verifyRequest($psrRequest, $publicKey);
+            $verified = $this->verifier->verifyRequest($psrRequest, $actor->public_key_object);
         } catch(RuntimeException $e) {
             Log::warning($e->getMessage());
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, $e->getMessage());
         }
 
         if (!$verified) {
-            Log::warning('Unable to verify given signature');
-            abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Unable to verify given signature');
+            Log::warning('Unable to verify given signature, try refetching user\'s public key');
+            // Enable blind key rotation, the author's key may have been locally cached
+            // and changed on the remote server, so let's try to retrieve it again from
+            // the remote server and try again.
+            $actor = FindActorInfo::dispatchSync($sigParameters['keyId'], false);
+
+            try {
+                $verified = $this->verifier->verifyRequest($psrRequest, $actor->public_key_object);
+            } catch(RuntimeException $e) {
+                Log::warning($e->getMessage());
+                abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, $e->getMessage());
+            }
+
+            if (!$verified) {
+                abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Unable to verify given signature');
+            }
         }
 
         Log::debug('Signature is VERIFIED!');

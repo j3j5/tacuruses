@@ -9,6 +9,7 @@ use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Domain\Feed\FeedItem;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
+use App\Events\LocalNoteUpdated;
 use App\Http\Resources\ActivityPub\AttachmentResource;
 use App\Models\Media;
 use App\Services\ActivityPub\Context;

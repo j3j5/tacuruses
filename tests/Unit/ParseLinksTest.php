@@ -7,13 +7,13 @@ use App\Jobs\Application\Posts\CreateNewPost;
 use App\Jobs\Application\Posts\ParseLinks;
 use App\Models\ActivityPub\LocalActor;
 use App\Processes\Process;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ParseLinksTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use LazilyRefreshDatabase, WithFaker;
 
     private object $process;
 

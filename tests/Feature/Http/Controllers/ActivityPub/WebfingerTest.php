@@ -3,7 +3,7 @@
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Str;
 
 use function Safe\parse_url;
@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class WebfingerTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     public function test_non_json_requests_get_404()
     {

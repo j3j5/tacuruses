@@ -3,12 +3,12 @@
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
 class ActorTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
     /**
      * A basic feature test example.
      *

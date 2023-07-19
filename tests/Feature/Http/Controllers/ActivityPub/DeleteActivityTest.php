@@ -5,7 +5,7 @@ namespace Tests\Feature\Http\Controllers\ActivityPub;
 use ActivityPhp\Type;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class DeleteActivityTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use LazilyRefreshDatabase, WithFaker;
 
     public function test_mastodon_delete_activity_for_non_existent_user()
     {

@@ -4,7 +4,7 @@ namespace Tests\Feature\Http\Middleware\ActivityPub\Federation;
 
 use App\Http\Middleware\ActivityPub\VerifySignature;
 use App\Services\ActivityPub\Signer;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class HttpSignaturesTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     private array $actorResponse = [
         '@context' => [

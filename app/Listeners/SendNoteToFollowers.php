@@ -34,6 +34,8 @@ class SendNoteToFollowers implements ShouldQueue
             throw new RuntimeException('Direct Messages not implemented yet!');
         }
 
+        $event->note->actor->loadMissing(['followers.actor']);
+
         // Get all remote actors
         $followers = $event->note->actor->followers
             ->map(fn (Follow $follow) => $follow->actor)

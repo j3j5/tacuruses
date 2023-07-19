@@ -28,15 +28,19 @@ class SendNoteToFollowers implements ShouldQueue
      */
     public function handle(LocalNotePublished $event) : void
     {
+        // Get all remote actors
         $followers = $event->note->actor->followers
             ->map(fn (Follow $follow) => $follow->actor)
             ->filter(
                 fn (Actor $follower) : bool => $follower instanceof RemoteActor
             );
+
+        // Deduplicate first by shared inbox address
         $followers->filter(fn (RemoteActor $actor) : bool => !empty($actor->sharedInbox))
             ->unique('sharedInbox')
             ->each->sendNote($event->note);
 
+        // Deduplicate now by inbox address
         $followers->filter(fn (RemoteActor $actor) : bool => empty($actor->sharedInbox))
             ->unique('inbox')
             ->each->sendNote($event->note);

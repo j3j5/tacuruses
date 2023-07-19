@@ -39,7 +39,7 @@ class LocalNoteFactory extends Factory
             // 'summaryMap' => '',
             'type' => 'Note',
             'sensitive' => false,
-            'to' => Context::ACTIVITY_STREAMS_PUBLIC,
+            // 'to' => Context::ACTIVITY_STREAMS_PUBLIC,
             // 'bto' => '',
             // 'cc' => '',
             // 'bcc' => '',
@@ -48,7 +48,7 @@ class LocalNoteFactory extends Factory
             // 'location' => '',
             // 'startTime' => '',
             // 'endTime' => '',
-            'visibility' => Visibility::PUBLIC,
+            // 'visibility' => Visibility::PUBLIC,
             // 'attachments' => '',
             // 'tags' => '',
             // 'repliesRaw' => '',
@@ -57,6 +57,43 @@ class LocalNoteFactory extends Factory
             'note_type' => 'local',
             // 'original_content' => '',
         ];
+    }
+
+    public function public(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'visibility' => Visibility::PUBLIC,
+                'to' => [Context::ACTIVITY_STREAMS_PUBLIC],
+            ];
+        })->afterCreating(function (LocalNote $note) {
+            $note->cc = [$note->actor->followers_url];
+        });
+    }
+
+    public function unlisted(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'visibility' => Visibility::UNLISTED,
+                'to' => [],
+                'cc' => [Context::ACTIVITY_STREAMS_PUBLIC],
+            ];
+        })->afterCreating(function (LocalNote $note) {
+            $note->to = [$note->actor->followers_url];
+        });
+    }
+
+    public function private(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'visibility' => Visibility::PRIVATE,
+                'to' => [],
+            ];
+        })->afterCreating(function (LocalNote $note) {
+            $note->to = [$note->actor->followers_url];
+        });
     }
 
 }

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('/api/v1')->group(function () {
-        Route::post('/statuses', PostStatus::class)->name('mastodon.v1.statuses');
+        Route::post('/statuses', PostStatus::class)->name('mastodon.v1.statuses.post');
     });
 
     Route::prefix('/api/v2')->group(function () {

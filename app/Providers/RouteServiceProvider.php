@@ -44,7 +44,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         Route::model('actor', LocalActor::class);
-
+        // Federation routes don't support accessing the Note w/o the actor
         Route::bind('note', function (string $value, RoutingRoute $route) : LocalNote {
             if (!$route->hasParameter('actor') || !$route->parameter('actor') instanceof LocalActor) {
                 throw new RuntimeException('Unresolvable param on route for note');

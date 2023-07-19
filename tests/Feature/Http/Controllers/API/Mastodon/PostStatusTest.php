@@ -32,7 +32,7 @@ class PostStatusTest extends TestCase
         );
 
         $status = $this->faker->sentences(random_int(1, 5), true);
-        $response = $this->post(route('mastodon.v1.statuses'), [
+        $response = $this->post(route('mastodon.v1.statuses.post'), [
             'status' => $status,
         ]);
 
@@ -56,7 +56,7 @@ class PostStatusTest extends TestCase
         );
         $status = '<p>' . $this->faker->sentences(random_int(1, 5), true) . '</p>';
 
-        $response = $this->post(route('mastodon.v1.statuses'), [
+        $response = $this->post(route('mastodon.v1.statuses.post'), [
             'status' => $status,
         ]);
 
@@ -82,7 +82,7 @@ class PostStatusTest extends TestCase
         $url = 'https://example.com';
         $status = trim($this->faker->sentences(random_int(0, 3), true) . ' ' . $url . ' ' . $this->faker->sentences(random_int(0, 3), true));
 
-        $response = $this->post(route('mastodon.v1.statuses'), [
+        $response = $this->post(route('mastodon.v1.statuses.post'), [
             'status' => $status,
         ]);
 
@@ -109,7 +109,7 @@ class PostStatusTest extends TestCase
         $hashtag = $this->faker->word();
         $status = $this->faker->sentences(random_int(1, 5), true) . ' #' . $hashtag;
 
-        $response = $this->post(route('mastodon.v1.statuses'), [
+        $response = $this->post(route('mastodon.v1.statuses.post'), [
             'status' => $status,
         ]);
 
@@ -140,7 +140,7 @@ class PostStatusTest extends TestCase
                 'name' => fake()->sentences(3, true),
             ];
         }
-        $response = $this->post(route('mastodon.v1.statuses'), array_merge([
+        $response = $this->post(route('mastodon.v1.statuses.post'), array_merge([
             'status' => $status,
         ], $options));
 

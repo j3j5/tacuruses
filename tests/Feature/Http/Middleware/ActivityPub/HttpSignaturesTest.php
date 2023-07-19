@@ -42,12 +42,6 @@ class HttpSignaturesTest extends TestCase
         ],
     ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Http::preventStrayRequests();
-    }
-
     public function test_requests_without_signature_are_unauthorized()
     {
         $headers = [

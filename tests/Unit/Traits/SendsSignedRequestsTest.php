@@ -69,7 +69,6 @@ class SendsSignedRequestsTest extends TestCase
             'to' => 'https://fedi.example/users/username',
         ];
 
-        Http::preventStrayRequests();
         Http::fake();
 
         $response = $trait->sendSignedPostRequest(

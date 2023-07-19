@@ -328,7 +328,11 @@ class LocalNote extends Note implements Feedable
         $this->published_at = now();
         $this->save();
 
-        LocalNotePublished::dispatch($this);
+        if ($this->wasRecentlyCreated) {
+            LocalNotePublished::dispatch($this);
+        } elseif ($this->isDirty(Arr::except($this->getAttributes(), 'published_at'))) {
+            LocalNoteUpdated::dispatch($this);
+        }
 
         return $this;
     }

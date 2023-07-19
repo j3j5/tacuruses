@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\Mastodon\LookupAccount;
 use App\Http\Controllers\API\Mastodon\PostMedia;
 use App\Http\Controllers\API\Mastodon\PostStatus;
+use App\Http\Controllers\API\Mastodon\UpdateStatus;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('/api/v1')->group(function () {
         Route::post('/statuses', PostStatus::class)->name('mastodon.v1.statuses.post');
+        Route::put('/statuses/{status}', UpdateStatus::class)->name('mastodon.v1.statuses.update');
     });
 
     Route::prefix('/api/v2')->group(function () {

@@ -57,5 +57,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->firstOrFail();
             return $note->setRelation('actor', $route->parameter('actor'));
         });
+
+        // Mastodon API does support accessing the note by ID only (no actor needed, it's on the login)
+        Route::model('status', LocalNote::class);
     }
 }

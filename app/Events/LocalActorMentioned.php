@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use Illuminate\Broadcasting\PrivateChannel;
 
-class LocalActorMentioned extends BaseEvent
+final class LocalActorMentioned extends BaseEvent
 {
     /**
      * Create a new event instance.

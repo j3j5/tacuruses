@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Events;
 
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Broadcasting\PrivateChannel;
 
-class RemoteActorCreated extends BaseEvent
+final class RemoteActorCreated extends BaseEvent
 {
     /**
      * Create a new event instance.

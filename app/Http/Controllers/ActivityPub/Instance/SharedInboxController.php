@@ -46,7 +46,7 @@ class SharedInboxController extends Controller
         switch ($type) {
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
-                ProcessCreateAction::dispatch($actor, $activityStream);
+                ProcessCreateAction::dispatchAfterResponse($actor, $activityStream);
                 break;
             case 'Update':
                 // case 'Delete':

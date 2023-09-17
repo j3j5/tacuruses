@@ -107,7 +107,7 @@ class InboxController extends Controller
                 break;
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
-                ProcessCreateAction::dispatch($actor, $activityStream);
+                ProcessCreateAction::dispatchAfterResponse($actor, $activityStream);
                 break;
             case 'Accept':
             case 'Reject':

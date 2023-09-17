@@ -50,6 +50,8 @@ class InboxController extends Controller
         $action->remove('actorModel');
 
         $type = $action->get('type');
+
+        Log::debug('Processing ' . $type . ' action from single inbox');
         $activityModel = null;
         if ($type !== 'Create') {
             $target = $this->tryToFindTarget($action);

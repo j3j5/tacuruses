@@ -38,6 +38,7 @@ class SharedInboxController extends Controller
 
         /** @var string $type */
         $type = $action->get('type');
+        Log::debug('Processing ' . $type . ' action from shared inbox');
 
         // Go ahead, process it
         $activityStream = Type::create($type, $action->all());

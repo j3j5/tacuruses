@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OnlyRequestsWantJson
 {
@@ -18,6 +19,7 @@ class OnlyRequestsWantJson
     {
         // Only accept proper requests on prod
         if (!$request->wantsJson()) {
+            Log::debug('Request should want JSON but does not!', compact('request'));
             abort_if(app()->environment(['production', 'testing']), 404);
         }
 

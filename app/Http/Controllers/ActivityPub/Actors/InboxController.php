@@ -6,7 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\OnlyRequestsWantJson;
+use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
@@ -28,7 +28,7 @@ class InboxController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(OnlyRequestsWantJson::class);
+        $this->middleware(OnlyContentType::class . ':application/activity+json');
     }
 
     /**

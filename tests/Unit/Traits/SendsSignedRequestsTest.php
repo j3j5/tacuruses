@@ -5,6 +5,7 @@ namespace Tests\Unit\Traits;
 use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Signer;
 use App\Services\ActivityPub\Verifier;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -70,8 +71,10 @@ class SendsSignedRequestsTest extends TestCase
         ];
 
         Http::fake();
+        $signer = app(Signer::class);
 
         $response = $trait->sendSignedPostRequest(
+            signer: $signer,
             actorSigning: $actor,
             url: $actor->inbox,
             data: $data,

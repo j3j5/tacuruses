@@ -16,6 +16,7 @@ trait SendsSignedRequests
 {
     /**
      *
+     * @param \App\Services\ActivityPub\Signer $signer
      * @param \App\Models\ActivityPub\LocalActor $actorSigning
      * @param string $url
      * @param array $data
@@ -30,6 +31,7 @@ trait SendsSignedRequests
      * @return \Illuminate\Http\Client\Response
      */
     private function sendSignedPostRequest(
+        Signer $signer,
         LocalActor $actorSigning,
         string $url,
         array $data,
@@ -45,8 +47,6 @@ trait SendsSignedRequests
             'User-Agent' => config('federation.user-agent'),
         ];
 
-        /** @var \App\Services\ActivityPub\Signer $signer */
-        $signer = app(Signer::class);
         $signer->setDigestAlgo('sha256')
             ->setKeyId($actorSigning->key_id)
             ->setPrivateKey($actorSigning->privateKey);

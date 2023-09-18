@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -47,10 +48,9 @@ final class SendAnnounceAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
-        $accept = [
+        $accept = Type::create('Accept', [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/announce/' . $this->announce->slug,
-            'type' => 'Accept',
             'actor' => $this->target->activityId,
             'object' => [
                 'id' => $this->announce->activityId,
@@ -58,8 +58,9 @@ final class SendAnnounceAcceptToActor implements ShouldQueue
                 'type' => 'Announce',
                 'object' => $this->target->activityId,
             ],
-        ];
+        ])->toArray();
         $this->sendSignedPostRequest(
+            signer: $signer,
             actorSigning: $this->targetActor,
             url: $this->actor->inbox,
             data: $accept,

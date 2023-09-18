@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
@@ -46,10 +47,9 @@ final class SendFollowAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
-        $accept = [
+        $accept = Type::create('Accept', [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/follows/' . $this->follow->slug,
-            'type' => 'Accept',
             'actor' => $this->target->activityId,
             'object' => [
                 'id' => $this->follow->activityId,
@@ -57,9 +57,10 @@ final class SendFollowAcceptToActor implements ShouldQueue
                 'type' => 'Follow',
                 'object' => $this->target->activityId,
             ],
-        ];
+        ])->toArray();
 
         $this->sendSignedPostRequest(
+            signer: $signer,
             actorSigning: $this->targetActor,
             data: $accept,
             url: $this->actor->inbox,

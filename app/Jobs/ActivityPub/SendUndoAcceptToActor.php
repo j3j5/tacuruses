@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
@@ -49,10 +50,9 @@ final class SendUndoAcceptToActor implements ShouldQueue
      */
     public function handle(Signer $signer)
     {
-        $accept = [
+        $accept = Type::create('Accept', [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/undo/' . $this->undo->slug,
-            'type' => 'Accept',
             'actor' => $this->target->activityId,
             'object' => [
                 'id' => $this->undo->activityId,
@@ -60,8 +60,9 @@ final class SendUndoAcceptToActor implements ShouldQueue
                 'type' => 'Undo',
                 'object' => $this->target->activityId,
             ],
-        ];
+        ])->toArray();
         $this->sendSignedPostRequest(
+            signer: $signer,
             actorSigning: $this->targetActor,
             data: $accept,
             url: $this->actor->inbox,

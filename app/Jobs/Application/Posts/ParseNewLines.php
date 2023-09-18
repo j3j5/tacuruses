@@ -20,7 +20,7 @@ final class ParseNewLines
         $contentMap = $model->contentMap;
         foreach ($contentMap as $lang => $content) {
             if (!$noteDto->plain_text) {
-                // Content is HTML, ignore and let them handle their own links
+                // Content is HTML, ignore and let them handle their own new lines
                 continue;
             }
             $contentMap[$lang] = str_replace(PHP_EOL, '', nl2br($content, false));

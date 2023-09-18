@@ -12,8 +12,8 @@ class UpdateStatusRequest extends ApiRequest
      */
     public function authorize() : bool
     {
-        $note = $this->route()->parameter('status');
-
+        $note = $this->route('status');
+        /** @phpstan-ignore-next-line */
         return parent::authorize() && $note->actor_id === $this->user()->id;
     }
 
@@ -44,7 +44,7 @@ class UpdateStatusRequest extends ApiRequest
     public function getDTO() : ApplicationNote
     {
         /** @var \App\Models\ActivityPub\LocalNote $note */
-        $note = $this->route()->parameter('status');
+        $note = $this->route('status');
         /** @var \App\Models\ActivityPub\LocalActor $actor   */
         $actor = $this->user();
         $dto = new ApplicationNote(

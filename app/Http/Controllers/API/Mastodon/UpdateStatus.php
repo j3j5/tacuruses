@@ -19,10 +19,10 @@ class UpdateStatus extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(UpdateStatusRequest $request, LocalNote $note)
+    public function __invoke(UpdateStatusRequest $request, LocalNote $note) : StatusResource
     {
         /** @var \App\Domain\Application\Note $note */
-        $note = $this->process->run($request->getDTO());
+        $note = $this->process->run($request);
         return new StatusResource($note->getModel());
     }
 }

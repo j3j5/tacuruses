@@ -21,6 +21,7 @@ class NoteRepliesTest extends TestCase
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
             ->for($actor, 'actor')
+            ->public()
             ->create();
 
         $response = $this->get(route('note.replies', [$actor, $note]));
@@ -32,6 +33,7 @@ class NoteRepliesTest extends TestCase
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
             ->for($actor, 'actor')
+            ->public()
             ->create();
 
         $response = $this->get(route('note.replies', [$actor, $note]), [
@@ -59,9 +61,11 @@ class NoteRepliesTest extends TestCase
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
             ->for($actor, 'actor')
+            ->public()
             ->create();
         $reply = LocalNote::factory()
             ->for($actor, 'actor')
+            ->unlisted()
             ->create(['replyTo_id' => $note->id]);
 
         $response = $this->get(route('note.replies', [$actor, $note, 'page' => 1]), [

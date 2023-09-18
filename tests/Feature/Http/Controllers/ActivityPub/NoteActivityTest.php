@@ -16,6 +16,7 @@ class NoteActivityTest extends TestCase
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
             ->for($actor, 'actor')
+            ->public()
             ->create();
 
         $response = $this->get(route('note.activity', [$actor, $note]));
@@ -27,6 +28,7 @@ class NoteActivityTest extends TestCase
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
             ->for($actor, 'actor')
+            ->public()
             ->create();
 
         $response = $this->get(route('note.activity', [$actor, $note]), [

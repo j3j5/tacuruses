@@ -142,8 +142,8 @@ class RemoteActor extends Actor
         }
 
         Log::debug('dispatching job to deliver the Create activity for a note', [
-            'actor' => $this->withoutRelations(),
-            'note' => $note->withoutRelations(),
+            'actor' => $this->id,
+            'note' => $note->id,
         ]);
 
         DeliverActivity::dispatch($note->actor, $note->getAPActivity(), $inbox);

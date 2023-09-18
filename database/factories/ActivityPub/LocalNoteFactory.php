@@ -64,10 +64,11 @@ class LocalNoteFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'visibility' => Visibility::PUBLIC,
-                'to' => [Context::ACTIVITY_STREAMS_PUBLIC],
             ];
+        })->afterMaking(function (LocalNote $note) {
+            $note->fillRecipients();
         })->afterCreating(function (LocalNote $note) {
-            $note->cc = [$note->actor->followers_url];
+            $note->fillRecipients();
         });
     }
 
@@ -76,11 +77,11 @@ class LocalNoteFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'visibility' => Visibility::UNLISTED,
-                'to' => [],
-                'cc' => [Context::ACTIVITY_STREAMS_PUBLIC],
             ];
+        })->afterMaking(function (LocalNote $note) {
+            $note->fillRecipients();
         })->afterCreating(function (LocalNote $note) {
-            $note->to = [$note->actor->followers_url];
+            $note->fillRecipients();
         });
     }
 
@@ -89,10 +90,11 @@ class LocalNoteFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'visibility' => Visibility::PRIVATE,
-                'to' => [],
             ];
+        })->afterMaking(function (LocalNote $note) {
+            $note->fillRecipients();
         })->afterCreating(function (LocalNote $note) {
-            $note->to = [$note->actor->followers_url];
+            $note->fillRecipients();
         });
     }
 

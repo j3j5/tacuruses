@@ -373,27 +373,17 @@ class LocalNote extends Note implements Feedable
             </a>';
         }
 
-        /*
-        @unless($note->mediaAttachments->isEmpty())
-        <div class="grid gap-4 grid-cols-2 grid-rows-2">
-            @foreach ($note->mediaAttachments as $media)
-                <a class="" href="' . $media->remote_url }}" target="_blank" rel="nofollow noopener">
-                    <img class="p-4" src="{{ $media->remote_url }}" alt="{{ $media->description }}">
-                </a>
-            @endforeach
-        </div>
-        @endunless
-        */
-
         $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
             ->title(strip_tags($title))
             ->image($this->actor->avatar_url)
             ->summary($content)
             ->link($this->url)
-            ->media($this->mediaAttachments)
             ->authorName($this->actor->name)
             ->authorEmail($this->actor->canonical_username);
+
+        /** @var \App\Domain\Feed\FeedItem $item */
+        $item->media($this->mediaAttachments);
 
         if ($this->updated_at instanceof Carbon) {
             $item->updated($this->updated_at);

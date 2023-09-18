@@ -74,6 +74,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $mentions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
+ * @property-read string $privateKey
  * @property-read string $private_key
  * @property-read string $public_key
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared

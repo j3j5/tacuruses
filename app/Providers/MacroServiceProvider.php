@@ -28,7 +28,7 @@ class MacroServiceProvider extends ServiceProvider
         });
 
         /**
-         * @example: return response()->activityJson($data)
+         * @example: return response()->jrdJson($data)
          */
         Response::macro('jrdJson', function (array $data = [], int $status = HttpResponse::HTTP_OK) {
             return response()->json(

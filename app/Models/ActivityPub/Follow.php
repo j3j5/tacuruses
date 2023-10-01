@@ -2,6 +2,9 @@
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use ActivityPhp\Type\Extended\Activity\Follow as ActivityFollow;
+use App\Services\ActivityPub\Context;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +41,10 @@ class Follow extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    protected $casts = [
+        'accepted' => 'bool',
+    ];
+
     public function actor() : BelongsTo
     {
         return $this->belongsTo(Actor::class);
@@ -53,5 +60,25 @@ class Follow extends Model
         return Attribute::make(
             get: fn () : string => Hashids::encode($this->id)
         );
+    }
+
+    public function accept() : self
+    {
+        $this->accepted = true;
+        $this->save();
+
+        return $this;
+    }
+
+    public function getApActivity() : ActivityFollow
+    {
+        /** @var \ActivityPhp\Type\Extended\Activity\Follow $activity */
+        $activity = Type::create('Follow', [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->activityId,
+            'actor' => $this->actor->activityId,
+            'object' => $this->target->activityId,
+        ]);
+        return $activity;
     }
 }

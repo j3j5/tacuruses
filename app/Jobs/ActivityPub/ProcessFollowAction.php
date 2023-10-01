@@ -53,6 +53,8 @@ final class ProcessFollowAction implements ShouldQueue
 
         if ($actor instanceof RemoteActor) {
             SendFollowAcceptToActor::dispatch($actor, $target, $this->activity);
+            return;
         }
+        $follow->accept();
     }
 }

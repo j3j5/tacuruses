@@ -7,12 +7,14 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
+use App\Jobs\ActivityPub\ProcessAcceptAction;
 use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
 use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityAccept;
 use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\ActivityLike;
@@ -110,14 +112,19 @@ class InboxController extends Controller
                 ProcessCreateAction::dispatchAfterResponse($actor, $activityStream);
                 break;
             case 'Accept':
+                if (!$activityModel instanceof ActivityAccept) {
+                    throw new RuntimeException('Unknown activity model');
+                }
+                ProcessAcceptAction::dispatchAfterResponse($activityModel);
+                break;
+            case 'Update':
+            case 'Delete':
             case 'Reject':
             case 'Add':
             case 'Remove':
             case 'Block':
             case 'Flag':
-            case 'Update':
             case 'Move':
-            case 'Delete':
             default:
                 Log::warning('Unknown/unsupported verb on inbox', ['class' => __CLASS__, 'payload' => $action, 'activityStream' => $activityStream]);
                 abort(422, 'Unknow type of action');
@@ -133,7 +140,18 @@ class InboxController extends Controller
             'Announce' => $this->tryToFindNoteTarget($action->get('object')),
             'Like' => $this->tryToFindNoteTarget($action->get('object')),
             'Undo' => $this->tryToFindUndoTarget($action->get('object')),
+            'Accept' => $this->tryToFindAcceptTarget($action->get('object')),
             default => throw new RuntimeException("Type '" . $action->get('type') . "' is not implemented yet!"),
+        };
+    }
+
+    private function tryToFindAcceptTarget(array $object) : LocalActor|LocalNote
+    {
+        return match ($object['type']) {
+            'Follow' => $this->tryToFindActorTarget($object['actor']),
+            'Announce' => $this->tryToFindNoteTarget($object['actor']),
+            'Like' => $this->tryToFindNoteTarget($object['object']),
+            default => throw new RuntimeException("Accept Type '" . $object['type'] . "' is not implemented yet!"),
         };
     }
 

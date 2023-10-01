@@ -58,6 +58,7 @@ class Activity extends Model
 
     /** @var array<string, class-string> */
     protected array $childTypes = [
+        'Accept' => ActivityAccept::class,
         'Announce' => ActivityAnnounce::class,
         'Create' => ActivityCreate::class,
         'Follow' => ActivityFollow::class,

@@ -4,6 +4,7 @@ namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\AbstractActor;
+use App\Jobs\ActivityPub\DeliverActivity;
 use App\Services\ActivityPub\Context;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
@@ -17,7 +18,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -344,6 +347,71 @@ class LocalActor extends Actor implements
             array_merge($person, $metadata, $links)
         );
         return $actor->toArray();
+    }
+
+    public function follow(Actor $target) : self
+    {
+        if ($this->relationLoaded('following')) {
+            $alreadyFollowing = $this->following->contains('target_id', $target->id);
+        } else {
+            $alreadyFollowing = Follow::where('actor_id', $this->id)->where('target_id', $target->id)->exists();
+        }
+
+        if ($alreadyFollowing) {
+            Log::debug('@' . $this->username . ' already follows ' . $target->canonical_username);
+            return $this;
+        }
+
+        // Store the follow
+        $follow = Follow::create([
+            'actor_id' => $this->id,
+            'target_id' => $target->id,
+            'activityId' => url('/' . Str::uuid()),
+        ]);
+
+        $activity = $follow->getApActivity();
+
+        Log::debug('dispatching job to deliver the Follow activity for an actor', [
+            'actor' => $this->id,
+            'target' => $target->id,
+        ]);
+
+        DeliverActivity::dispatch($this, $activity, $target->inbox);
+
+        return $this;
+    }
+
+    public function unfollow(Actor $target) : self
+    {
+        if ($this->relationLoaded('following')) {
+            $follow = $this->following->firstWhere('target_id', $target->id);
+            $alreadyFollowing = $follow !== null;
+        } else {
+            $follow = Follow::where('actor_id', $this->id)->where('target_id', $target->id)->first();
+            $alreadyFollowing = $follow !== null;
+        }
+
+        if (!$alreadyFollowing) {
+            Log::debug('@' . $this->username . ' is currently not following ' . $target->canonical_username);
+            return $this;
+        }
+
+        /** @var \ActivityPhp\Type\Extended\Activity\Undo $activity */
+        $activity = Type::create('Undo', [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => route('actor.show', [$this]) . '#follows/' . $follow->slug . '/undo',
+            'actor' => $this->activityId,
+            'object' => $follow->getAPActivity(),
+        ]);
+        $follow->delete();
+
+        Log::debug('dispatching job to deliver the Follow activity for an actor', [
+            'actor' => $this->id,
+            'target' => $target->id,
+        ]);
+        DeliverActivity::dispatch($this, $activity, $target->inbox);
+
+        return $this;
     }
 
     public function scopeByActivityId(Builder $query, string $activityId) : void

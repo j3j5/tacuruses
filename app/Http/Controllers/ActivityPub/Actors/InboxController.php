@@ -22,6 +22,7 @@ use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -130,7 +131,7 @@ class InboxController extends Controller
                 abort(422, 'Unknow type of action');
         }
 
-        return response()->activityJson();
+        return response()->activityJson([], Response::HTTP_ACCEPTED);
     }
 
     private function tryToFindTarget(ParameterBag $action) : LocalActor|LocalNote

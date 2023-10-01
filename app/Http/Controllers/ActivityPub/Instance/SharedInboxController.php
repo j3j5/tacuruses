@@ -8,6 +8,7 @@ use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class SharedInboxController extends Controller
@@ -78,6 +79,6 @@ class SharedInboxController extends Controller
                 abort(422, 'Unknow type of action');
         }
 
-        return response()->activityJson();
+        return response()->activityJson([], Response::HTTP_ACCEPTED);
     }
 }

@@ -46,6 +46,9 @@ final class DeliverActivity implements ShouldQueue, ShouldBeUnique
             url: $this->inbox,
             data: $this->activity->toArray(),
         );
-        Log::debug('Delivering activity; response ' . $response->status());
+        Log::debug('Delivering activity; response ' . $response->status(), [
+            'activity' => $this->activity->toArray(),
+            'inbox' => $this->inbox,
+        ]);
     }
 }

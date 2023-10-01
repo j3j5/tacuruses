@@ -3,6 +3,7 @@
 namespace App\Models\ActivityPub;
 
 use ActivityPhp\Type;
+use ActivityPhp\Type\Extended\Activity\Update;
 use App\Domain\ActivityPub\Mastodon\AbstractActor;
 use App\Jobs\ActivityPub\DeliverActivity;
 use App\Services\ActivityPub\Context;
@@ -293,6 +294,23 @@ class LocalActor extends Actor implements
         $type = 'Service'; // TODO: move to the DB
         /** @phpstan-ignore-next-line */
         return Type::create($type, array_merge($context, $person));
+    }
+
+    public function getAPUpdate() : Update
+    {
+        $context = Context::$actor;
+        $person = $this->getActorArray();
+        /** @var \ActivityPhp\Type\Extended\Activity\Update $update */
+        $update = Type::create('Update', [
+            '@context' => $context,
+            'id' => route('actor.show', [$this]) . '#updates/' . \time(),
+            'actor' => $this->activityId,
+            // TODO: should it change depending on visibility of the account?
+            'to' => [Context::ACTIVITY_STREAMS_PUBLIC],
+            'object' => $person,
+        ]);
+
+        return $update;
     }
 
     private function getActorArray() : array

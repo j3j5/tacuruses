@@ -58,7 +58,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             // Verify linked data signature
             $this->verifySignature();
         } catch(RuntimeException $e) {
-            Log::error($e->getMessage());
+            Log::error($e->getMessage(), ['action' => $this->action->toArray()]);
         }
 
         DB::beginTransaction();
@@ -162,7 +162,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
     private function verifySignature()
     {
         // No signature!!
-        if (data_get($this->action, 'signature', false)) {
+        if (empty($this->action->signature)) {
             throw new RuntimeException('No signature available on object');
         }
 

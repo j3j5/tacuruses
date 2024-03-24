@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Parental\HasChildren;
 use function Safe\json_decode;
@@ -98,6 +99,7 @@ class Note extends Model
     use HasFactory;
     use HasChildren;
     use HasSnowflakePrimary;
+    use SoftDeletes;
 
     protected $fillable = ['type', 'note_type'];
 
@@ -126,6 +128,22 @@ class Note extends Model
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (LocalNote $note) {
+            // Use soft delete but keep the content
+            $note->content = 'DELETED';
+            $note->contentMap = [];
+            $note->original_content = null;
+            $note->save();
+
+            return $note;
+        });
+    }
 
     public function actor() : BelongsTo
     {

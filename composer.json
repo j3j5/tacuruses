@@ -90,6 +90,9 @@
         ],
         "phpunit-coverage": [
             "@php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text"
+        ],
+        "phpunit-coverage-report": [
+            "@php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-html storage/_reports/coverage/"
         ]
     },
     "extra": {

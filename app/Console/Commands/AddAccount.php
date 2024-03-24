@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use phpseclib3\Crypt\RSA;
 
 class AddAccount extends Command
 {

@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 use Parental\HasParent;
+use phpseclib3\Crypt\RSA;
 use RuntimeException;
 
 use function Safe\preg_match;
@@ -428,6 +429,19 @@ class LocalActor extends Actor implements
             'target' => $target->id,
         ]);
         DeliverActivity::dispatch($this, $activity, $target->inbox);
+
+        return $this;
+    }
+
+    public function generateKeys() : self
+    {
+        if (Storage::disk('local')->exists("keys/local/{$this->id}/private.pem")) {
+            throw new RuntimeException('This actor already has keys');
+        }
+        $keyLength = 2048;
+        $privateKey = RSA::createKey($keyLength);
+        Storage::disk('local')->put("keys/local/{$this->id}/private.pem", $privateKey->toString('PKCS1'));
+        Storage::disk('local')->put("keys/local/{$this->id}/public.pem", $privateKey->getPublicKey()->toString('PKCS1'));
 
         return $this;
     }

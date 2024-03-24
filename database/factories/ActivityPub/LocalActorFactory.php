@@ -4,6 +4,7 @@ namespace Database\Factories\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActivityPub\LocalActor>
@@ -38,5 +39,18 @@ class LocalActorFactory extends Factory
             'type' => 'Service',
             'actor_type' => 'local',
         ];
+    }
+
+        /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (LocalActor $actor) {
+            if (!Storage::disk('local')->exists("keys/local/{$actor->id}/private.pem")) {
+                $actor->generateKeys();
+            }
+        });
+
     }
 }

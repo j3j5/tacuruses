@@ -52,25 +52,25 @@ class SharedInboxController extends Controller
             case 'Delete':
                 ProcessDeleteAction::dispatch($activityStream);
                 break;
-            // case 'Update':
+                // case 'Update':
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();
                 // 	break;
-            // case 'Undo':
+                // case 'Undo':
                 // break;
 
-            // case 'View':
+                // case 'View':
                 // break;
 
-            // case 'Reject':
+                // case 'Reject':
                 // break;
 
-            // case 'Delete':
+                // case 'Delete':
                 // break;
 
-            // case 'Add':
+                // case 'Add':
                 // 	break;
 
-            // case 'Accept':
+                // case 'Accept':
                 // 	break;
 
             default:

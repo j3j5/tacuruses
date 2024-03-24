@@ -6,7 +6,7 @@ use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActivityPub\LocalActor>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActivityPub\RemoteActor>
  */
 class RemoteActorFactory extends Factory
 {
@@ -24,7 +24,7 @@ class RemoteActorFactory extends Factory
      */
     public function definition()
     {
-
+        $activityId = fake()->url();
         return [
             'created_at' => now()->subMonth(),
             'updated_at' => now()->subMonth(),
@@ -34,9 +34,11 @@ class RemoteActorFactory extends Factory
             'header' => fake()->url,
             'bio' => fake()->text(),
             'language' => fake()->languageCode(),
-            'activityId' => fake()->url(),
-            'url' => fake()->url(),
-            'inbox' => fake()->url(),
+            'activityId' => $activityId,
+            'following_url' => $activityId . '/following',
+            'followers_url' => $activityId . '/followers',
+            'url' => $activityId,
+            'inbox' => $activityId . '/inbox',
             'sharedInbox' => fake()->url(),
             'publicKeyId' => fake()->url() . '#main-key',
             'type' => 'Person',

@@ -39,7 +39,7 @@ class VerifySignature
         // For delete activities, the signature doesn't really matter, we'll check
         // later on the job whether the user actually exists on its activityID location
         // and act based on that, we don't really care who is notifying us about it
-        if ($request->json('type') === 'Delete') {
+        if ($request->json('type') === 'Delete' && is_string($request->json('object'))) {
             /** @phpstan-ignore-next-line */
             ProcessDeleteAction::dispatch(Type::create('Delete', $request->json()->all()));
             return response()->activityJson();

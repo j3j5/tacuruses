@@ -6,6 +6,7 @@ use ActivityPhp\Type;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessCreateAction;
+use App\Jobs\ActivityPub\ProcessDeleteAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -43,35 +44,33 @@ class SharedInboxController extends Controller
 
         // Go ahead, process it
         $activityStream = Type::create($type, $action->all());
-
         switch ($type) {
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
-                ProcessCreateAction::dispatchAfterResponse($actor, $activityStream);
+                ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
-            case 'Update':
-                // case 'Delete':
-                // break;
-                // case 'Undo':
-                // break;
-
-                // case 'View':
-                // break;
-
-                // case 'Reject':
-                // break;
-
-                // case 'Delete':
-                // break;
-
-                // case 'Add':
-                // 	break;
-
-                // case 'Accept':
-                // 	break;
-
-                // case 'Update':
+            case 'Delete':
+                ProcessDeleteAction::dispatch($activityStream);
+                break;
+            // case 'Update':
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();
+                // 	break;
+            // case 'Undo':
+                // break;
+
+            // case 'View':
+                // break;
+
+            // case 'Reject':
+                // break;
+
+            // case 'Delete':
+                // break;
+
+            // case 'Add':
+                // 	break;
+
+            // case 'Accept':
                 // 	break;
 
             default:

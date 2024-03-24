@@ -56,6 +56,7 @@ trait SendsSignedRequests
         foreach($middlewares as $middleware) {
             $request->withMiddleware($middleware);
         }
+        Log::debug('sending signed request', ['url' => $url, 'data' => $data]);
         /** @var \Illuminate\Http\Client\Response $response */
         $response = $request->post($url, $data);
 

@@ -18,7 +18,6 @@ class Debug
     public function handle(Request $request, Closure $next)
     {
         if (config('app.debug')) {
-            Log::debug('request');
             Log::debug((string) $request);
         }
         /** @var \Illuminate\Http\Response $response */

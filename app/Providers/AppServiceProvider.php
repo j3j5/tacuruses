@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         /** @var \Monolog\Logger $logger */
-        $logger = $this->app->log->driver()->getLogger();
+        $logger = $this->app->log->driver()->getLogger();        /** @phpstan-ignore-line */
         $logger->pushProcessor(new MemoryPeakUsageProcessor());
         $logger->pushProcessor(new MemoryUsageProcessor());
         $logger->pushProcessor(new UidProcessor(16));

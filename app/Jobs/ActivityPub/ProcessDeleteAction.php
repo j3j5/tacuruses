@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Jobs\ActivityPub;
 
+use ActivityPhp\Type\Core\Link;
+use ActivityPhp\Type\Extended\AbstractActor;
 use ActivityPhp\Type\Extended\Activity\Delete;
+use ActivityPhp\Type\Extended\Object\Tombstone;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use Illuminate\Bus\Queueable;
@@ -33,11 +36,20 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 
     public function handle() : void
     {
-        if (is_string($this->action->object)) {
+        if (is_string($this->action->object)
+            || $this->action->object instanceof Link
+            || $this->action->object instanceof AbstractActor
+        ) {
             $this->deleteActor();
             return;
         }
-        $this->deleteNote();
+        if ($this->action->object instanceof Tombstone) {
+            $this->deleteNote();
+            return;
+        }
+
+        Log::warning('DELETE action not implemented yet', $this->action->toArray());
+        throw new RuntimeException('This DELETE action format is not implemented yet');
     }
 
     private function deleteActor() : void
@@ -45,33 +57,45 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         if ($this->action->actor !== $this->action->object) {
             throw new RuntimeException('Unsupported Delete Actor action: ' . $this->action->toJson());
         }
+
+        if (is_string($this->action->object)) {
+            $actorActivityId = $this->action->object;
+        } elseif ($this->action->object instanceof Link) {
+            $actorActivityId = (string) $this->action->object->href;
+        } elseif($this->action->object instanceof AbstractActor) {
+            $actorActivityId = (string) $this->action->object->id;
+        }
+
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::acceptJson()->get($this->action->object);
+        $response = Http::acceptJson()->get($actorActivityId);
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
-            Log::info($this->action->object . ' does not seems to be gone, skipping deletion', [
+            Log::info($actorActivityId . ' does not seems to be gone, skipping deletion', [
                 'code' => $response->status(),
                 'response' => $response->body(),
             ]);
             return;
         }
-        Log::debug('deleting ' . $this->action->object . ' from DB');
+        Log::debug('deleting ' . $actorActivityId . ' from DB');
 
-        RemoteActor::where('activityId', $this->action->object)->delete();
+        RemoteActor::where('activityId', $actorActivityId)->delete();
     }
 
     private function deleteNote() : void
     {
+        /** @var \ActivityPhp\Type\Extended\Object\Tombstone $object */
+        $object = $this->action->object;
+
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::acceptJson()->get($this->action->object->id);
+        $response = Http::acceptJson()->get($object->id);
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
-            Log::info($this->action->object->id . ' does not seems to be gone, skipping deletion', [
+            Log::info($object->id . ' does not seems to be gone, skipping deletion', [
                 'code' => $response->status(),
                 'response' => $response->body(),
             ]);
             return;
         }
-        Log::debug('deleting ' . $this->action->object->id . ' from DB');
+        Log::debug('deleting ' . $object->id . ' from DB');
 
-        RemoteNote::where('activityId', $this->action->object->id)->delete();
+        RemoteNote::where('activityId', $object->id)->delete();
     }
 }

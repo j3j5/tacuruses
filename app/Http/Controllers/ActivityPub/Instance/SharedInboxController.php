@@ -44,12 +44,18 @@ class SharedInboxController extends Controller
 
         // Go ahead, process it
         $activityStream = Type::create($type, $action->all());
+
+        // TODO: Add proper authorization to check that the verified actor who
+        // signed the activity stream can indeed perform whatever action they're
+        // trying perform (create/update/delete a note from themselves...)
+
         switch ($type) {
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
                 ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
             case 'Delete':
+                /** @var \ActivityPhp\Type\Extended\Activity\Delete $activityStream */
                 ProcessDeleteAction::dispatch($activityStream);
                 break;
                 // case 'Update':

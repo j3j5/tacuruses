@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\UidProcessor;
@@ -70,12 +71,16 @@ class AppServiceProvider extends ServiceProvider
             ?>';
         });
 
-        /** @phpstan-ignore-next-line */
-        $this->app->log->pushProcessor(new UidProcessor(16));
-        /** @phpstan-ignore-next-line */
-        $this->app->log->pushProcessor(new MemoryUsageProcessor());
-        /** @phpstan-ignore-next-line */
-        $this->app->log->pushProcessor(new MemoryPeakUsageProcessor());
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->app->log->driver()->getLogger();
+        $logger->pushProcessor(new MemoryPeakUsageProcessor());
+        $logger->pushProcessor(new MemoryUsageProcessor());
+        $logger->pushProcessor(new UidProcessor(16));
+        $logger->pushProcessor(new IntrospectionProcessor(skipClassesPartials: [
+            \Illuminate\Support\Facades\Facade::class,
+            \Illuminate\Log\LogManager::class,
+            \Illuminate\Log\Logger::class,
+        ]));
     }
 
     /**

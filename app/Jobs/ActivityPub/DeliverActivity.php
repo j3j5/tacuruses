@@ -51,4 +51,12 @@ final class DeliverActivity implements ShouldQueue, ShouldBeUnique
             'inbox' => $this->inbox,
         ]);
     }
+
+    /**
+     * Get the unique ID for the job.
+     */
+    public function uniqueId(): string
+    {
+        return $this->activity->id . '|' . $this->inbox;
+    }
 }

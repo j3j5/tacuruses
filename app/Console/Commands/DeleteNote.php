@@ -35,7 +35,7 @@ class DeleteNote extends Command
         $instances = RemoteActor::query()->groupBy('sharedInbox')->pluck('sharedInbox');
 
         $instances->each(
-            fn (string $inbox) => SendDeleteNoteToInstance::dispatchSync(note: $note, inbox: $inbox)
+            fn (string $inbox) => SendDeleteNoteToInstance::dispatch(note: $note, inbox: $inbox)
         );
 
         $note->delete();

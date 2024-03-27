@@ -34,7 +34,7 @@ class UpdateProfile extends Command
         $instances = RemoteActor::query()->groupBy('sharedInbox')->pluck('sharedInbox');
 
         $instances->each(
-            fn (string $inbox) => SendUpdateToInstance::dispatchSync(actor: $actor, inbox: $inbox)
+            fn (string $inbox) => SendUpdateToInstance::dispatch(actor: $actor, inbox: $inbox)
         );
 
         return Command::SUCCESS;

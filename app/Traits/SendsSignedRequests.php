@@ -44,7 +44,6 @@ trait SendsSignedRequests
         $headers = [
             'Accept' => 'application/activity+json',
             'Content-Type' => 'application/ld+json; profile="' . Context::ACTIVITY_STREAMS . '"',
-            'User-Agent' => config('federation.user-agent'),
         ];
 
         $signer->setDigestAlgo('sha256')

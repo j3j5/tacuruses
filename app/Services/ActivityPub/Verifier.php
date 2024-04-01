@@ -41,13 +41,13 @@ final class Verifier
         $date = $request->getHeaderLine('Date');
 
         // Only accept requests maximum 5 mins "from the future"
-        if (Carbon::parse($date)->isFuture() && Carbon::parse($date)->diffInMinutes() > 5) {
+        if (Carbon::parse($date)->isFuture() && Carbon::parse($date)->diffInMinutes(absolute: true) > 5) {
             Log::warning('Given date is in the future, dates are way out of sync. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
             throw new RuntimeException('Date is on the future');
         }
 
         // Check requests aren't older than 12 hours
-        if (Carbon::parse($date)->diffInMinutes() > 12 * 60) {
+        if (Carbon::parse($date)->diffInHours(absolute: true) > 12) {
             Log::warning('Given date is older than 12 hours. Aborting in prod.', ['given' => $date, 'current' => now()->toDateTimeString()]);
             throw new RuntimeException('Request date is too old');
         }

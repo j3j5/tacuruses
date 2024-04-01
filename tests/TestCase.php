@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Storage;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         Http::preventStrayRequests();
         Storage::fake('local');
     }

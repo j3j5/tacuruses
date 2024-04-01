@@ -104,7 +104,7 @@ class HttpSignaturesTest extends TestCase
         $headers = [
             'Accept' => 'application/activity+json',
             'Signature' => 'keyId="' . $keyId . '",' . Str::random(),
-            'Date' => now()->subHours(13)->format(Signer::DATE_FORMAT),
+            'Date' => now()->subHours(12)->subMinute()->format(Signer::DATE_FORMAT),
         ];
         $data = [
             '@context' => 'https://www.w3.org/ns/activitystreams',

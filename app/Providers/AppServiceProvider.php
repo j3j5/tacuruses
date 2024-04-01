@@ -132,10 +132,18 @@ class AppServiceProvider extends ServiceProvider
      *  #6 vendor/laravel/framework/src/Illuminate/Database/Connection.php(422): Illuminate\Database\Connection->run
      * @return string
      */
-    private function createStackTrace() : string
+    private function createStackTrace(array $skipClasses = []) : string
     {
+        $skipClasses = array_merge([
+            \App\Providers\AppServiceProvider::class,
+            \Illuminate\Events\Dispatcher::class,
+            \Illuminate\Database\Connection::class,
+            \Illuminate\Database\Query\Builder::class,
+            \Illuminate\Database\Eloquent\Builder::class,
+            \Illuminate\Database\Concerns\BuildsQueries::class,
+        ], $skipClasses);
         $backtrace = collect(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
-            ->skip(6)   // the first six are related to the DB event all the way here, see above
+            ->filter(fn (array $trace) => !isset($trace['class']) || !in_array($trace['class'], $skipClasses))
             ->values()
             ->map(function (array $element, int $index) : string {
                 $line = "#$index ";

@@ -32,17 +32,6 @@ class RouteServiceProvider extends ServiceProvider
         // return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         // });
 
-        $this->routes(function () {
-            Route::middleware('feeds')
-                ->group(base_path('routes/feeds.php'));
-
-            Route::middleware('federation')
-                ->group(base_path('routes/federation.php'));
-
-            Route::middleware('mastodon-api')
-                ->group(base_path('routes/mastodon-api.php'));
-        });
-
         Route::model('actor', LocalActor::class);
         // Federation routes don't support accessing the Note w/o the actor
         Route::bind('note', function (string $value, RoutingRoute $route) : LocalNote {

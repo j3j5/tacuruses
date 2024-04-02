@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Http\Middleware\ActivityPub\Federation;
+namespace Tests\Feature\Http\Middleware\ActivityPub;
 
 use App\Http\Middleware\ActivityPub\VerifySignature;
 use App\Models\ActivityPub\RemoteActor;

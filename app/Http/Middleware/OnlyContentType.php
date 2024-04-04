@@ -16,7 +16,7 @@ class OnlyContentType
      */
     public function handle(Request $request, Closure $next, string $contentType): Response
     {
-        if (mb_strpos(haystack: $request->header('Content-Type'), needle: $contentType) === false) {
+        if (mb_strpos(haystack: (string) $request->header('Content-Type'), needle: $contentType) === false) {
         // if ($request->header('Content-Type') !== $contentType) {
             Log::debug("Wrong content-type, expected $contentType but found '" . $request->header('Content-Type') . "'", compact('request'));
             abort_if(app()->environment(['production', 'testing']), 404);

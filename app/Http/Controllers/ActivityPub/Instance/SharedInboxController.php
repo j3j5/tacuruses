@@ -80,8 +80,8 @@ class SharedInboxController extends Controller
                 // 	break;
 
             default:
-                Log::warning('Unknown verb on inbox', ['class' => __CLASS__, 'payload' => $action]);
-                abort(422, 'Unknow type of action');
+                Log::warning("Unknown verb on inbox ($type)", ['payload' => $action]);
+                abort(422, "Unknown type of action ($type)");
         }
 
         return response()->activityJson([], Response::HTTP_ACCEPTED);

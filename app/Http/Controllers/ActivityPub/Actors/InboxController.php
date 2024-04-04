@@ -127,8 +127,11 @@ class InboxController extends Controller
             case 'Flag':
             case 'Move':
             default:
-                Log::warning('Unknown/unsupported verb on inbox', ['class' => __CLASS__, 'payload' => $action, 'activityStream' => $activityStream]);
-                abort(422, 'Unknow type of action');
+                Log::warning("Unknown/unsupported verb on inbox ($type)", [
+                    'payload' => $action,
+                    'activityStream' => $activityStream
+                ]);
+                abort(422, "Unknown type of action ($type)");
         }
 
         return response()->activityJson([], Response::HTTP_ACCEPTED);

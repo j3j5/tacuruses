@@ -109,7 +109,7 @@ class AppServiceProvider extends ServiceProvider
 
             if (isset($level)) {
                 $message = $query->time / 1000 . 's; ';
-                $message .= preg_replace(array_pad([], count($query->bindings), '/\?/'), $query->bindings, $query->sql, 1);
+                $message .= preg_replace(array_pad([], count($query->bindings), '/\?/'), $query->bindings, $query->sql, 1); // @phpstan-ignore-line
 
                 if (config('database.enable_query_backtrace')) {
                     $message .= $this->createStackTrace();

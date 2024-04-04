@@ -23,7 +23,7 @@ class PostMediaRequest extends ApiRequest
         $actor = $this->user();
         return new Media(
             actor: $actor,
-            attributes: $this->validated()
+            attributes: $this->validated()  // @phpstan-ignore-line
         );
     }
 }

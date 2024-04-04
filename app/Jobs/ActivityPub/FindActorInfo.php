@@ -35,7 +35,7 @@ final class FindActorInfo
     /**
      * Execute the job.
      *
-     * @throws \Http\Client\Exception\RequestException
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function handle() : Actor
     {

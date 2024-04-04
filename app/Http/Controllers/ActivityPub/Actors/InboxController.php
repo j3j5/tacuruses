@@ -23,6 +23,7 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -140,12 +141,12 @@ class InboxController extends Controller
     private function tryToFindTarget(InputBag $action) : LocalActor|LocalNote
     {
         return match ($action->get('type')) {
-            'Follow' => $this->tryToFindActorTarget($action->get('object')),
-            'Announce' => $this->tryToFindNoteTarget($action->get('object')),
-            'Like' => $this->tryToFindNoteTarget($action->get('object')),
-            'Undo' => $this->tryToFindUndoTarget($action->all('object')),
-            'Accept' => $this->tryToFindAcceptTarget($action->all('object')),
-            default => throw new RuntimeException("Type '" . $action->get('type') . "' is not implemented yet!"),
+            'Follow' => $this->tryToFindActorTarget((string) $action->get('object')),
+            'Announce' => $this->tryToFindNoteTarget((string) $action->get('object')),
+            'Like' => $this->tryToFindNoteTarget((string) $action->get('object')),
+            'Undo' => $this->tryToFindUndoTarget(Arr::wrap($action->all('object'))),
+            'Accept' => $this->tryToFindAcceptTarget(Arr::wrap($action->all('object'))),
+            default => throw new RuntimeException("Type '" . (string) $action->get('type') . "' is not implemented yet!"),
         };
     }
 

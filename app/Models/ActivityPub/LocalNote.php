@@ -131,7 +131,7 @@ class LocalNote extends Note implements Feedable
     use HasFactory;
     use HasParent;
 
-    public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)/(?:p/)?(?<noteId>\d+)$#';
+    public const NOTE_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?:p/)(?<user>[\w\.\_\-]+)?/(?<noteId>\d+)$#';
 
     protected $fillable = ['type', 'note_type'];
 

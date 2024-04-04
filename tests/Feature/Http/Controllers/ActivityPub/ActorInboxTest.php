@@ -37,7 +37,7 @@ class ActorInboxTest extends TestCase
 
         $headers = [
             'Accept' => 'application/activity+json',
-            'Content-Type' => 'application/activity+json; profile="http://www.w3.org/ns/activitystreams"',
+            'Content-Type' => 'application/activity+json',
         ];
 
         $data = [

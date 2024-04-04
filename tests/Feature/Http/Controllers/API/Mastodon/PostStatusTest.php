@@ -62,7 +62,20 @@ class PostStatusTest extends TestCase
             'status' => $status,
         ]);
 
-        $response->assertCreated();
+        $response->assertCreated()
+            ->assertJsonFragment([
+                'original_content' => $status,
+                "contentMap" => [$actor->language => $status],
+                "replyTo_id" => null,
+                "summary" => null,
+                // "visibility" => $this->visibility,
+                // "to" => $this->to,
+                // "cc" => $this->cc,
+                // "tags" => $this->tags,
+                // "published_at" => $this->published_at,
+            ]);
+
+
         $note = LocalNote::findOrFail($response->json('id'));
 
         $expected = $status;

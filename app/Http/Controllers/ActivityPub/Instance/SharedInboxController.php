@@ -43,7 +43,7 @@ class SharedInboxController extends Controller
         Log::debug('Processing ' . $type . ' action from shared inbox');
 
         // Go ahead, process it
-        $activityStream = Type::create($type, $action->all());
+        $activityStream = Type::create($type, $request->input());
 
         // TODO: Add proper authorization to check that the verified actor who
         // signed the activity stream can indeed perform whatever action they're

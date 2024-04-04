@@ -26,7 +26,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InboxController extends Controller
 {

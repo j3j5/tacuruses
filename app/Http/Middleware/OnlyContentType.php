@@ -19,7 +19,7 @@ class OnlyContentType
         if (mb_strpos(haystack: (string) $request->header('Content-Type'), needle: $contentType) === false) {
             // if ($request->header('Content-Type') !== $contentType) {
             Log::debug("Wrong content-type, expected $contentType but found '" . $request->header('Content-Type') . "'", compact('request'));
-            abort_if(app()->environment(['production', 'testing']), 404);
+            abort_if(app()->environment(['production', 'testing']), Response::HTTP_NOT_FOUND);
         }
         return $next($request);
     }

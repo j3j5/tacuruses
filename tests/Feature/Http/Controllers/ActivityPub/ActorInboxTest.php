@@ -56,4 +56,64 @@ class ActorInboxTest extends TestCase
         $this->assertCount(1, $note->likes);
     }
 
+    public function test_undo_like_note()
+    {
+        $actor = LocalActor::factory()->create();
+        $note = LocalNote::factory()
+            ->for($actor, 'actor')
+            ->public()
+            ->create();
+
+        $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $key->getPublicKey()->toString('PKCS1');
+
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+            $actorInfo['inbox'] => Http::response('', 202),
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json',
+        ];
+
+        $data = [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->faker()->url,
+            'type' => 'Like',
+            'actor' => $actorInfo['id'],
+            'object' => route('note.show', [$actor, $note]),
+        ];
+
+        $url = route('actor.inbox', [$actor]);
+        $headers = $this->sign($key, $actorInfo['publicKey']['id'], $url, json_encode($data), $headers);
+        $response = $this->postJson($url, $data, $headers);
+
+        $response->assertAccepted();
+        $this->assertCount(1, $note->likes);
+        $object = $data;
+        unset($object['@context']);
+        $data = [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->faker()->url,
+            'type' => 'Undo',
+            'actor' => $actorInfo['id'],
+            'object' => $object,
+        ];
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json',
+        ];
+
+        $url = route('actor.inbox', [$actor]);
+        $headers = $this->sign($key, $actorInfo['publicKey']['id'], $url, json_encode($data), $headers);
+        $response = $this->postJson($url, $data, $headers);
+        $response->assertAccepted();
+        $this->assertCount(0, $note->fresh()->likes);
+    }
+
 }

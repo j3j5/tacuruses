@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InboxController extends Controller
@@ -45,20 +46,20 @@ class InboxController extends Controller
      */
     public function __invoke(Request $request)
     {
-        /** @type \Symfony\Component\HttpFoundation\ParameterBag $action */
+        /** @type \Symfony\Component\HttpFoundation\InputBag $action */
         $action = $request->json();
 
         // Remove the actor from session
         $actor = $request->actorModel;
         $action->remove('actorModel');
 
-        $type = $action->get('type');
+        $type = $request->input('type');
 
         Log::debug('Processing ' . $type . ' action from single inbox');
         $activityModel = null;
         if ($type !== 'Create') {
             $target = $this->tryToFindTarget($action);
-            $objectType = data_get($action->get('object'), 'type');
+            $objectType = data_get($request->input('object'), 'type');
             // store the action
             $activityModel = Activity::updateOrCreate([
                 'activityId' => $action->get('id'),
@@ -137,14 +138,14 @@ class InboxController extends Controller
         return response()->activityJson([], Response::HTTP_ACCEPTED);
     }
 
-    private function tryToFindTarget(ParameterBag $action) : LocalActor|LocalNote
+    private function tryToFindTarget(InputBag $action) : LocalActor|LocalNote
     {
         return match ($action->get('type')) {
             'Follow' => $this->tryToFindActorTarget($action->get('object')),
             'Announce' => $this->tryToFindNoteTarget($action->get('object')),
             'Like' => $this->tryToFindNoteTarget($action->get('object')),
-            'Undo' => $this->tryToFindUndoTarget($action->get('object')),
-            'Accept' => $this->tryToFindAcceptTarget($action->get('object')),
+            'Undo' => $this->tryToFindUndoTarget($action->all('object')),
+            'Accept' => $this->tryToFindAcceptTarget($action->all('object')),
             default => throw new RuntimeException("Type '" . $action->get('type') . "' is not implemented yet!"),
         };
     }

@@ -129,7 +129,7 @@ class InboxController extends Controller
             default:
                 Log::warning("Unknown/unsupported verb on inbox ($type)", [
                     'payload' => $action,
-                    'activityStream' => $activityStream
+                    'activityStream' => $activityStream,
                 ]);
                 abort(422, "Unknown type of action ($type)");
         }

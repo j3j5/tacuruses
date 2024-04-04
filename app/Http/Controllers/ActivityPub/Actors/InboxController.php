@@ -85,38 +85,38 @@ class InboxController extends Controller
                     throw new RuntimeException('Unknown activity model');
                 }
                 /** @var \ActivityPhp\Type\Extended\Activity\Follow $activityStream */
-                ProcessFollowAction::dispatchAfterResponse($activityStream, $activityModel);
+                ProcessFollowAction::dispatch($activityStream, $activityModel);
                 break;
 
             case 'Like':
                 if (!$activityModel instanceof ActivityLike) {
                     throw new RuntimeException('Unknown activity model');
                 }/** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
-                ProcessLikeAction::dispatchAfterResponse($activityStream, $activityModel);
+                ProcessLikeAction::dispatch($activityStream, $activityModel);
                 break;
             case 'Announce':    // Share/Boost
                 if (!$activityModel instanceof ActivityAnnounce) {
                     throw new RuntimeException('Unknown activity model');
                 }
                 /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
-                ProcessAnnounceAction::dispatchAfterResponse($activityStream, $activityModel);
+                ProcessAnnounceAction::dispatch($activityStream, $activityModel);
                 break;
             case 'Undo':
                 if (!$activityModel instanceof ActivityUndo) {
                     throw new RuntimeException('Unknown activity model');
                 }
                 /** @var \ActivityPhp\Type\Extended\Activity\Undo $activityStream */
-                ProcessUndoAction::dispatchAfterResponse($activityStream, $activityModel);
+                ProcessUndoAction::dispatch($activityStream, $activityModel);
                 break;
             case 'Create':
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
-                ProcessCreateAction::dispatchAfterResponse($actor, $activityStream);
+                ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
             case 'Accept':
                 if (!$activityModel instanceof ActivityAccept) {
                     throw new RuntimeException('Unknown activity model');
                 }
-                ProcessAcceptAction::dispatchAfterResponse($activityModel);
+                ProcessAcceptAction::dispatch($activityModel);
                 break;
             case 'Update':
             case 'Delete':

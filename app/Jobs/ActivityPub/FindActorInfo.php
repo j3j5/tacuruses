@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -59,7 +60,7 @@ final class FindActorInfo
             abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Actor cannot be found');
         }
 
-        $actorData = $response->json();
+        $actorData = Arr::wrap($response->json());
         $validator = Validator::make($actorData, [
             'id' => ['required', 'string'],
             'type' => ['required', 'string'],

@@ -200,13 +200,13 @@ class Note extends Model
 
                 if (count($this->contentMap) === 1) {
                     $content = Arr::first($this->contentMap);
+                } else {
+                    $content = Arr::get(
+                        $this->contentMap,
+                        $this->actor->language,
+                        Arr::first($this->contentMap)
+                    );
                 }
-
-                $content = Arr::get(
-                    $this->contentMap,
-                    $this->actor->language,
-                    Arr::first($this->contentMap)
-                );
 
                 // TODO: add support for other content-types like, markdown...
                 /** @phpstan-ignore-next-line */

@@ -8,6 +8,7 @@ use App\Models\Media;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
+use Stevebauman\Purify\Facades\Purify;
 use Tests\TestCase;
 
 class PostStatusTest extends TestCase
@@ -15,11 +16,6 @@ class PostStatusTest extends TestCase
 
     use LazilyRefreshDatabase;
     use WithFaker;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     /**
      * A basic feature test posting plain text.
@@ -38,11 +34,24 @@ class PostStatusTest extends TestCase
             'status' => $status,
         ]);
 
+        $expectedContent = Purify::config('mastodon')->clean($status);
         $response->assertCreated();
-        $note = LocalNote::findOrFail($response->json('id'));
+        $response->assertJsonFragment([
+            'original_content' => $status,
+            'content' => $expectedContent,
+            'contentMap' => [$actor->language => $status],
+            'replyTo_id' => null,
+            'summary' => null,
+            // "visibility" => $this->visibility,
+            // "to" => $this->to,
+            // "cc" => $this->cc,
+            // "tags" => $this->tags,
+            // 'published_at' => now()->milliseconds(0)->toJSON(),
+        ]);
 
-        $expected = '<p>' . $status . '</p>';
-        $this->assertSame($expected, $note->content);
+        $note = new LocalNote();
+        $note->id = $response->json('id');
+        $this->assertModelExists($note);
     }
 
     /**
@@ -62,25 +71,24 @@ class PostStatusTest extends TestCase
             'status' => $status,
         ]);
 
-        $response->assertCreated()
-            ->assertJsonFragment([
-                'original_content' => $status,
-                "contentMap" => [$actor->language => $status],
-                "replyTo_id" => null,
-                "summary" => null,
-                // "visibility" => $this->visibility,
-                // "to" => $this->to,
-                // "cc" => $this->cc,
-                // "tags" => $this->tags,
-                // "published_at" => $this->published_at,
-            ]);
+        $response->assertCreated();
+        $response->assertJsonFragment([
+            'original_content' => $status,
+            'content' => $status,
+            'contentMap' => [$actor->language => $status],
+            'replyTo_id' => null,
+            'summary' => null,
+            // "visibility" => $this->visibility,
+            // "to" => $this->to,
+            // "cc" => $this->cc,
+            // "tags" => $this->tags,
+            // 'published_at' => now()->milliseconds(0)->toJSON(),
+        ]);
 
+        $note = new LocalNote();
+        $note->id = $response->json('id');
+        $this->assertModelExists($note);
 
-        $note = LocalNote::findOrFail($response->json('id'));
-
-        $expected = $status;
-        $this->assertSame($expected, $note->content);
-        $this->assertNotNull($note->published_at);
     }
 
     /**
@@ -101,13 +109,25 @@ class PostStatusTest extends TestCase
             'status' => $status,
         ]);
 
-        $response->assertCreated();
-        $note = LocalNote::findOrFail($response->json('id'));
-
         $anchor = '<a class="post-url external-url" href="https://example.com" rel="external nofollow noreferrer noopener" target="_blank">https://example.com</a>';
-        $expected = '<p>' . str_replace($url, $anchor, $status) . '</p>';
-        $this->assertSame($expected, $note->content);
-        $this->assertNotNull($note->published_at);
+
+        $response->assertCreated()
+            ->assertJsonFragment([
+                'original_content' => $status,
+                'content' => Purify::config('mastodon')->clean(str_replace($url, $anchor, $status)),
+                'contentMap' => [$actor->language => str_replace($url, $anchor, $status)],
+                'replyTo_id' => null,
+                'summary' => null,
+                // "visibility" => $this->visibility,
+                // "to" => $this->to,
+                // "cc" => $this->cc,
+                // "tags" => $this->tags,
+                // 'published_at' => now()->milliseconds(0)->toJSON(),
+            ]);
+
+        $note = new LocalNote();
+        $note->id = $response->json('id');
+        $this->assertModelExists($note);
     }
 
     /**
@@ -128,14 +148,26 @@ class PostStatusTest extends TestCase
             'status' => $status,
         ]);
 
-        $response->assertCreated();
-        $note = LocalNote::findOrFail($response->json('id'));
-
         $hashtagUrl = route('tag.show', $hashtag);
-        $anchor = '<a href="' . $hashtagUrl . '" title="#' . $hashtag . '" class="post-url hashtag" target="_blank" rel="noreferrer noopener">#' . $hashtag . '</a>';
-        $expected = '<p>' . str_replace("#$hashtag", $anchor, $status) . '</p>';
-        $this->assertSame($expected, $note->content);
-        $this->assertNotNull($note->published_at);
+        $anchor = '<a href="' . $hashtagUrl . '" title="#' . $hashtag . '" class="post-url hashtag" target="_blank">#' . $hashtag . '</a>';
+
+        $response->assertCreated();
+        $response->assertJsonFragment([
+            'original_content' => $status,
+            'content' => Purify::config('mastodon')->clean(str_replace("#$hashtag", $anchor, $status)),
+            'contentMap' => [$actor->language => str_replace("#$hashtag", $anchor, $status)],
+            'replyTo_id' => null,
+            'summary' => null,
+            // "visibility" => $this->visibility,
+            // "to" => $this->to,
+            // "cc" => $this->cc,
+            // "tags" => $this->tags,
+            // 'published_at' => now()->milliseconds(0)->toJSON(),
+        ]);
+
+        $note = new LocalNote();
+        $note->id = $response->json('id');
+        $this->assertModelExists($note);
     }
 
     public function test_post_status_with_media()
@@ -160,6 +192,18 @@ class PostStatusTest extends TestCase
         ], $options));
 
         $response->assertCreated();
+        $response->assertJsonFragment([
+            'original_content' => $status,
+            'content' => Purify::config('mastodon')->clean($status),
+            'contentMap' => [$actor->language => $status],
+            'replyTo_id' => null,
+            'summary' => null,
+            // "visibility" => $this->visibility,
+            // "to" => $this->to,
+            // "cc" => $this->cc,
+            // "tags" => $this->tags,
+            // 'published_at' => now()->milliseconds(0)->toJSON(),
+        ]);
 
         $note = LocalNote::findOrFail($response->json('id'));
         $this->assertSame(count($options['media']), $note->mediaAttachments->count());

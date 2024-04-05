@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Parental\HasParent;
+use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
 
 /**
  * App\Models\ActivityPub\RemoteActor
@@ -91,6 +92,10 @@ class RemoteActor extends Actor
     use HasParent;
 
     protected $fillable = ['activityId', 'type', 'actor_type'];
+
+    protected $casts = [
+        'bio' => PurifyHtmlOnGet::class . ':mastodon',
+    ];
 
     /**
      * Create an Actor model from the data returned from an instance

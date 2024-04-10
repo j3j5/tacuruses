@@ -30,9 +30,9 @@ use function Safe\json_encode;
  * @property array|null $summaryMap
  * @property bool $sensitive Mastodon-specific; content warning
  * @property array $to array of recipients
- * @property string|null $bto array of recipients of the blind carbon copy
+ * @property array|null $bto array of recipients of the blind carbon copy
  * @property array|null $cc array of recipients of the carbon copy
- * @property string|null $bcc array of recipients of the blind carbon copy
+ * @property array|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
@@ -87,6 +87,14 @@ use function Safe\json_encode;
  * @property-read array $content_map
  * @property string|null $original_content
  * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereOriginalContent($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read \App\Models\ActivityPub\Note|null $replyingTo
+ * @method static \Database\Factories\ActivityPub\RemoteNoteFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote withoutTrashed()
  * @mixin \Eloquent
  */
 class RemoteNote extends Note
@@ -99,7 +107,9 @@ class RemoteNote extends Note
         'id' => 'integer',
         'sensitive' => 'boolean',
         'to' => 'array',
+        'bto' => 'array',
         'cc' => 'array',
+        'bcc' => 'array',
         'summaryMap' => 'array',
         'repliesRaw' => 'collection',
         'published_at' => 'datetime',

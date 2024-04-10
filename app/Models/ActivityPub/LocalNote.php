@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -124,6 +123,12 @@ use Spatie\Feed\Feedable;
  * @property-read \App\Models\ActivityPub\Note|null $replyingTo
  * @method static \Database\Factories\ActivityPub\LocalNoteFactory factory($count = null, $state = [])
  * @method static Builder|LocalNote whereOriginalContent($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @method static Builder|LocalNote onlyTrashed()
+ * @method static Builder|LocalNote whereDeletedAt($value)
+ * @method static Builder|LocalNote withTrashed()
+ * @method static Builder|LocalNote withoutTrashed()
  * @mixin \Eloquent
  */
 class LocalNote extends Note implements Feedable
@@ -174,11 +179,6 @@ class LocalNote extends Note implements Feedable
         return $this->hasMany(Note::class, 'replyTo_id');
     }
 
-    public function replyingTo() : HasOne
-    {
-        return $this->hasOne(Note::class, 'id', 'replyTo_id');
-    }
-
     public function mediaAttachments() : HasMany
     {
         return $this->hasMany(Media::class);
@@ -211,7 +211,7 @@ class LocalNote extends Note implements Feedable
     public function peers() : HasManyThrough
     {
         /*
-          There seem to be something weird when applying an union to a
+          There seem to be something weird when applying a union to a
           HasManyThrough relationship, hence, the need to manually `select(*)`
           and to manually add the `laravel_through_key` to the second part of
           the union.
@@ -316,7 +316,7 @@ class LocalNote extends Note implements Feedable
             'first' => Type::create('CollectionPage', [
                 'next' => route('note.replies', [$this->actor, $this]),
                 'partOf' => route('note.replies', [$this->actor, $this]),
-                'items' => [],
+                'items' => $this->directReplies()->pluck('activityId'),
             ]),
         ]);
 

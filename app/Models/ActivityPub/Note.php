@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Parental\HasChildren;
@@ -33,10 +34,10 @@ use Stevebauman\Purify\Facades\Purify;
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
  * @property array|null $summaryMap
  * @property bool $sensitive Mastodon-specific; content warning
- * @property string $to array of recipients
- * @property string|null $bto array of recipients of the blind carbon copy
- * @property string|null $cc array of recipients of the carbon copy
- * @property string|null $bcc array of recipients of the blind carbon copy
+ * @property array $to array of recipients
+ * @property array|null $bto array of recipients of the blind carbon copy
+ * @property array|null $cc array of recipients of the carbon copy
+ * @property array|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
@@ -92,6 +93,14 @@ use Stevebauman\Purify\Facades\Purify;
  * @property string|null $original_content
  * @property-read array $content_map
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereOriginalContent($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read Note|null $replyingTo
+ * @method static \Database\Factories\ActivityPub\NoteFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Note onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Note withoutTrashed()
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -116,6 +125,10 @@ class Note extends Model
         'id' => 'integer',
         'sensitive' => 'boolean',
         'published_at' => 'datetime',
+        'to' => 'array',
+        'bto' => 'array',
+        'cc' => 'array',
+        'bcc' => 'array',
         'visibility' => Visibility::class,
         'summaryMap' => 'array',
         // Implemented manually to force array return
@@ -152,7 +165,17 @@ class Note extends Model
 
     public function mentions() : BelongsToMany
     {
-        return $this->belongsToMany(LocalActor::class);
+        return $this->belongsToMany(LocalActor::class)->withTimestamps();
+    }
+
+    public function replyingTo() : HasOne
+    {
+        return $this->hasOne(Note::class, 'id', 'replyTo_id');
+    }
+
+    public function activity() :  HasOne
+    {
+        return $this->hasOne(Activity::class, 'target_id')->where('object_type', 'Note');
     }
 
     public function url() : Attribute
@@ -194,7 +217,7 @@ class Note extends Model
                     return Purify::clean($value);
                 }
 
-                if(!is_array($this->contentMap) || count($this->contentMap) === 0) {
+                if (!is_array($this->contentMap) || count($this->contentMap) === 0) {
                     return '';
                 }
 
@@ -260,5 +283,10 @@ class Note extends Model
         ]);
 
         return $note;
+    }
+
+    public function isReply() : bool
+    {
+        return $this->inReplyTo !== null;
     }
 }

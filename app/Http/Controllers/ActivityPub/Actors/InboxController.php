@@ -115,6 +115,9 @@ class InboxController extends Controller
                 break;
             case 'Accept':
                 if (!$activityModel instanceof ActivityAccept) {
+                    Log::warning("Unknown/unsupported ACCEPT activity on inbox ($type)", [
+                        'model' => $activityModel,
+                    ]);
                     throw new RuntimeException('Unknown activity model');
                 }
                 ProcessAcceptAction::dispatch($activityModel);

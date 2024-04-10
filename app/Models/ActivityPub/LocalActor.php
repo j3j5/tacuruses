@@ -170,7 +170,7 @@ class LocalActor extends Actor implements
     {
         return Attribute::make(
             get: function ($value) : string {
-                if(empty($value)) {
+                if (empty($value)) {
                     return asset('/img/default_avatar.svg');
                 }
 
@@ -187,7 +187,7 @@ class LocalActor extends Actor implements
     {
         return Attribute::make(
             get: function ($value) : string {
-                if(empty($value)) {
+                if (empty($value)) {
                     return asset('/img/default_header.svg');
                 }
 

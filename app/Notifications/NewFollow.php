@@ -7,6 +7,7 @@ use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+
 // use Illuminate\Notifications\Messages\MailMessage;
 
 class NewFollow extends Notification implements ShouldQueue

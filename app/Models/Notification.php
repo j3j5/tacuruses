@@ -2,16 +2,12 @@
 
 namespace App\Models;
 
-use App\Contracts\Snowflake;
 use App\Enums\NotificationTypes;
-use App\Exceptions\NotificationTypeNotFoundException;
 use App\Models\ActivityPub\LocalActor;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\DatabaseNotification;
 
 /**
@@ -51,7 +47,6 @@ class Notification extends DatabaseNotification
      * @var int
      */
     protected $keyType = 'int';
-
 
     protected $casts = [
         'data' => 'array',

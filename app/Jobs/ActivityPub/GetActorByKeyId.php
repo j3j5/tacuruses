@@ -21,7 +21,6 @@ final class GetActorByKeyId
     public function __construct(private readonly string $keyId)
     {
         Validator::validate(['keyId' => $keyId], ['keyId' => 'required|url']);
-
     }
 
     /**

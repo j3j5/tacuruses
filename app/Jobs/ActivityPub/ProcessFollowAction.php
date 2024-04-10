@@ -56,5 +56,6 @@ final class ProcessFollowAction implements ShouldQueue
             return;
         }
         $follow->accept();
+
     }
 }

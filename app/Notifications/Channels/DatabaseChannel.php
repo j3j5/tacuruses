@@ -4,11 +4,9 @@ namespace App\Notifications\Channels;
 
 use Illuminate\Notifications\Channels\DatabaseChannel as IlluminateDatabaseChannel;
 use Illuminate\Notifications\Notification;
-use RuntimeException;
 
 class DatabaseChannel extends IlluminateDatabaseChannel
 {
-
 
     /**
      * Build an array payload for the DatabaseNotification Model.

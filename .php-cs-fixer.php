@@ -10,7 +10,6 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('resources')
     ->exclude('vendor')
     ->exclude('bootstrap')
-    ->exclude('tests')
     ->notPath('_ide_helper.php')
     ->in(__DIR__);
 

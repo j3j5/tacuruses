@@ -25,23 +25,24 @@ class LocalActorFactory extends Factory
      */
     public function definition()
     {
+        $username = fake()->userName();
         return [
             'created_at' => now(),
             'updated_at' => now(),
             'name' => fake()->name(),
-            'username' => fake()->userName(),
+            'username' => $username,
             'avatar' => mb_substr(fake()->filePath() . '.jpg', 1),
             'header' => mb_substr(fake()->filePath() . '.jpg', 1),
             'bio' => fake()->text(),
             'language' => fake()->languageCode(),
-            'activityId' => fake()->url(),
-            'url' => fake()->url(),
-            'type' => 'Service',
+            'activityId' => route('actor.show', ['actor' => $username]),
+            'url' => route('actor.show', ['actor' => $username]),
+            'type' => 'Person', // or Service
             'actor_type' => 'local',
         ];
     }
 
-        /**
+    /**
      * Configure the model factory.
      */
     public function configure(): static

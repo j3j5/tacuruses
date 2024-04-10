@@ -25,24 +25,26 @@ class RemoteActorFactory extends Factory
     public function definition()
     {
         $activityId = fake()->url();
+        $username = fake()->userName();
+
         return [
             'created_at' => now()->subMonth(),
             'updated_at' => now()->subMonth(),
             'name' => fake()->name(),
-            'username' => fake()->userName(),
-            'avatar' => fake()->url,
-            'header' => fake()->url,
+            'username' => $username,
+            'avatar' => fake()->url(),
+            'header' => fake()->url(),
             'bio' => fake()->text(),
             'language' => fake()->languageCode(),
             'activityId' => $activityId,
-            'following_url' => $activityId . '/following',
-            'followers_url' => $activityId . '/followers',
+            'following_url' => $activityId . 'following',
+            'followers_url' => $activityId . 'followers',
             'url' => $activityId,
-            'inbox' => $activityId . '/inbox',
+            'inbox' => $activityId . 'inbox',
             'sharedInbox' => fake()->url(),
-            'publicKeyId' => fake()->url() . '#main-key',
+            'publicKeyId' => $activityId . '#main-key',
             'type' => 'Person',
-            'actor_type' => 'local',
+            'actor_type' => 'remote',
         ];
 
     }

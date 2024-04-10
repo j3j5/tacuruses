@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Object\Article;
+use ActivityPhp\Type\Extended\Object\Mention;
 use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Document;
 use App\Domain\ActivityPub\Mastodon\Note;
 use App\Domain\ActivityPub\Mastodon\RsaSignature2017;
 use App\Events\LocalActorMentioned;
+use App\Events\LocalNoteReplied;
+use App\Exceptions\SignatureException;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note as ActivityPubNote;
-use App\Models\ActivityPub\RemoteNote;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -31,7 +33,6 @@ use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 use function Safe\json_encode;
-use function Safe\preg_match;
 
 final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 {
@@ -57,7 +58,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         try {
             // Verify linked data signature
             $this->verifySignature();
-        } catch(RuntimeException $e) {
+        } catch(SignatureException $e) {
             Log::error($e->getMessage(), ['action' => $this->action->toArray()]);
         }
 
@@ -83,8 +84,14 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             throw new RuntimeException(get_class($object) . ' is an unsupported object');
         }
         /** @var \ActivityPhp\Type\Extended\Object\Article|\App\Domain\ActivityPub\Mastodon\Document|\App\Domain\ActivityPub\Mastodon\Note $object */
-        $note = RemoteNote::firstOrNew(['activityId' => $object->id]);
+
+        /** @var \App\Models\ActivityPub\Note $note */
+        $note = ActivityPubNote::firstOrNew(['activityId' => $object->id]);
+        if ($note->exists === false) {
+            $note->note_type = $this->activityActor->actor_type;
+        }
         $note->actor_id = $this->activityActor->id;
+
         if ($object->published !== null) {
             try {
                 $note->published_at = Carbon::parse($object->published);
@@ -92,12 +99,12 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             }
         }
 
-        $note->content = data_get($object, 'content', '');
+        $note->content = data_get($object, 'content');
         $note->contentMap = $object->contentMap;
         $note->summary = is_string($object->summary) ? $object->summary : json_encode($object->summary);
         $note->sensitive = data_get($object, 'sensitive', false);
         $note->to = $object->to !== null ? Arr::wrap($object->to) : [];
-        $note->cc = $object->to !== null ? Arr::wrap($object->cc) : null;
+        $note->cc = $object->cc !== null ? Arr::wrap($object->cc) : null;
         if (!empty($object->inReplyTo)) {
             $note->inReplyTo = is_string($object->inReplyTo) ? $object->inReplyTo : json_encode($object->inReplyTo);
             // Store the id if available
@@ -106,6 +113,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
                 try {
                     $replyTo = ActivityPubNote::where('activityId', $object->inReplyTo)->firstOrFail();
                     $note->replyTo_id = $replyTo->id;
+                    $note->setRelation('replyingTo', $replyTo);
                 } catch (ModelNotFoundException) {
                 }
             }
@@ -137,19 +145,23 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 
         $localRecipients = $this->getLocalRecipients();
 
-        // Attach the mention to all local recipients
-        $localRecipients->each(function (LocalActor $actor) use ($note) : void {
-            $actor->mentions()->attach($note);
-            LocalActorMentioned::dispatch($actor, $note);
-        });
-
-        if ($localRecipients->isEmpty()) {
-            return;
-        }
+        collect($object->tag)->where('type', 'Mention')
+            ->map(fn (Mention $mention) : ?LocalActor => LocalActor::where('activityId', $mention->href)->first())
+            ->filter()
+            ->each(function (LocalActor $actor) use ($note) : void {
+                $actor->mentions()->attach($note);
+                if ($note->replyingTo instanceof ActivityPubNote && $note->replyingTo->actor_id === $actor->id) {
+                    LocalNoteReplied::dispatch($note->replyingTo);
+                }
+                LocalActorMentioned::dispatch($actor, $note);
+            });
 
         // TODO: Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding
         //
 
+        if ($localRecipients->isEmpty()) {
+            return;
+        }
         // Accept the creation, any of the receivers can sign the accept in the name of the instance
         SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel); /** @phpstan-ignore-line */
     }
@@ -163,35 +175,35 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
     {
         // No signature!!
         if (empty($this->action->signature)) {
-            throw new RuntimeException('No signature available on object');
+            throw new SignatureException('No signature available on object');
         }
 
         // Wrong signature type, mastodon-specific
         if (!$this->action->signature instanceof RsaSignature2017) {
-            throw new RuntimeException('Signature is not RsaSignature2017');
+            throw new SignatureException('Signature is not RsaSignature2017');
         }
 
         $actor = $this->action->actor;
         if (!is_string($actor)) {
-            throw new RuntimeException('unsupported actor type: ' . json_encode($actor));
+            throw new SignatureException('unsupported actor type: ' . json_encode($actor));
         }
 
         // Signature's creator and actor don't match
         if (mb_strpos($this->action->signature->creator, $actor) !== 0) {
-            throw new RuntimeException("Signature actor and activity actor don't match: \n
+            throw new SignatureException("Signature actor and activity actor don't match: \n
                 {$this->action->signature->creator} != {$actor}");
         }
 
         // Sender an author match
         if ($this->action->actor !== data_get($this->action, 'object.attributedTo')) {
-            throw new RuntimeException('Actor and object attribution don\'t match');
+            throw new SignatureException('Actor and object attribution don\'t match');
         }
 
         // Actor should have been retrieved on middleware so if real, it should exists on the DB
         try {
             $this->activityActor = Actor::where('activityId', $this->action->actor)->firstOrFail();
         } catch (ModelNotFoundException) {
-            throw new RuntimeException('Could not find the actor on the DB');
+            throw new SignatureException('Could not find the actor on the DB');
         }
 
         $array = $this->action->toArray();
@@ -206,6 +218,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
      */
     private function getLocalRecipients() : Collection
     {
+
         $recipients = array_merge(
             Arr::wrap($this->action->to),
             Arr::wrap($this->action->cc),
@@ -214,16 +227,17 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             Arr::wrap($this->action->bcc)
         );
 
-        $localRecipients = collect($recipients)
-            ->filter(fn (string $recipient) : bool => mb_strpos($recipient, config('app.url')) === 0)
-            ->map(function (string $recipient) : string {
-                if (!preg_match(LocalActor::USER_REGEX, $recipient, $matches)) {
-                    throw new RuntimeException('Unknow local user on our own domain');
-                }
-                return $matches['user'];
-            });
-
-        return LocalActor::whereIn('username', $localRecipients)->get();
+        // Let's look for local actors who are followers
+        if (in_array($this->activityActor->followers_url, $recipients)) {
+            $recipients = array_merge(
+                $recipients,
+                $this->activityActor
+                    ->followers()
+                    ->pluck('actors.activityId')
+                    ->toArray()
+            );
+        }
+        return LocalActor::whereIn('activityId', array_unique($recipients))->get();
     }
 
     /**

@@ -8,6 +8,7 @@ use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -36,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
                 ->setStartTimeStamp(strtotime($app->config->get('snowflake.epoch')) * 1000)
                 ->setSequenceResolver(new LaravelSequenceResolver($app->get('cache.store')));
         });
+
+        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
 
         $this->app->bind(ContractsSnowflake::class, fn ($app) => $app->make('snowflake'));
 

@@ -4,21 +4,13 @@ declare(strict_types=1);
 
 namespace App\Events;
 
-use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
 use Illuminate\Broadcasting\PrivateChannel;
 
-final class LocalActorMentioned extends BaseEvent
+final class LocalNoteReplied extends BaseEvent
 {
     /**
-     * The local actor being mentioned
-     *
-     * @var LocalActor
-     */
-    public readonly LocalActor $actor;
-
-    /**
-     * The note that mentions an actor on our server
+     * Represents the new note that replies to a local note
      *
      * @var Note
      */
@@ -29,9 +21,8 @@ final class LocalActorMentioned extends BaseEvent
      *
      * @return void
      */
-    public function __construct(LocalActor $actor, Note $note)
+    public function __construct(Note $note)
     {
-        $this->actor = $actor;
         $this->note = $note;
     }
 

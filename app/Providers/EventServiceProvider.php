@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\LocalNotePublished;
 use App\Listeners\DebugSubscriber;
+use App\Listeners\NotificationsSubscriber;
 use App\Listeners\SendNoteToFollowers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         DebugSubscriber::class,
+        NotificationsSubscriber::class,
     ];
 
     /**

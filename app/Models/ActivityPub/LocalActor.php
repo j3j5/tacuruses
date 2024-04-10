@@ -6,7 +6,9 @@ use ActivityPhp\Type;
 use ActivityPhp\Type\Extended\Activity\Update;
 use App\Domain\ActivityPub\Mastodon\AbstractActor;
 use App\Jobs\ActivityPub\DeliverActivity;
+use App\Models\Notification;
 use App\Services\ActivityPub\Context;
+use App\Traits\Notifiable;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -119,15 +121,17 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\LocalActorFactory factory($count = null, $state = [])
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Notification> $notifications
+ * @property-read int|null $notifications_count
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements
     AuthenticatableContract,
     AuthorizableContract
 {
+    use Authenticatable, Authorizable, Notifiable;
     use HasFactory;
     use HasParent;
-    use Authenticatable, Authorizable;
     use HasApiTokens;
 
     public const USER_REGEX = '#^https://(?<domain>[\w\.\_\-]+)/(?<user>[\w\.\_\-]+)$#';

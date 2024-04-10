@@ -163,7 +163,7 @@ class LocalActor extends Actor implements
 
     public function mentions() : BelongsToMany
     {
-        return $this->belongsToMany(Note::class);
+        return $this->belongsToMany(Note::class)->withTimestamps();
     }
 
     public function avatar() : Attribute

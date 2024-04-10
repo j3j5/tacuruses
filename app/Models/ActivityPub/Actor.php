@@ -37,7 +37,7 @@ use function Safe\parse_url;
  * @property string|null $sharedInbox
  * @property string $publicKeyId
  * @property string $publicKey
- * @property string|null $actor_type
+ * @property string $actor_type
  * @property string $followers_url
  * @property string $following_url
  * @property string|null $outbox
@@ -85,6 +85,8 @@ use function Safe\parse_url;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
  * @property-read int|null $notes_with_replies_count
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $followers
+ * @property-read int|null $followers_count
  * @mixin \Eloquent
  */
 class Actor extends Model
@@ -102,9 +104,38 @@ class Actor extends Model
 
     protected string $childColumn = 'actor_type';
 
-    public function following() : HasMany
+    public function follows() : HasMany
     {
         return $this->hasMany(Follow::class);
+    }
+
+    public function receivedFollows() : HasMany
+    {
+        return $this->hasMany(Follow::class, 'target_id');
+    }
+
+    public function followers() : HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Actor::class,
+            Follow::class,
+            'target_id',
+            'id',
+            'id',
+            'actor_id',
+        );
+    }
+
+    public function following() : HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Actor::class,
+            Follow::class,
+            'actor_id',
+            'id',
+            'id',
+            'target_id',
+        );
     }
 
     public function liked() : HasMany

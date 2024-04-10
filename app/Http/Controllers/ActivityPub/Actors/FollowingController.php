@@ -31,7 +31,7 @@ class FollowingController extends Controller
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|FollowCollection
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator */
-        $following = $actor->following()->with('target')->paginate(self::PER_PAGE);
+        $following = $actor->following()->paginate(self::PER_PAGE);
 
         if ($request->missing(['page']) && $following->total() > self::PER_PAGE) {
             // When quering the id (w/o page), if there is more than one page,

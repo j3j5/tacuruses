@@ -53,12 +53,7 @@ class FollowCollection extends ResourceCollection
             'partOf' => $this->following
                 ? route('actor.following', [$this->user])
                 : route('actor.followers', [$this->user]),
-            'orderedItems' => $this->collection->map(
-                function (FollowResource $resource) : string {
-                    $resource->following = $this->following;
-                    return $resource->getId();
-                }
-            ),
+            'orderedItems' => $this->collection->pluck('activityId'),
         ]);
 
         return $collection->toArray();

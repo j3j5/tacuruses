@@ -30,7 +30,7 @@ class FollowersController extends Controller
     public function __invoke(Request $request, LocalActor $actor) : JsonResponse|FollowCollection
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator */
-        $followers = $actor->followers()->with('actor')->paginate(self::PER_PAGE);
+        $followers = $actor->followers()->paginate(self::PER_PAGE);
 
         if ($request->missing(['page']) && $followers->total() > self::PER_PAGE) {
             // When quering the id (w/o page), if there is more than one page,

@@ -17,7 +17,6 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Arr;
@@ -26,7 +25,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
-
 use Parental\HasParent;
 use phpseclib3\Crypt\RSA;
 use RuntimeException;
@@ -55,7 +53,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
- * @property string|null $actor_type
+ * @property string $actor_type
  * @property string $followers_url
  * @property string $following_url
  * @property string $outbox
@@ -70,7 +68,6 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $followers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
  * @property-read int|null $following_count
- * @property-read string $full_username
  * @property-read string $header_url
  * @property-read string $key_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
@@ -152,16 +149,6 @@ class LocalActor extends Actor implements
     public function getRouteKeyName()
     {
         return 'username';
-    }
-
-    public function followers() : HasMany
-    {
-        return $this->hasMany(Follow::class, 'target_id');
-    }
-
-    public function following() : HasMany
-    {
-        return $this->hasMany(Follow::class, 'actor_id');
     }
 
     public function likes() : HasManyThrough
@@ -406,11 +393,19 @@ class LocalActor extends Actor implements
 
     public function unfollow(Actor $target) : self
     {
-        if ($this->relationLoaded('following')) {
-            $follow = $this->following->firstWhere('target_id', $target->id);
+        if ($this->relationLoaded('follows')) {
+            $follow = $this->follows->firstWhere('id', $target->id);
             $alreadyFollowing = $follow !== null;
+        } elseif ($this->relationLoaded('following')) {
+            $following = $this->following->firstWhere('id', $target->id);
+            $alreadyFollowing = false;
+            $follow = null;
+            if ($following) {
+                $alreadyFollowing = true;
+                $follow = Follow::findOrFail($following->laravel_through_key); // @phpstan-ignore-line
+            }
         } else {
-            $follow = Follow::where('actor_id', $this->id)->where('target_id', $target->id)->first();
+            $follow = $this->follows()->where('target_id', $target->id)->first();
             $alreadyFollowing = $follow !== null;
         }
 
@@ -419,6 +414,7 @@ class LocalActor extends Actor implements
             return $this;
         }
 
+        /** @var \App\Models\ActivityPub\Follow $follow */
         /** @var \ActivityPhp\Type\Extended\Activity\Undo $activity */
         $activity = Type::create('Undo', [
             '@context' => Context::ACTIVITY_STREAMS,

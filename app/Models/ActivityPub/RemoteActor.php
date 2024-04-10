@@ -34,7 +34,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
- * @property string|null $actor_type
+ * @property string $actor_type
  * @property string|null $followers_url
  * @property string|null $following_url
  * @property string|null $outbox
@@ -84,6 +84,8 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\RemoteActorFactory factory($count = null, $state = [])
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $followers
+ * @property-read int|null $followers_count
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor

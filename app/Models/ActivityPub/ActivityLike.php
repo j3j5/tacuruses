@@ -2,6 +2,7 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Events\LocalNoteLiked;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
@@ -45,5 +46,12 @@ class ActivityLike extends Activity
     public function target() : BelongsTo
     {
         return $this->belongsTo(LocalNote::class, 'target_id');
+    }
+
+    public function markAsAccepted(): ActivityLike
+    {
+        parent::markAsAccepted();
+        LocalNoteLiked::dispatch($this);
+        return $this;
     }
 }

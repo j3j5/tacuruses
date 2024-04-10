@@ -2,6 +2,7 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Events\LocalNoteShared;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
@@ -45,5 +46,12 @@ class ActivityAnnounce extends Activity
     public function target() : BelongsTo
     {
         return $this->belongsTo(LocalNote::class, 'target_id');
+    }
+
+    public function markAsAccepted(): ActivityAnnounce
+    {
+        parent::markAsAccepted();
+        LocalNoteShared::dispatch($this);
+        return $this;
     }
 }

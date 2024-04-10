@@ -9,6 +9,32 @@ use RuntimeException;
 
 /**
  * App\Models\ActivityPub\ActivityAccept
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $activityId
+ * @property string $type
+ * @property int $actor_id
+ * @property int $target_id
+ * @property string|null $object_type
+ * @property array $object
+ * @property int $accepted
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityAccept extends Activity

@@ -55,7 +55,7 @@ class ActivityUndo extends Activity
         return match ($this->object_type) {
             'Follow' => $this->belongsTo(LocalActor::class, 'target_id'),
             'Like', 'Undo', 'Announce' => $this->belongsTo(LocalNote::class, 'target_id'),
-            default => throw new RuntimeException('Unknown UNDO type "' . $this->object_type . '"'),
+            default => throw new RuntimeException('Unknown Undo type "' . $this->object_type . '"'),
         };
     }
 }

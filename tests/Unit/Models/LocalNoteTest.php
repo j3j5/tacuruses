@@ -9,7 +9,7 @@ use App\Services\ActivityPub\Context;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\TestCase;
 
-class LocalNote extends TestCase
+class LocalNoteTest extends TestCase
 {
     /**
      * A basic unit test example.

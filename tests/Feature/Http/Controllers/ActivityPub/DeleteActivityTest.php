@@ -4,8 +4,6 @@ namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Http\Middleware\ActivityPub\VerifySignature;
-use App\Models\ActivityPub\LocalActor;
-use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use App\Services\ActivityPub\Context;

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
+use App\Events\LocalNoteLiked;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
@@ -35,6 +37,10 @@ class ActorInboxTest extends TestCase
             $actorInfo['inbox'] => Http::response('', 202),
         ]);
 
+        Event::fake([
+            LocalNoteLiked::class,
+        ]);
+
         $headers = [
             'Accept' => 'application/activity+json',
             'Content-Type' => 'application/activity+json',
@@ -54,6 +60,10 @@ class ActorInboxTest extends TestCase
 
         $response->assertAccepted();
         $this->assertCount(1, $note->likes);
+
+        Http::assertSent($actorInfo['inbox']);
+        Event::assertDispatched(LocalNoteLiked::class);
+
     }
 
     public function test_undo_like_note()

@@ -22,8 +22,8 @@ class FollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
-                ->for($remoteActor, 'target')
-                ->for($localActor, 'actor')
+                ->for($localActor, 'target')
+                ->for($remoteActor, 'actor')
                 ->create();
         }
 

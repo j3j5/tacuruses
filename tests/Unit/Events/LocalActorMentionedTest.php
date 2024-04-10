@@ -20,6 +20,5 @@ class LocalActorMentionedTest extends TestCase
         $localActor = LocalActor::factory()->create();
         $remoteActors = RemoteActor::factory()->count(random_int(2, 10))->create();
 
-
     }
 }

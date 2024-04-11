@@ -145,7 +145,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 
         $localRecipients = $this->getLocalRecipients();
 
-        collect($object->tag)->where('type', 'Mention')
+        collect(Arr::wrap($object->tag))->where('type', 'Mention')
             ->map(fn (Mention $mention) : ?LocalActor => LocalActor::where('activityId', $mention->href)->first())
             ->filter()
             ->each(function (LocalActor $actor) use ($note) : void {

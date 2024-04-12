@@ -8,6 +8,7 @@ use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use phpseclib3\Crypt\RSA;
@@ -61,7 +62,9 @@ class ActorInboxTest extends TestCase
         $response->assertAccepted();
         $this->assertCount(1, $note->likes);
 
-        Http::assertSent($actorInfo['inbox']);
+        Http::assertSent(function (Request $request) use ($actorInfo) {
+            return $request->url() === $actorInfo['inbox'];
+        });
         Event::assertDispatched(LocalNoteLiked::class);
 
     }

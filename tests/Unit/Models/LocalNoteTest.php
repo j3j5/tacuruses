@@ -6,11 +6,14 @@ use App\Events\LocalNotePublished;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote as ActivityPubLocalNote;
 use App\Services\ActivityPub\Context;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class LocalNoteTest extends TestCase
 {
+    use LazilyRefreshDatabase;
+
     /**
      * A basic unit test example.
      */

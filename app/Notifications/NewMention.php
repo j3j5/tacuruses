@@ -16,15 +16,11 @@ class NewMention extends Notification implements ShouldQueue
 
     /**
      * The Actor who followed
-     *
-     * @var Actor
      */
     public readonly Actor $from;
 
     /**
      * The activity that "caused" this notification
-     *
-     * @var Activity
      */
     public readonly ?Activity $activity;
 

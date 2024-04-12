@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\NotificationTypes;
 use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,22 +17,20 @@ class NewShare extends Notification implements ShouldQueue
 
     /**
      * The Actor who followed
-     *
-     * @var Actor
      */
     public readonly Actor $from;
 
     /**
      * The activity that "caused" this notification
      *
-     * @var Activity
+     * @var ActivityAnnounce
      */
     public readonly ?Activity $activity;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Actor $actor, ?Activity $activity = null)
+    public function __construct(Actor $actor, ?ActivityAnnounce $activity = null)
     {
         $this->from = $actor;
         $this->activity = $activity;

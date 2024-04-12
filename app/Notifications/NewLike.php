@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\NotificationTypes;
 use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,14 +25,14 @@ class NewLike extends Notification implements ShouldQueue
     /**
      * The activity that "caused" this notification
      *
-     * @var Activity
+     * @var ActivityLike
      */
     public readonly ?Activity $activity;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Actor $actor, ?Activity $activity = null)
+    public function __construct(Actor $actor, ?ActivityLike $activity = null)
     {
         $this->from = $actor;
         $this->activity = $activity;

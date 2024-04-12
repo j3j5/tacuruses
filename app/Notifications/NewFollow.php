@@ -4,11 +4,10 @@ namespace App\Notifications;
 
 use App\Enums\NotificationTypes;
 use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\Actor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
-// use Illuminate\Notifications\Messages\MailMessage;
 
 class NewFollow extends Notification implements ShouldQueue
 {
@@ -24,14 +23,14 @@ class NewFollow extends Notification implements ShouldQueue
     /**
      * The activity that "caused" this notification
      *
-     * @var Activity
+     * @var ActivityFollow
      */
     public readonly ?Activity $activity;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Actor $actor, ?Activity $activity = null)
+    public function __construct(Actor $actor, ?ActivityFollow $activity = null)
     {
         $this->from = $actor;
         $this->activity = $activity;

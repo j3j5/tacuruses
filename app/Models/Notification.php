@@ -44,7 +44,7 @@ class Notification extends DatabaseNotification
     /**
      * The "type" of the primary key ID.
      *
-     * @var int
+     * @var string
      */
     protected $keyType = 'int';
 

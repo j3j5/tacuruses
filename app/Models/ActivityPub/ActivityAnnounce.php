@@ -22,7 +22,7 @@ use Parental\HasParent;
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\LocalNote|null $target
+ * @property-read \App\Models\ActivityPub\LocalNote $target
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce query()

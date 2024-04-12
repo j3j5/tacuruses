@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\ActivityPub;
 
+use App\Events\LocalActorFollowed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
@@ -45,5 +48,12 @@ class ActivityFollow extends Activity
     public function target() : BelongsTo
     {
         return $this->belongsTo(LocalActor::class, 'target_id');
+    }
+
+    public function markAsAccepted(): ActivityFollow
+    {
+        parent::markAsAccepted();
+        LocalActorFollowed::dispatch($this);
+        return $this;
     }
 }

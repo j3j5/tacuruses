@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
-use App\Enums\NotificationTypes;
+use App\Events\LocalActorFollowed;
 use App\Events\LocalActorMentioned;
 use App\Events\LocalNoteLiked;
 use App\Events\LocalNoteReplied;
 use App\Events\LocalNoteShared;
-use App\Events\NewNotification;
-use App\Models\Notification;
+use App\Notifications\NewFollow;
 use App\Notifications\NewLike;
 use App\Notifications\NewMention;
 use App\Notifications\NewReply;
@@ -17,6 +18,13 @@ use Illuminate\Events\Dispatcher;
 
 class NotificationsSubscriber
 {
+    public function createNotificationForNewFollow(LocalActorFollowed $event) : void
+    {
+        $event->actor->notify(new NewFollow(
+            actor: $event->follower,
+            activity: $event->activity,
+        ));
+    }
 
     public function createNotificationForMention(LocalActorMentioned $event) : void
     {
@@ -61,6 +69,7 @@ class NotificationsSubscriber
     public function subscribe(Dispatcher $events) : array
     {
         return [
+            LocalActorFollowed::class => 'createNotificationForNewFollow',
             LocalActorMentioned::class => 'createNotificationForMention',
             LocalNoteLiked::class => 'createNotificationForLike',
             LocalNoteReplied::class => 'createNotificationForReply',

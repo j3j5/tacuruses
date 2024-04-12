@@ -3,8 +3,13 @@
 namespace App\Listeners;
 
 use App\Events\BaseEvent;
+use App\Events\LocalActorFollowed;
 use App\Events\LocalActorMentioned;
+use App\Events\LocalNoteLiked;
 use App\Events\LocalNotePublished;
+use App\Events\LocalNoteReplied;
+use App\Events\LocalNoteShared;
+use App\Events\LocalNoteUpdated;
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
 use Illuminate\Support\Facades\Log;
@@ -30,10 +35,15 @@ class DebugSubscriber
     public function subscribe($events) : array
     {
         return [
+            LocalActorFollowed::class => 'debug',
+            LocalActorMentioned::class => 'debug',
+            LocalNoteLiked::class => 'debug',
+            LocalNotePublished::class => 'debug',
+            LocalNoteReplied::class => 'debug',
+            LocalNoteShared::class => 'debug',
+            LocalNoteUpdated::class => 'debug',
             RemoteActorCreated::class => 'debug',
             RemoteActorUpdated::class => 'debug',
-            LocalNotePublished::class => 'debug',
-            LocalActorMentioned::class => 'debug',
         ];
     }
 }

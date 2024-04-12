@@ -110,7 +110,7 @@ class Note extends Model
     use HasSnowflakePrimary;
     use SoftDeletes;
 
-    protected $fillable = ['type', 'note_type'];
+    protected $fillable = ['type', 'note_type', 'activityId'];
 
     /** @var array<string, class-string> */
     protected array $childTypes = [

@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Models\ActivityPub\Actor;
-use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

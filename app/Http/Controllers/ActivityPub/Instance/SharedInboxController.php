@@ -50,7 +50,7 @@ class SharedInboxController extends Controller
         // signed the activity stream can indeed perform whatever action they're
         // trying perform (create/update/delete a note from themselves...)
 
-        switch (ActivityTypes::from($type)) {
+        switch (ActivityTypes::tryFrom($type)) {
             case ActivityTypes::CREATE:
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
                 ProcessCreateAction::dispatch($actor, $activityStream);

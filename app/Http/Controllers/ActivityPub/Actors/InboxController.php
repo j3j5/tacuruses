@@ -81,7 +81,7 @@ class InboxController extends Controller
 
         $activityStream = Type::create($type, $action->all());
         // Go ahead, process it
-        switch (ActivityTypes::from($type)) {
+        switch (ActivityTypes::tryFrom($type)) {
             case ActivityTypes::FOLLOW:
                 if (!$activityModel instanceof ActivityFollow) {
                     throw new RuntimeException('Unknown activity model');

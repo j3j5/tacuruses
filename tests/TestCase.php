@@ -5,6 +5,7 @@ namespace Tests;
 use App\Services\ActivityPub\Signer;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use phpseclib3\Crypt\Common\PrivateKey;
 use RuntimeException;
@@ -41,6 +42,11 @@ abstract class TestCase extends BaseTestCase
 
         Http::preventStrayRequests();
         Storage::fake('local');
+
+        if (!env('ENABLE_LOGGING_ON_TESTS', false)) {
+            Log::shouldReceive('channel')->andReturnSelf();
+            Log::shouldReceive('debug', 'info', 'notice', 'error', 'warning', 'alert', 'critical', 'emergency');
+        }
     }
 
     protected function sign(PrivateKey $privateKey, string $keyId, string $url, ?string $body = null, array $extraHeaders = []) : array

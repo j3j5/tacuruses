@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Type;
+use App\Enums\ActivityTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessCreateAction;
@@ -49,34 +50,36 @@ class SharedInboxController extends Controller
         // signed the activity stream can indeed perform whatever action they're
         // trying perform (create/update/delete a note from themselves...)
 
-        switch ($type) {
-            case 'Create':
+        switch (ActivityTypes::from($type)) {
+            case ActivityTypes::CREATE:
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
                 ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
-            case 'Delete':
+            case ActivityTypes::DELETE:
                 /** @var \ActivityPhp\Type\Extended\Activity\Delete $activityStream */
                 ProcessDeleteAction::dispatch($activityStream);
                 break;
-                // case 'Update':
+//            case ActivityTypes::ANNOUNCE:
+//                break;
+                // case ActivityTypes::UPDATE:
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();
                 // 	break;
-                // case 'Undo':
+                // case ActivityTypes::UNDO:
                 // break;
 
-                // case 'View':
+                // case ActivityTypes::VIEW:
                 // break;
 
-                // case 'Reject':
+                // case ActivityTypes::REJECT:
                 // break;
 
-                // case 'Delete':
+                // case ActivityTypes::DELETE:
                 // break;
 
-                // case 'Add':
+                // case ActivityTypes::ADD:
                 // 	break;
 
-                // case 'Accept':
+                // case ActivityTypes::ACCEPT:
                 // 	break;
 
             default:

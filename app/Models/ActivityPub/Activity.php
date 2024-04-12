@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\ActivityPub;
 
+use App\Enums\ActivityTypes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,12 +61,12 @@ class Activity extends Model
 
     /** @var array<string, class-string> */
     protected array $childTypes = [
-        'Accept' => ActivityAccept::class,
-        'Announce' => ActivityAnnounce::class,
-        'Create' => ActivityCreate::class,
-        'Follow' => ActivityFollow::class,
-        'Like' => ActivityLike::class,
-        'Undo' => ActivityUndo::class,
+        ActivityTypes::ACCEPT->value => ActivityAccept::class,
+        ActivityTypes::ANNOUNCE->value => ActivityAnnounce::class,
+        ActivityTypes::CREATE->value => ActivityCreate::class,
+        ActivityTypes::FOLLOW->value => ActivityFollow::class,
+        ActivityTypes::LIKE->value => ActivityLike::class,
+        ActivityTypes::UNDO->value => ActivityUndo::class,
     ];
 
     public function slug() : Attribute

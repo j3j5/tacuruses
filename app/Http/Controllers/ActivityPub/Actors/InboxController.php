@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type;
+use App\Enums\ActivityTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessAcceptAction;
@@ -80,8 +81,8 @@ class InboxController extends Controller
 
         $activityStream = Type::create($type, $action->all());
         // Go ahead, process it
-        switch ($type) {
-            case 'Follow':
+        switch (ActivityTypes::from($type)) {
+            case ActivityTypes::FOLLOW:
                 if (!$activityModel instanceof ActivityFollow) {
                     throw new RuntimeException('Unknown activity model');
                 }
@@ -89,31 +90,31 @@ class InboxController extends Controller
                 ProcessFollowAction::dispatch($activityStream, $activityModel);
                 break;
 
-            case 'Like':
+            case ActivityTypes::LIKE:
                 if (!$activityModel instanceof ActivityLike) {
                     throw new RuntimeException('Unknown activity model');
                 }/** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
                 ProcessLikeAction::dispatch($activityStream, $activityModel);
                 break;
-            case 'Announce':    // Share/Boost
+            case ActivityTypes::ANNOUNCE:    // Share/Boost
                 if (!$activityModel instanceof ActivityAnnounce) {
                     throw new RuntimeException('Unknown activity model');
                 }
                 /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
                 ProcessAnnounceAction::dispatch($activityStream, $activityModel);
                 break;
-            case 'Undo':
+            case ActivityTypes::UNDO:
                 if (!$activityModel instanceof ActivityUndo) {
                     throw new RuntimeException('Unknown activity model');
                 }
                 /** @var \ActivityPhp\Type\Extended\Activity\Undo $activityStream */
                 ProcessUndoAction::dispatch($activityStream, $activityModel);
                 break;
-            case 'Create':
+            case ActivityTypes::CREATE:
                 /** @var \App\Domain\ActivityPub\Mastodon\Create $activityStream */
                 ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
-            case 'Accept':
+            case ActivityTypes::ACCEPT:
                 if (!$activityModel instanceof ActivityAccept) {
                     Log::warning("Unknown/unsupported ACCEPT activity on inbox ($type)", [
                         'model' => $activityModel,
@@ -122,14 +123,14 @@ class InboxController extends Controller
                 }
                 ProcessAcceptAction::dispatch($activityModel);
                 break;
-            case 'Update':
-            case 'Delete':
-            case 'Reject':
-            case 'Add':
-            case 'Remove':
-            case 'Block':
-            case 'Flag':
-            case 'Move':
+            case ActivityTypes::UPDATE:
+            case ActivityTypes::DELETE:
+            case ActivityTypes::REJECT:
+            case ActivityTypes::ADD:
+            case ActivityTypes::REMOVE:
+            case ActivityTypes::BLOCK:
+            case ActivityTypes::FLAG:
+            case ActivityTypes::MOVE:
             default:
                 Log::warning("Unknown/unsupported verb on inbox ($type)", [
                     'payload' => $action,

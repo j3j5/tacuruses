@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
+use App\Enums\ActivityTypes;
 use App\Events\LocalNoteLiked;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -61,6 +63,13 @@ class ActorInboxTest extends TestCase
 
         $response->assertAccepted();
         $this->assertCount(1, $note->likes);
+        $remoteActor = RemoteActor::where('activityId', $actorInfo['id'])->firstOrFail();
+        $this->assertDatabaseHas('activities', [
+            'type' => ActivityTypes::LIKE->value,
+            'actor_id' => $remoteActor->id,
+            'target_id' => $note->id,
+            'object' => json_encode($data),
+        ]);
 
         Http::assertSent(function (Request $request) use ($actorInfo) {
             return $request->url() === $actorInfo['inbox'];

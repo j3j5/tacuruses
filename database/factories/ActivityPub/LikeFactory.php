@@ -2,20 +2,20 @@
 
 namespace Database\Factories\ActivityPub;
 
-use App\Models\ActivityPub\Follow;
+use App\Models\ActivityPub\Like;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActivityPub\Follow>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActivityPub\Like>
  */
-class FollowFactory extends Factory
+class LikeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Follow::class;
+    protected $model = Like::class;
 
     /**
      * Define the model's default state.
@@ -30,13 +30,6 @@ class FollowFactory extends Factory
             // 'actor_id' => '',
             // 'target_id' => '',
             'activityId' => fake()->url(),
-            'accepted' => false,
         ];
     }
-
-    public function accepted()
-    {
-        return $this->state(fn(array $attrs) => ['accepted' => true]);
-    }
-
 }

@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
+use ActivityPhp\Type;
 use App\Enums\ActivityTypes;
 use App\Events\LocalNoteLiked;
+use App\Events\LocalNoteShared;
+use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\Like;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
@@ -23,7 +27,9 @@ class ActorInboxTest extends TestCase
 
     public function test_like_note()
     {
+        /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();
+        /** @var \App\Models\ActivityPub\LocalNote $note */
         $note = LocalNote::factory()
             ->for($actor, 'actor')
             ->public()
@@ -52,7 +58,7 @@ class ActorInboxTest extends TestCase
         $data = [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->faker()->url,
-            'type' => 'Like',
+            'type' => ActivityTypes::LIKE->value,
             'actor' => $actorInfo['id'],
             'object' => route('note.show', [$actor, $note]),
         ];
@@ -63,6 +69,7 @@ class ActorInboxTest extends TestCase
 
         $response->assertAccepted();
         $this->assertCount(1, $note->likes);
+        // Remote actor was created
         $remoteActor = RemoteActor::where('activityId', $actorInfo['id'])->firstOrFail();
         $this->assertDatabaseHas('activities', [
             'type' => ActivityTypes::LIKE->value,
@@ -75,12 +82,104 @@ class ActorInboxTest extends TestCase
             return $request->url() === $actorInfo['inbox'];
         });
         Event::assertDispatched(LocalNoteLiked::class);
-
     }
 
     public function test_undo_like_note()
     {
+        /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();
+        /** @var \App\Models\ActivityPub\LocalNote $note */
+        $note = LocalNote::factory()
+            ->for($actor, 'actor')
+            ->public()
+            ->create();
+
+        $remoteActorKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        /** @var \App\Models\ActivityPub\RemoteActor $remoteActor */
+        $remoteActor = RemoteActor::factory()
+            ->withPublicKey($remoteActorKey->getPublicKey()->toString('PKCS1'))
+            ->create();
+
+        $actorInfo = $this->actorResponse;
+        $actorInfo['id'] = $remoteActor->activityId;
+        $actorInfo['publicKey']['publicKeyPem'] = $remoteActor->publicKey;
+
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+            $actorInfo['inbox'] => Http::response('', 202),
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json',
+        ];
+
+        /** @var \ActivityPhp\Type\Extended\Activity\Like $dataLike */
+        $dataLike = Type::create(ActivityTypes::LIKE->value, [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->faker()->url,
+            'actor' => $actorInfo['id'],
+            'object' => route('note.show', [$actor, $note]),
+        ]);
+        /** @var \App\Models\ActivityPub\Activity $activity */
+        $activity = Activity::factory()
+            ->accepted()
+            ->type(ActivityTypes::LIKE)
+            ->object($dataLike)
+            ->state([
+                'actor_id' => $remoteActor->id,
+                'target_id' => $note->id,
+            ])
+            ->create();
+
+        Like::factory()
+            ->state(['activityId' => $activity->activityId])
+            ->for('actor', $remoteActor)
+            ->for('target', $note);
+
+        $object = $dataLike->toArray();
+        unset($object['@context']);
+        $dataUndo = [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->faker()->url,
+            'type' => ActivityTypes::UNDO->value,
+            'actor' => $actorInfo['id'],
+            'object' => $object,
+        ];
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json',
+        ];
+
+        $url = route('actor.inbox', [$actor]);
+        $headers = $this->sign($remoteActorKey, $actorInfo['publicKey']['id'], $url, json_encode($dataUndo), $headers);
+        $response = $this->postJson($url, $dataUndo, $headers);
+
+        $response->assertAccepted();
+        $this->assertCount(0, $note->fresh()->likes);
+
+        $this->assertDatabaseHas('activities', [
+            'type' => ActivityTypes::LIKE->value,
+            'actor_id' => $remoteActor->id,
+            'target_id' => $note->id,
+            'object' => $dataLike->toJson(),
+        ]);
+
+        $this->assertDatabaseHas('activities', [
+            'type' => ActivityTypes::UNDO->value,
+            'actor_id' => $remoteActor->id,
+            'target_id' => $note->id,
+            'object' => json_encode($dataUndo),
+        ]);
+    }
+
+    public function test_share_note()
+    {
+        /** @var \App\Models\ActivityPub\LocalActor $actor */
+        $actor = LocalActor::factory()->create();
+        /** @var \App\Models\ActivityPub\LocalNote $note */
         $note = LocalNote::factory()
             ->for($actor, 'actor')
             ->public()
@@ -97,6 +196,10 @@ class ActorInboxTest extends TestCase
             $actorInfo['inbox'] => Http::response('', 202),
         ]);
 
+        Event::fake([
+            LocalNoteShared::class,
+        ]);
+
         $headers = [
             'Accept' => 'application/activity+json',
             'Content-Type' => 'application/activity+json',
@@ -105,7 +208,7 @@ class ActorInboxTest extends TestCase
         $data = [
             '@context' => Context::ACTIVITY_STREAMS,
             'id' => $this->faker()->url,
-            'type' => 'Like',
+            'type' => ActivityTypes::ANNOUNCE->value,
             'actor' => $actorInfo['id'],
             'object' => route('note.show', [$actor, $note]),
         ];
@@ -115,27 +218,20 @@ class ActorInboxTest extends TestCase
         $response = $this->postJson($url, $data, $headers);
 
         $response->assertAccepted();
-        $this->assertCount(1, $note->likes);
-        $object = $data;
-        unset($object['@context']);
-        $data = [
-            '@context' => Context::ACTIVITY_STREAMS,
-            'id' => $this->faker()->url,
-            'type' => 'Undo',
-            'actor' => $actorInfo['id'],
-            'object' => $object,
-        ];
+        $this->assertCount(1, $note->shares);
+        // Remote actor was created
+        $remoteActor = RemoteActor::where('activityId', $actorInfo['id'])->firstOrFail();
+        $this->assertDatabaseHas('activities', [
+            'type' => ActivityTypes::ANNOUNCE->value,
+            'actor_id' => $remoteActor->id,
+            'target_id' => $note->id,
+            'object' => json_encode($data),
+        ]);
 
-        $headers = [
-            'Accept' => 'application/activity+json',
-            'Content-Type' => 'application/activity+json',
-        ];
-
-        $url = route('actor.inbox', [$actor]);
-        $headers = $this->sign($key, $actorInfo['publicKey']['id'], $url, json_encode($data), $headers);
-        $response = $this->postJson($url, $data, $headers);
-        $response->assertAccepted();
-        $this->assertCount(0, $note->fresh()->likes);
+        Http::assertSent(function (Request $request) use ($actorInfo) {
+            return $request->url() === $actorInfo['inbox'];
+        });
+        Event::assertDispatched(LocalNoteShared::class);
     }
 
 }

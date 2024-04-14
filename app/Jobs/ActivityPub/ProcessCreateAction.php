@@ -16,6 +16,7 @@ use App\Exceptions\SignatureException;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\Note as ActivityPubNote;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Bus\Queueable;
@@ -150,8 +151,8 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             ->filter()
             ->each(function (LocalActor $actor) use ($note) : void {
                 $actor->mentions()->attach($note);
-                if ($note->replyingTo instanceof ActivityPubNote && $note->replyingTo->actor_id === $actor->id) {
-                    LocalNoteReplied::dispatch($note->replyingTo);
+                if ($note->replyingTo instanceof LocalNote && $note->replyingTo->actor_id === $actor->id) {
+                    LocalNoteReplied::dispatch($note, $note->replyingTo);
                 }
                 LocalActorMentioned::dispatch($actor, $note);
             });

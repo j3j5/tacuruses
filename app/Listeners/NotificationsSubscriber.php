@@ -44,7 +44,7 @@ class NotificationsSubscriber
 
     public function createNotificationForReply(LocalNoteReplied $event) : void
     {
-        $event->note->replyingTo->actor->notify(new NewReply(
+        $event->noteReplied->actor->notify(new NewReply(
             actor: $event->note->actor,
             activity: $event->note->activity,
         ));

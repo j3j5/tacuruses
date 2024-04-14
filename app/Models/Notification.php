@@ -94,13 +94,13 @@ class Notification extends DatabaseNotification implements Feedable
         $content = $this->text;
 
         $item = FeedItem::create()
-            ->id($this->id)
+            ->id('Notification ' . $this->id)
             ->title(strip_tags($title))
-            ->image($this->fromActor->avatar)
+            ->image(data_get($this->fromActor, 'avatar', ''))
             ->summary($content)
-            ->link($this->activity->activityId)
-            ->authorName($this->fromActor->name)
-            ->authorEmail($this->fromActor->canonical_username);
+            ->link(data_get($this->activity, 'activityId', ''))
+            ->authorName(data_get($this->fromActor, 'name', ''))
+            ->authorEmail(data_get($this->fromActor, 'canonical_username', ''));
 
         /** @var \App\Domain\Feed\FeedItem $item */
         $item->media(collect());

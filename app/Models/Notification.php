@@ -2,13 +2,21 @@
 
 namespace App\Models;
 
+use App\Domain\Feed\FeedItem;
 use App\Enums\NotificationTypes;
+use App\Models\ActivityPub\Activity;
+use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Traits\HasSnowflakePrimary;
+use Carbon\Carbon;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Str;
+use Spatie\Feed\Feedable;
 
 /**
  *
@@ -36,7 +44,7 @@ use Illuminate\Notifications\DatabaseNotification;
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Notification extends DatabaseNotification
+class Notification extends DatabaseNotification implements Feedable
 {
     use HasFactory;
     use HasSnowflakePrimary;
@@ -54,6 +62,16 @@ class Notification extends DatabaseNotification
         'type' => NotificationTypes::class,
     ];
 
+    public function activity() : BelongsTo
+    {
+        return $this->belongsTo(Activity::class);
+    }
+
+    public function fromActor() : BelongsTo
+    {
+        return $this->belongsTo(Actor::class, 'from_actor_id');
+    }
+
     public function text() : Attribute
     {
         return Attribute::make(
@@ -68,5 +86,29 @@ class Notification extends DatabaseNotification
                 return trans($text, $replace, $locale);
             }
         );
+    }
+
+    public function toFeedItem(): FeedItem
+    {
+        $title = Str::limit($this->text, 100);
+        $content = $this->text;
+
+        $item = FeedItem::create()
+            ->id($this->id)
+            ->title(strip_tags($title))
+            ->image($this->fromActor->avatar)
+            ->summary($content)
+            ->link($this->activity->activityId)
+            ->authorName($this->fromActor->name)
+            ->authorEmail($this->fromActor->canonical_username);
+
+        /** @var \App\Domain\Feed\FeedItem $item */
+        $item->media(collect());
+
+        if ($this->updated_at instanceof Carbon) {
+            $item->updated($this->updated_at);
+        }
+
+        return $item;
     }
 }

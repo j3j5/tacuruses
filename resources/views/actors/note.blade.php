@@ -31,7 +31,7 @@
     {{-- <meta content="" property="og:image:width" /> --}}
     {{-- <meta content="" property="og:image:height" /> --}}
     @empty
-    <meta property="og:image" content="{{ $note->actor->avatar_url }}" />
+    <meta property="og:image" content="{{ $note->actor->avatar }}" />
     {{-- <meta content="" property="og:image:width" /> --}}
     {{-- <meta content="" property="og:image:height" /> --}}
     @endforelse

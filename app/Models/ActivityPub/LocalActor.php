@@ -60,7 +60,6 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read string $activity_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $allNotes
  * @property-read int|null $all_notes_count
- * @property-read string $avatar_url
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $drafts
  * @property-read int|null $drafts_count
@@ -263,13 +262,6 @@ class LocalActor extends Actor implements
         );
     }
 
-    public function avatarUrl() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => asset($this->avatar),
-        );
-    }
-
     public function headerUrl() : Attribute
     {
         return Attribute::make(
@@ -317,7 +309,7 @@ class LocalActor extends Actor implements
             'icon' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => $this->avatar_url,
+                'url' => $this->avatar,
             ],
             // Header
             'image' => [

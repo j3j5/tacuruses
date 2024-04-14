@@ -23,7 +23,7 @@
     <meta property="og:url" content="{{ route('actor.show', [$actor]) }}"  />
     <meta property="og:locale" content="{{ $actor->language }}">
 
-    <meta property="og:image" content="{{ $actor->avatar_url }}" />
+    <meta property="og:image" content="{{ $actor->avatar }}" />
     {{-- <meta content="1280" property="og:image:width" /> --}}
     {{-- <meta content="640" property="og:image:height" /> --}}
 

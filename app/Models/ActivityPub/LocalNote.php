@@ -376,7 +376,7 @@ class LocalNote extends Note implements Feedable
         $item = FeedItem::create()
             ->id($this->actor->username . '/' . $this->id)
             ->title(strip_tags($title))
-            ->image($this->actor->avatar_url)
+            ->image($this->actor->avatar)
             ->summary($content)
             ->link($this->url)
             ->authorName($this->actor->name)

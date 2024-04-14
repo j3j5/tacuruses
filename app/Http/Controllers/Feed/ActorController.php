@@ -27,7 +27,7 @@ class ActorController extends Controller
             "feed::$format",
             $actor->bio ?? '',
             $actor->language,
-            $actor->avatar_url,
+            $actor->avatar,
             $format,
         );
     }

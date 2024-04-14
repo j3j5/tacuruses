@@ -7,7 +7,7 @@
     {{-- ActivityPub --}}
     {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
     <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$note->actor]) }}" title="ActivityPub profile">
-    <link rel="alternate" type="application/rss+xml" title="{{ $note->actor->name }} Feed" href="{{ route('actor.feed.rss', [$note->actor]) }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ $note->actor->name }} Feed" href="{{ route('feed.actor.rss', [$note->actor]) }}">
 
     {{-- OpenGraph, see https://ogp.me --}}
     <meta name="author" content="{{ $note->actor->canonical_username }}">

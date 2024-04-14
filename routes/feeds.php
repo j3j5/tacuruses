@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Feed\ActorController;
+use App\Http\Controllers\Feed\ActorNotificationsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,5 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::prefix('/')->group(function () {
-    Route::get('{actor}.rss', ActorController::class)->name('actor.feed.rss');
+    Route::get('notifications.{format}', ActorNotificationsController::class)
+        ->name('feed.notifications');
+    Route::get('{actor}.rss', ActorController::class)->name('feed.actor.rss');
 });

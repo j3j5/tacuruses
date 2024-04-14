@@ -4,11 +4,14 @@ namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\Create;
+use App\Enums\ActivityTypes;
 use App\Events\LocalActorMentioned;
 use App\Events\LocalNoteReplied;
+use App\Events\LocalNoteShared;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
+use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -188,6 +191,65 @@ class SharedInboxTest extends TestCase
 
         Event::assertDispatched(LocalActorMentioned::class);
         Event::assertNotDispatched(LocalNoteReplied::class);
+    }
+
+    public function test_share_note()
+    {
+        /** @var \App\Models\ActivityPub\LocalActor $actor */
+        $actor = LocalActor::factory()->create();
+        /** @var \App\Models\ActivityPub\LocalNote $note */
+        $note = LocalNote::factory()
+            ->for($actor, 'actor')
+            ->public()
+            ->create();
+
+        $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+
+        $actorInfo = $this->actorResponse;
+        $actorInfo['publicKey']['publicKeyPem'] = $key->getPublicKey()->toString('PKCS1');
+
+        Http::fake([
+            $actorInfo['id'] => Http::response($actorInfo, 200),
+            $actorInfo['publicKey']['id'] => Http::response($actorInfo, 200),
+            $actorInfo['inbox'] => Http::response('', 202),
+        ]);
+
+        Event::fake([
+            LocalNoteShared::class,
+        ]);
+
+        $headers = [
+            'Accept' => 'application/activity+json',
+            'Content-Type' => 'application/activity+json',
+        ];
+
+        $data = [
+            '@context' => Context::ACTIVITY_STREAMS,
+            'id' => $this->faker()->url,
+            'type' => ActivityTypes::ANNOUNCE->value,
+            'actor' => $actorInfo['id'],
+            'object' => route('note.show', [$actor, $note]),
+        ];
+
+        $url = route('shared-inbox');
+        $headers = $this->sign($key, $actorInfo['publicKey']['id'], $url, json_encode($data), $headers);
+        $response = $this->postJson($url, $data, $headers);
+
+        $response->assertAccepted();
+        $this->assertCount(1, $note->shares);
+        // Remote actor was created
+        $remoteActor = RemoteActor::where('activityId', $actorInfo['id'])->firstOrFail();
+        $this->assertDatabaseHas('activities', [
+            'type' => ActivityTypes::ANNOUNCE->value,
+            'actor_id' => $remoteActor->id,
+            'target_id' => $note->id,
+            'object' => json_encode($data),
+        ]);
+
+        Http::assertSent(function (Request $request) use ($actorInfo) {
+            return $request->url() === $actorInfo['inbox'];
+        });
+        Event::assertDispatched(LocalNoteShared::class);
     }
 
     private function generateCreateActivity(Actor $actor, string $note = null) : Create

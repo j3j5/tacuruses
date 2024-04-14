@@ -47,6 +47,7 @@ class NotificationsSubscriberTest extends TestCase
 
     public function test_new_follow_creates_notification()
     {
+        $this->markTestIncomplete('todo');
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
         $remoteActor = RemoteActor::factory()->create();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Type;
 use App\Enums\ActivityTypes;
+use App\Http\Controllers\ActivityPub\Actors\InboxController;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessCreateAction;
@@ -11,6 +12,7 @@ use App\Jobs\ActivityPub\ProcessDeleteAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class SharedInboxController extends Controller
@@ -59,8 +61,11 @@ class SharedInboxController extends Controller
                 /** @var \ActivityPhp\Type\Extended\Activity\Delete $activityStream */
                 ProcessDeleteAction::dispatch($activityStream);
                 break;
-//            case ActivityTypes::ANNOUNCE:
-//                break;
+            case ActivityTypes::ANNOUNCE:
+                // Put back the actor bc we're going to the actor's inbox controller
+                $action->set('actorModel', $actor);
+                App::call(InboxController::class, [$request]);
+                break;
                 // case ActivityTypes::UPDATE:
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();
                 // 	break;

@@ -64,9 +64,9 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $drafts
  * @property-read int|null $drafts_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $followers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $followers
  * @property-read int|null $followers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $following
  * @property-read int|null $following_count
  * @property-read string $header_url
  * @property-read string $key_id

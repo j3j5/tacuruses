@@ -43,7 +43,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts
  * @property-read int|null $drafts_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $following
  * @property-read int|null $following_count
  * @property-read string $full_username
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked

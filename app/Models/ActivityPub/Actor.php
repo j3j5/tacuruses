@@ -200,8 +200,8 @@ class Actor extends Model
                 if (!$publicKey instanceof CommonPublicKey) {
                     throw new RuntimeException('invalid key type');
                 }
-                // Mastodon uses the relaxed padding
                 if ($publicKey instanceof PublicKey) {
+                    // Mastodon uses the relaxed padding
                     $publicKey = $publicKey->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
                 }
 

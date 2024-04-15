@@ -259,7 +259,6 @@ class Note extends Model
                 Context::$status,
             ],
             'id' => $this->activityId,
-            'type' => 'Note',
             // On Mastodon, if sensitive is true, only this is visible, content goes after a click
             'summary' => $this->summary,
             // TODO: implement

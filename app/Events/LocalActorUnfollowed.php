@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;

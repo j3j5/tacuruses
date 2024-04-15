@@ -83,4 +83,5 @@ class Follow extends Model
         ]);
         return $activity;
     }
+
 }

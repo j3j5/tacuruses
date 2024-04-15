@@ -6,6 +6,7 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Follow as ExtendedActivityFollow;
 use App\Models\ActivityPub\ActivityFollow;
+use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
@@ -15,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 final class ProcessFollowAction implements ShouldQueue
 {
@@ -41,9 +43,8 @@ final class ProcessFollowAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$target instanceof LocalActor) {
-            throw new RuntimeException('The ActivityFollow does not seem to have a valid target');
-        }
+
+        Assert::isInstanceOf($target, LocalActor::class);
 
         // Store the follow
         $follow = Follow::updateOrCreate(
@@ -53,9 +54,7 @@ final class ProcessFollowAction implements ShouldQueue
 
         if ($actor instanceof RemoteActor) {
             SendFollowAcceptToActor::dispatch($actor, $target, $this->activity);
-            return;
         }
         $follow->accept();
-
     }
 }

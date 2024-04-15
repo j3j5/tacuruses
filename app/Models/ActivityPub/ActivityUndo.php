@@ -2,10 +2,12 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Enums\ActivityTypes;
+use App\Events\LocalActorUnfollowed;
+use App\Exceptions\AppException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasParent;
-use RuntimeException;
 
 /**
  * App\Models\ActivityPub\ActivityUndo
@@ -52,10 +54,22 @@ class ActivityUndo extends Activity
 
     public function target() : BelongsTo
     {
-        return match ($this->object_type) {
-            'Follow' => $this->belongsTo(LocalActor::class, 'target_id'),
-            'Like', 'Undo', 'Announce' => $this->belongsTo(LocalNote::class, 'target_id'),
-            default => throw new RuntimeException('Unknown Undo type "' . $this->object_type . '"'),
+        return match (ActivityTypes::tryFrom($this->object_type)) {
+            ActivityTypes::FOLLOW => $this->belongsTo(LocalActor::class, 'target_id'),
+            ActivityTypes::LIKE, ActivityTypes::UNDO, ActivityTypes::ANNOUNCE => $this->belongsTo(LocalNote::class, 'target_id'),
+            default => throw new AppException('Unknown Undo type "' . $this->object_type . '"'),
         };
+    }
+
+    public function markAsAccepted() : self
+    {
+        parent::markAsAccepted();
+
+        match (ActivityTypes::tryFrom($this->object_type)) {
+            ActivityTypes::FOLLOW => LocalActorUnfollowed::dispatch($this),
+            ActivityTypes::LIKE, ActivityTypes::UNDO, ActivityTypes::ANNOUNCE => '', // TODO: delete associated notification!
+            default => throw new AppException('Unknown Undo type "' . $this->object_type . '"'),
+        };
+        return $this;
     }
 }

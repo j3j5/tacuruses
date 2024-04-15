@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Undo;
+use App\Enums\ActivityTypes;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -42,14 +43,14 @@ final class ProcessUndoAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        switch($this->activity->object_type) {
-            case 'Follow':
+        switch(ActivityTypes::tryFrom($this->activity->object_type)) {
+            case ActivityTypes::FOLLOW:
                 if (!$target instanceof LocalActor) {
                     throw new RuntimeException('The ActivityUndo does not seem to have a valid actor target');
                 }
                 $this->processUndoFollow();
                 break;
-            case 'Like':
+            case ActivityTypes::LIKE:
                 if (!$target instanceof LocalNote) {
                     throw new RuntimeException('The ActivityUndo do not seem to have a valid note target');
                 }

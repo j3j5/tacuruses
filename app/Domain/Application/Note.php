@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Application;
 
 use App\Enums\Visibility;
+use App\Exceptions\AppException;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
 
 /**
  *
@@ -63,7 +63,7 @@ class Note extends Fluent
             /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);
         } catch (ValidationException $e) {
-            throw new RuntimeException('Invalid attributes for Note', 0, $e);
+            throw new AppException('Invalid attributes for Note', 0, $e);
         }
 
         $attributes['plain_text'] = false;

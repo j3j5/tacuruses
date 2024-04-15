@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Application;
 
+use App\Exceptions\AppException;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\Media as ModelsMedia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
 
 /**
  *
@@ -36,7 +36,7 @@ class Media extends Fluent
      * @param \App\Models\ActivityPub\LocalActor $actor
      * @param array $attributes
      * @phpstan-param array{file: \Illuminate\Http\UploadedFile, thumbnail?: \Illuminate\Http\UploadedFile, description?: string, focus?: string}  $attributes
-     * @throws \RuntimeException
+     * @throws \App\Exceptions\AppException
      * @return void
      */
     public function __construct(private LocalActor $actor, array $attributes)
@@ -45,7 +45,7 @@ class Media extends Fluent
             /** @throws \Illuminate\Validation\ValidationException */
             $attributes = Validator::validate($attributes, self::$rules);
         } catch (ValidationException $e) {
-            throw new RuntimeException('Invalid attributes for Media', 0, $e);
+            throw new AppException('Invalid attributes for Media', 0, $e);
         }
 
         parent::__construct($attributes);

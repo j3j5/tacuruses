@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type;
 use App\Enums\ActivityTypes;
+use App\Exceptions\AppException;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessAcceptAction;
@@ -26,7 +27,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 
 class InboxController extends Controller
@@ -144,33 +144,33 @@ class InboxController extends Controller
 
     private function tryToFindTarget(InputBag $action) : LocalActor|LocalNote
     {
-        return match ($action->get('type')) {
-            'Follow' => $this->tryToFindActorTarget((string) $action->get('object')),
-            'Announce' => $this->tryToFindNoteTarget((string) $action->get('object')),
-            'Like' => $this->tryToFindNoteTarget((string) $action->get('object')),
-            'Undo' => $this->tryToFindUndoTarget(Arr::wrap($action->all('object'))),
-            'Accept' => $this->tryToFindAcceptTarget(Arr::wrap($action->all('object'))),
-            default => throw new RuntimeException("Type '" . (string) $action->get('type') . "' is not implemented yet!"),
+        return match (ActivityTypes::tryFrom($action->get('type'))) {
+            ActivityTypes::FOLLOW => $this->tryToFindActorTarget((string) $action->get('object')),
+            ActivityTypes::ANNOUNCE => $this->tryToFindNoteTarget((string) $action->get('object')),
+            ActivityTypes::LIKE => $this->tryToFindNoteTarget((string) $action->get('object')),
+            ActivityTypes::UNDO => $this->tryToFindUndoTarget(Arr::wrap($action->all('object'))),
+            ActivityTypes::ACCEPT => $this->tryToFindAcceptTarget(Arr::wrap($action->all('object'))),
+            default => throw new AppException("Type '" . (string) $action->get('type') . "' is not implemented yet!"),
         };
     }
 
     private function tryToFindAcceptTarget(array $object) : LocalActor|LocalNote
     {
-        return match ($object['type']) {
-            'Follow' => $this->tryToFindActorTarget($object['actor']),
-            'Announce' => $this->tryToFindNoteTarget($object['actor']),
-            'Like' => $this->tryToFindNoteTarget($object['object']),
-            default => throw new RuntimeException("Accept Type '" . $object['type'] . "' is not implemented yet!"),
+        return match (ActivityTypes::tryFrom($object['type'])) {
+            ActivityTypes::FOLLOW => $this->tryToFindActorTarget($object['actor']),
+            ActivityTypes::ANNOUNCE => $this->tryToFindNoteTarget($object['actor']),
+            ActivityTypes::LIKE => $this->tryToFindNoteTarget($object['object']),
+            default => throw new AppException("Accept Type '" . $object['type'] . "' is not implemented yet!"),
         };
     }
 
     private function tryToFindUndoTarget(array $object) : LocalActor|LocalNote
     {
-        return match ($object['type']) {
-            'Follow' => $this->tryToFindActorTarget($object['object']),
-            'Announce' => $this->tryToFindNoteTarget($object['object']),
-            'Like' => $this->tryToFindNoteTarget($object['object']),
-            default => throw new RuntimeException("Undo Type '" . $object['type'] . "' is not implemented yet!"),
+        return match (ActivityTypes::tryFrom($object['type'])) {
+            ActivityTypes::FOLLOW => $this->tryToFindActorTarget($object['object']),
+            ActivityTypes::ANNOUNCE => $this->tryToFindNoteTarget($object['object']),
+            ActivityTypes::LIKE => $this->tryToFindNoteTarget($object['object']),
+            default => throw new AppException("Undo Type '" . $object['type'] . "' is not implemented yet!"),
         };
     }
 

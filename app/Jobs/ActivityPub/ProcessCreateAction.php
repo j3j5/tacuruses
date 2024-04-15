@@ -31,9 +31,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
-
 use function Safe\json_encode;
+
+use Webmozart\Assert\Assert;
 
 final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
 {
@@ -46,7 +46,14 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(protected Actor $activityActor, protected readonly Create $action)
     {
-        //
+        // Supported objects
+        $supportedObjects = [
+            Article::class,
+            Document::class,
+            Note::class,
+        ];
+
+        Assert::isInstanceOfAny($this->action->object, $supportedObjects);
     }
 
     /**
@@ -66,25 +73,8 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         DB::beginTransaction();
 
         // Store the object
-        $object = $this->action->object;
-
-        // Supported objects
-        $supportedObjects = [
-            Article::class,
-            Document::class,
-            Note::class,
-        ];
-
-        if (empty($object) || is_string($object)) {
-            DB::rollBack();
-            throw new RuntimeException("'$object'  is an unsupported type");
-        }
-
-        if (!in_array(get_class($object), $supportedObjects)) {
-            DB::rollBack();
-            throw new RuntimeException(get_class($object) . ' is an unsupported object');
-        }
         /** @var \ActivityPhp\Type\Extended\Object\Article|\App\Domain\ActivityPub\Mastodon\Document|\App\Domain\ActivityPub\Mastodon\Note $object */
+        $object = $this->action->object;
 
         /** @var \App\Models\ActivityPub\Note $note */
         $note = ActivityPubNote::firstOrNew(['activityId' => $object->id]);

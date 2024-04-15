@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Events;
 
-use App\Exceptions\AppException;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\Note;
 use Illuminate\Broadcasting\PrivateChannel;
+use Webmozart\Assert\Assert;
 
 final class LocalNoteReplied extends BaseEvent
 {
@@ -32,9 +32,9 @@ final class LocalNoteReplied extends BaseEvent
      */
     public function __construct(Note $note, LocalNote $noteReplied)
     {
-        if ($noteReplied->replyingTo->isNot($note)) {
-            throw new AppException('Note ' . $noteReplied->id . ' does not seem to be replying to ' . $note->id);
-        }
+        Assert::isInstanceOf($noteReplied->replyingTo, LocalNote::class);
+        Assert::eq($noteReplied->replyingTo->id, $note->id, 'Note ' . $noteReplied->id . ' does not seem to be replying to ' . $note->id);
+
         $this->note = $note;
         $this->noteReplied = $noteReplied;
     }

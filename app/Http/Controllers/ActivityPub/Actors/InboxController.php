@@ -28,6 +28,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\InputBag;
+use Webmozart\Assert\Assert;
 
 class InboxController extends Controller
 {
@@ -83,30 +84,27 @@ class InboxController extends Controller
         // Go ahead, process it
         switch (ActivityTypes::tryFrom($type)) {
             case ActivityTypes::FOLLOW:
-                if (!$activityModel instanceof ActivityFollow) {
-                    throw new RuntimeException('Unknown activity model');
-                }
+                Assert::isInstanceOf($activityModel, ActivityFollow::class);
+
                 /** @var \ActivityPhp\Type\Extended\Activity\Follow $activityStream */
                 ProcessFollowAction::dispatch($activityStream, $activityModel);
                 break;
 
             case ActivityTypes::LIKE:
-                if (!$activityModel instanceof ActivityLike) {
-                    throw new RuntimeException('Unknown activity model');
-                }/** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
+                Assert::isInstanceOf($activityModel, ActivityLike::class);
+
+                /** @var \ActivityPhp\Type\Extended\Activity\Like $activityStream */
                 ProcessLikeAction::dispatch($activityStream, $activityModel);
                 break;
             case ActivityTypes::ANNOUNCE:    // Share/Boost
-                if (!$activityModel instanceof ActivityAnnounce) {
-                    throw new RuntimeException('Unknown activity model');
-                }
+                Assert::isInstanceOf($activityModel, ActivityAnnounce::class);
+
                 /** @var \ActivityPhp\Type\Extended\Activity\Announce $activityStream */
                 ProcessAnnounceAction::dispatch($activityStream, $activityModel);
                 break;
             case ActivityTypes::UNDO:
-                if (!$activityModel instanceof ActivityUndo) {
-                    throw new RuntimeException('Unknown activity model');
-                }
+                Assert::isInstanceOf($activityModel, ActivityUndo::class);
+
                 /** @var \ActivityPhp\Type\Extended\Activity\Undo $activityStream */
                 ProcessUndoAction::dispatch($activityStream, $activityModel);
                 break;
@@ -115,12 +113,8 @@ class InboxController extends Controller
                 ProcessCreateAction::dispatch($actor, $activityStream);
                 break;
             case ActivityTypes::ACCEPT:
-                if (!$activityModel instanceof ActivityAccept) {
-                    Log::warning("Unknown/unsupported ACCEPT activity on inbox ($type)", [
-                        'model' => $activityModel,
-                    ]);
-                    throw new RuntimeException('Unknown activity model');
-                }
+                Assert::isInstanceOf($activityModel, ActivityAccept::class);
+
                 ProcessAcceptAction::dispatch($activityModel);
                 break;
             case ActivityTypes::UPDATE:

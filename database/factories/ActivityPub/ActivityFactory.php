@@ -42,7 +42,11 @@ class ActivityFactory extends Factory
     public function object(AbstractObject $object)
     {
         return $this->state(
-            fn(array $attrs) => ['object' => $object->toArray()]
+            fn(array $attrs) => [
+                'activityId' => $object->id,
+                'type' => $object->type,
+                'object' => $object->toArray()
+            ]
         );
     }
 

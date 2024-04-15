@@ -22,6 +22,7 @@ class FollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($localActor, 'target')
                 ->for($remoteActor, 'actor')
                 ->create();
@@ -38,6 +39,7 @@ class FollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($localActor, 'target')
                 ->for($remoteActor, 'actor')
                 ->create();
@@ -71,6 +73,7 @@ class FollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($localActor, 'target')
                 ->for($remoteActor, 'actor')
                 ->create();
@@ -105,6 +108,7 @@ class FollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($remoteActor, 'actor')
                 ->for($localActor, 'target')
                 ->create();

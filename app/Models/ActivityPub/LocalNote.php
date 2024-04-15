@@ -87,7 +87,6 @@ use Spatie\Feed\Feedable;
  * @method static Builder|LocalNote byActivityId(string $activityId)
  * @method static Builder|LocalNote newModelQuery()
  * @method static Builder|LocalNote newQuery()
- * @method static Builder|LocalNote published()
  * @method static Builder|LocalNote query()
  * @method static Builder|LocalNote whereActivityId($value)
  * @method static Builder|LocalNote whereActorId($value)
@@ -404,10 +403,5 @@ class LocalNote extends Note implements Feedable
     public function scopeByActivityId(Builder $query, string $activityId) : Builder
     {
         return $query->where('id', $this->getIdFromActivityId($activityId));
-    }
-
-    public function scopePublished(Builder $query) : Builder
-    {
-        return $query->whereNotNull('published_at');
     }
 }

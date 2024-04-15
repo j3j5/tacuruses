@@ -39,6 +39,7 @@ class SharedInboxTest extends TestCase
         $remoteActor = RemoteActor::factory()->withPublicKey($remoteActorKey->getPublicKey()->toString('PKCS1'))->create();
         // Local actor follows the remote one
         Follow::factory()
+            ->accepted()
             ->for($remoteActor, 'target')
             ->for($localActor, 'actor')
             ->create();
@@ -90,6 +91,7 @@ class SharedInboxTest extends TestCase
         $remoteActor = RemoteActor::factory()->withPublicKey($remoteActorKey->getPublicKey()->toString('PKCS1'))->create();
         // Local actor follows the remote one
         Follow::factory()
+            ->accepted()
             ->for($remoteActor, 'target')
             ->for($localActor, 'actor')
             ->create();

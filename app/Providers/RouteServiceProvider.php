@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use App\Scopes\Published;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -42,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider
             $note = LocalNote::withCount(['shares', 'likes'])
                 ->where('id', $value)
                 ->where('actor_id', $route->parameter('actor')->id)
-                ->published()
+                ->tap(new Published())
                 ->firstOrFail();
             return $note->setRelation('actor', $route->parameter('actor'));
         });

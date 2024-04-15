@@ -2,6 +2,7 @@
 
 namespace App\Models\ActivityPub;
 
+use App\Scopes\Accepted;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -106,12 +107,14 @@ class Actor extends Model
 
     public function follows() : HasMany
     {
-        return $this->hasMany(Follow::class);
+        return $this->hasMany(Follow::class)
+            ->tap(new Accepted());
     }
 
     public function receivedFollows() : HasMany
     {
-        return $this->hasMany(Follow::class, 'target_id');
+        return $this->hasMany(Follow::class, 'target_id')
+            ->tap(new Accepted());
     }
 
     public function followers() : HasManyThrough
@@ -123,7 +126,7 @@ class Actor extends Model
             'id',
             'id',
             'actor_id',
-        );
+        )->tap(new Accepted());
     }
 
     public function following() : HasManyThrough
@@ -135,7 +138,7 @@ class Actor extends Model
             'id',
             'id',
             'target_id',
-        );
+        )->tap(new Accepted());
     }
 
     public function liked() : HasMany

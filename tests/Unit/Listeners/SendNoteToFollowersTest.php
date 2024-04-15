@@ -36,6 +36,7 @@ class SendNoteToFollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($localActor, 'target')
                 ->for($remoteActor, 'actor')
                 ->create();
@@ -71,6 +72,7 @@ class SendNoteToFollowersTest extends TestCase
         $follows = [];
         foreach ($remoteActors as $remoteActor) {
             $follows[] = Follow::factory()
+                ->accepted()
                 ->for($localActor, 'target')
                 ->for($remoteActor, 'actor')
                 ->create();

@@ -73,13 +73,14 @@ final class ProcessUndoAction implements ShouldQueue
 
     private function processUndoFollow() : void
     {
+        /** @var \App\Models\ActivityPub\Actor $actor */
         $actor = $this->activity->actor;
         /** @var \App\Models\ActivityPub\LocalActor $target */
         $target = $this->activity->target;
 
         // Delete the follow relationship
-        $actor->following()
-            ->where('target_id', $target->id)
+        $target->receivedFollows()
+            ->where('actor_id', $actor->id)
             ->where('activityId', $this->action->object->id)    /* @phpstan-ignore-line */
             ->delete();
     }

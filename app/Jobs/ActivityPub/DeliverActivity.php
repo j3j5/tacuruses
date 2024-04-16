@@ -8,18 +8,14 @@ use ActivityPhp\Type\Core\Activity;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-final class DeliverActivity implements ShouldQueue, ShouldBeUnique
+final class DeliverActivity extends BaseFederationJob implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
+
     /**
      * Create a new job instance.
      *

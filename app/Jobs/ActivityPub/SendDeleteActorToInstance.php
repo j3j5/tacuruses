@@ -22,9 +22,8 @@ use Psr\Http\Message\RequestInterface;
 use function Safe\json_decode;
 use function Safe\json_encode;
 
-final class SendDeleteActorToInstance implements ShouldQueue
+final class SendDeleteActorToInstance extends BaseFederationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
 
     private readonly LocalActor $actor;

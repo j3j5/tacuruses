@@ -11,15 +11,10 @@ use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-final class SendFollowAcceptToActor implements ShouldQueue
+final class SendFollowAcceptToActor extends BaseFederationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
 
     private readonly RemoteActor $actor;

@@ -11,20 +11,15 @@ use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 
 use function Safe\json_decode;
 use function Safe\json_encode;
 
-final class SendDeleteNoteToInstance implements ShouldQueue
+final class SendDeleteNoteToInstance extends BaseFederationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
 
     private readonly LocalNote $note;

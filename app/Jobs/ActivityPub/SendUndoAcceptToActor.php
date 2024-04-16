@@ -12,15 +12,10 @@ use App\Models\ActivityPub\LocalNote;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-final class SendUndoAcceptToActor implements ShouldQueue
+final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use SendsSignedRequests;
 
     private readonly Actor $actor;

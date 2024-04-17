@@ -6,7 +6,6 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Follow as ExtendedActivityFollow;
 use App\Models\ActivityPub\ActivityFollow;
-use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
@@ -15,7 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use RuntimeException;
 use Webmozart\Assert\Assert;
 
 final class ProcessFollowAction implements ShouldQueue

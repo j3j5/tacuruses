@@ -11,11 +11,7 @@ use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 

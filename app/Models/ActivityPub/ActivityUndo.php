@@ -21,7 +21,7 @@ use Parental\HasParent;
  * @property string $type
  * @property int $actor_id
  * @property int $target_id
- * @property string|null $object_type
+ * @property string $object_type
  * @property array $object
  * @property int $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor

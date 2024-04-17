@@ -6,7 +6,6 @@ namespace App\Events;
 
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\Note;
-use Illuminate\Broadcasting\PrivateChannel;
 use Webmozart\Assert\Assert;
 
 final class LocalNoteReplied extends BaseEvent
@@ -37,15 +36,5 @@ final class LocalNoteReplied extends BaseEvent
 
         $this->note = $note;
         $this->noteReplied = $noteReplied;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
     }
 }

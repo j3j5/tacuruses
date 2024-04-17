@@ -5,7 +5,6 @@ namespace App\Events;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Broadcasting\PrivateChannel;
 
 class LocalActorFollowed extends BaseEvent
 {
@@ -39,17 +38,5 @@ class LocalActorFollowed extends BaseEvent
         $this->activity = $activity;
         $this->actor = $activity->target;
         $this->follower = $activity->actor;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

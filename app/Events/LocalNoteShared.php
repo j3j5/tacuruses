@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Events;
 
 use App\Models\ActivityPub\ActivityAnnounce;
-use Illuminate\Broadcasting\PrivateChannel;
 
 final class LocalNoteShared extends BaseEvent
 {
@@ -19,13 +18,4 @@ final class LocalNoteShared extends BaseEvent
         //
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
-    }
 }

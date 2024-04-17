@@ -6,7 +6,6 @@ namespace App\Events;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\Note;
-use Illuminate\Broadcasting\PrivateChannel;
 
 final class LocalActorMentioned extends BaseEvent
 {
@@ -33,15 +32,5 @@ final class LocalActorMentioned extends BaseEvent
     {
         $this->actor = $actor;
         $this->note = $note;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
     }
 }

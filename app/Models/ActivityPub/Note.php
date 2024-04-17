@@ -263,7 +263,6 @@ class Note extends Model
             'id' => $this->activityId,
             // On Mastodon, if sensitive is true, only this is visible, content goes after a click
             'summary' => $this->summary,
-            // TODO: implement
             'inReplyTo' => $this->inReplyTo,
             'published' => $this->published_at ? $this->published_at->toIso8601ZuluString() : null,
             'url' => $this->url,

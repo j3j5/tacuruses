@@ -7,6 +7,7 @@ namespace App\Models\ActivityPub;
 use ActivityPhp\Type;
 use ActivityPhp\Type\Extended\Activity\Update;
 use App\Domain\ActivityPub\Mastodon\AbstractActor;
+use App\Enums\ActorTypes;
 use App\Jobs\ActivityPub\DeliverActivity;
 use App\Models\Notification;
 use App\Services\ActivityPub\Context;
@@ -277,7 +278,7 @@ class LocalActor extends Actor implements
 
         $person = $this->getActorArray();
 
-        $type = 'Service'; // TODO: move to the DB
+        $type = ActorTypes::SERVICE->value; // TODO: move to the DB
         /** @phpstan-ignore-next-line */
         return Type::create($type, array_merge($context, $person));
     }

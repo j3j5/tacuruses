@@ -56,7 +56,7 @@ class ActivityUndo extends Activity
 
     public function target() : BelongsTo
     {
-        return match (ActivityTypes::tryFrom($this->object_type)) {
+        return match (ActivityTypes::tryFrom((string) $this->object_type)) {
             ActivityTypes::FOLLOW => $this->belongsTo(LocalActor::class, 'target_id'),
             ActivityTypes::LIKE, ActivityTypes::UNDO, ActivityTypes::ANNOUNCE => $this->belongsTo(LocalNote::class, 'target_id'),
             default => throw new AppException('Unknown Undo type "' . $this->object_type . '"'),
@@ -67,7 +67,7 @@ class ActivityUndo extends Activity
     {
         parent::markAsAccepted();
 
-        match (ActivityTypes::tryFrom($this->object_type)) {
+        match (ActivityTypes::tryFrom((string) $this->object_type)) {
             ActivityTypes::FOLLOW => LocalActorUnfollowed::dispatch($this),
             ActivityTypes::LIKE, ActivityTypes::UNDO, ActivityTypes::ANNOUNCE => '', // TODO: delete associated notification!
             default => throw new AppException('Unknown Undo type "' . $this->object_type . '"'),

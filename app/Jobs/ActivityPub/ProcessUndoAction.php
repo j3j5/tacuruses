@@ -6,6 +6,7 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Undo;
 use App\Enums\ActivityTypes;
+use App\Exceptions\AppException;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -16,7 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
+use Webmozart\Assert\Assert;
 
 final class ProcessUndoAction implements ShouldQueue
 {
@@ -43,22 +44,18 @@ final class ProcessUndoAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        switch(ActivityTypes::tryFrom($this->activity->object_type)) {
+        switch(ActivityTypes::tryFrom(data_get($this->activity, 'object_type', ''))) {
             case ActivityTypes::FOLLOW:
-                if (!$target instanceof LocalActor) {
-                    throw new RuntimeException('The ActivityUndo does not seem to have a valid actor target');
-                }
+                Assert::isInstanceOf($target, LocalActor::class);
                 $this->processUndoFollow();
                 break;
             case ActivityTypes::LIKE:
-                if (!$target instanceof LocalNote) {
-                    throw new RuntimeException('The ActivityUndo do not seem to have a valid note target');
-                }
+                Assert::isInstanceOf($target, LocalNote::class);
                 $this->processUndoLike();
                 break;
             default:
                 Log::notice('unknown action', [$this->action, $this->activity]);
-                throw new RuntimeException('Unknown action');
+                throw new AppException('Unknown action');
         }
 
         if ($actor instanceof RemoteActor) {

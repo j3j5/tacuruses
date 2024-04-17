@@ -43,11 +43,9 @@ class InboxController extends Controller
         $this->middleware(OnlyContentType::class . ':application/activity+json');
     }
 
-
     /**
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Webmozart\Assert\InvalidArgumentException
      * @throws \Symfony\Component\HttpFoundation\Exception\BadRequestException
      * @throws \InvalidArgumentException
@@ -57,6 +55,7 @@ class InboxController extends Controller
      * @throws \Exception
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request) : JsonResponse
     {

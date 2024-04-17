@@ -150,7 +150,12 @@ class RemoteNote extends Note
     public function getAPNote() : ActivityNote
     {
         $note = parent::getAPNote();
-        $note->replies = $this->repliesRaw;
+        $replies = Type::create('Collection', []);
+        if ($this->repliesRaw !== null) {
+            $replies = Type::create('Collection', $this->repliesRaw->toArray());
+        }
+        /** @var \ActivityPhp\Type\Core\Collection $replies */
+        $note->replies = $replies;
 
         return $note;
     }

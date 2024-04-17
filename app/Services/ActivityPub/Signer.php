@@ -124,7 +124,7 @@ final class Signer
 
         // Get headers to be signed
         $headersToSign = $this->headersToSign(
-            url: $request->getUri(),
+            url: (string) $request->getUri(),
             digest: $digest,
             method: $request->getMethod(),
         );

@@ -5,9 +5,10 @@ declare(strict_types = 1);
 namespace App\Rules;
 
 use Carbon\Carbon;
-use Illuminate\Contracts\Validation\InvokableRule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class InThePast implements InvokableRule
+class InThePast implements ValidationRule
 {
     private const DATE_FORMAT = 'Y-m-d\TH:i:s\Z';
 
@@ -19,7 +20,7 @@ class InThePast implements InvokableRule
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      * @return void
      */
-    public function __invoke($attribute, $value, $fail)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $date = Carbon::createFromFormat(self::DATE_FORMAT, $value);
         if (!$date instanceof Carbon) {

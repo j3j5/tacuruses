@@ -90,6 +90,10 @@ use function Safe\parse_url;
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $followers
  * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
+ * @property-read int|null $follows_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
+ * @property-read int|null $received_follows_count
  * @mixin \Eloquent
  */
 class Actor extends Model

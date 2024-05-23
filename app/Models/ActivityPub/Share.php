@@ -31,6 +31,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Share whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Share whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Share whereUpdatedAt($value)
+ * @method static \Database\Factories\ActivityPub\ShareFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class Share extends Model

@@ -31,6 +31,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Like whereUpdatedAt($value)
+ * @method static \Database\Factories\ActivityPub\LikeFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class Like extends Model

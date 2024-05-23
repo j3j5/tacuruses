@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Models\ActivityPub;
 
+use App\Enums\ActorTypes;
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
 use App\Jobs\ActivityPub\DeliverActivity;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;
@@ -26,11 +28,8 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property string|null $avatar
  * @property string|null $header
  * @property string|null $bio
- * @property string|null $alsoKnownAs
- * @property string|null $properties
  * @property string $language
  * @property string|null $activityId
- * @property string|null $type
  * @property string|null $url
  * @property string $inbox
  * @property string|null $sharedInbox
@@ -88,6 +87,13 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $followers
  * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
+ * @property-read int|null $follows_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
+ * @property-read int|null $received_follows_count
+ * @property array|null $alsoKnownAs
+ * @property array|null $properties
+ * @property ActorTypes|null $type
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor
@@ -100,7 +106,8 @@ class RemoteActor extends Actor
     protected $casts = [
         'bio' => PurifyHtmlOnGet::class . ':mastodon',
         'alsoKnownAs' => 'array',
-        'properties' => 'array'
+        'properties' => 'array',
+        'type' => ActorTypes::class,
     ];
 
     /**

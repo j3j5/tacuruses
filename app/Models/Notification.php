@@ -43,6 +43,23 @@ use Spatie\Feed\Feedable;
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereReadAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereUpdatedAt($value)
+ * @property string $notifiable_type
+ * @property int $notifiable_id
+ * @property array $data
+ * @property-read Activity|null $activity
+ * @property-read Actor|null $fromActor
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $notifiable
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
+ * @method static Builder|DatabaseNotification read()
+ * @method static Builder|DatabaseNotification unread()
+ * @method static \Illuminate\Database\Eloquent\Builder|Notification whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Notification whereNotifiableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Notification whereNotifiableType($value)
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
  * @mixin \Eloquent
  */
 class Notification extends DatabaseNotification implements Feedable

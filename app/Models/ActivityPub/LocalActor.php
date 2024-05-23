@@ -50,7 +50,6 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property array|null $properties
  * @property string $language
  * @property string|null $activityId
- * @property string|null $type
  * @property string $url
  * @property string $inbox
  * @property string|null $sharedInbox
@@ -61,6 +60,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property string $following_url
  * @property string $outbox
  * @property-read string $activity_id
+ * @property ActorTypes|null $type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $allNotes
  * @property-read int|null $all_notes_count
  * @property-read string $domain
@@ -70,7 +70,6 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $followers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $following
  * @property-read int|null $following_count
- * @property-read string $header_url
  * @property-read string $key_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
@@ -122,6 +121,11 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Notification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
+ * @property-read int|null $follows_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
+ * @property-read int|null $received_follows_count
+ * @property-read string $shared_inbox
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements
@@ -141,6 +145,7 @@ class LocalActor extends Actor implements
         'alsoKnownAs' => 'array',
         'properties' => 'array',
         'bio' => PurifyHtmlOnGet::class . ':mastodon',
+        'type' => ActorTypes::class,
     ];
 
     /**
@@ -265,10 +270,10 @@ class LocalActor extends Actor implements
         );
     }
 
-    public function headerUrl() : Attribute
+    public function sharedInbox() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => asset($this->header),
+            get: fn() : string => route('shared-inbox')
         );
     }
 
@@ -318,13 +323,14 @@ class LocalActor extends Actor implements
             'image' => [
                 'type' => 'Image',
                 'mediaType' => 'image/jpeg',
-                'url' => $this->header_url,
+                'url' => $this->header,
             ],
         ];
 
         $metadata = [
-            'tag' => [],
-            'attachment' => Arr::wrap($this->properties),
+            'tag' => Arr::get($this->properties, 'tag', []),
+            'attachment' => Arr::get($this->properties, 'attachment', []),
+            // TODO: move to properties
             'discoverable' => true,
             // Crypto to sign messages
             'publicKey' => [
@@ -344,11 +350,11 @@ class LocalActor extends Actor implements
             'followers' => $this->followers_url,
             'manuallyApprovesFollowers' => false,   // TODO: Move to the DB
             'endpoints' => [
-                'sharedInbox' => route('shared-inbox'),
+                'sharedInbox' => $this->sharedInbox,
             ],
         ];
         $actor = Type::create(
-            'Service', // store on the db
+            $this->type->value, // store on the db
             array_merge($person, $metadata, $links)
         );
         return $actor->toArray();

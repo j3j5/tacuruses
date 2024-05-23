@@ -40,6 +40,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereTargetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
+ * @method static \Database\Factories\ActivityPub\ActivityFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class Activity extends Model

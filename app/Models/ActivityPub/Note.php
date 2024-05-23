@@ -122,23 +122,6 @@ class Note extends Model
 
     protected string $childColumn = 'note_type';
 
-    /** @var array<string, string> */
-    protected $casts = [
-        'id' => 'integer',
-        'sensitive' => 'boolean',
-        'published_at' => 'datetime',
-        'to' => 'array',
-        'bto' => 'array',
-        'cc' => 'array',
-        'bcc' => 'array',
-        'visibility' => Visibility::class,
-        'summaryMap' => 'array',
-        // Implemented manually to force array return
-        // 'contentMap' => 'array',
-        // 'attachments' => 'array',
-        // 'tags' => 'array',
-    ];
-
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -158,6 +141,30 @@ class Note extends Model
 
             return $note;
         });
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'sensitive' => 'boolean',
+            'published_at' => 'datetime',
+            'to' => 'array',
+            'bto' => 'array',
+            'cc' => 'array',
+            'bcc' => 'array',
+            'visibility' => Visibility::class,
+            'summaryMap' => 'array',
+            // Implemented manually to force array return
+            // 'contentMap' => 'array',
+            // 'attachments' => 'array',
+            // 'tags' => 'array',
+        ];
     }
 
     public function actor() : BelongsTo
@@ -289,4 +296,5 @@ class Note extends Model
     {
         return $this->inReplyTo !== null;
     }
+
 }

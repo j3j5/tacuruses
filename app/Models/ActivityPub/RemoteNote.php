@@ -104,27 +104,34 @@ class RemoteNote extends Note
     use HasFactory;
     use HasParent;
 
-    /** @var array<string, string> */
-    protected $casts = [
-        'id' => 'integer',
-        'sensitive' => 'boolean',
-        'to' => 'array',
-        'bto' => 'array',
-        'cc' => 'array',
-        'bcc' => 'array',
-        'summaryMap' => 'array',
-        'repliesRaw' => 'collection',
-        'published_at' => 'datetime',
-        'startTime' => 'datetime',
-        'endTime' => 'datetime',
-        'visibility' => Visibility::class,
-        // 'contentMap' => 'array',
-        // Implemented manually to force array return
-        // 'attachments' => 'array',
-        // 'tags' => 'array',
-    ];
-
     protected $fillable = ['note_type', 'activityId'];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'sensitive' => 'boolean',
+            'to' => 'array',
+            'bto' => 'array',
+            'cc' => 'array',
+            'bcc' => 'array',
+            'summaryMap' => 'array',
+            'repliesRaw' => 'collection',
+            'published_at' => 'datetime',
+            'startTime' => 'datetime',
+            'endTime' => 'datetime',
+            'visibility' => Visibility::class,
+            // 'contentMap' => 'array',
+            // Implemented manually to force array return
+            // 'attachments' => 'array',
+            // 'tags' => 'array',
+        ];
+    }
 
     public function actor() : BelongsTo
     {
@@ -196,4 +203,5 @@ class RemoteNote extends Note
     {
         return $query->where('activityId', $activityId);
     }
+
 }

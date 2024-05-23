@@ -74,11 +74,19 @@ class Notification extends DatabaseNotification implements Feedable
      */
     protected $keyType = 'int';
 
-    protected $casts = [
-        'data' => 'array',
-        'read_at' => 'datetime',
-        'type' => NotificationTypes::class,
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+            'read_at' => 'datetime',
+            'type' => NotificationTypes::class,
+        ];
+    }
 
     public function activity() : BelongsTo
     {

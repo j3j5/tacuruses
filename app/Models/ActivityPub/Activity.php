@@ -54,12 +54,6 @@ class Activity extends Model
     /** @var string */
     protected string $childColumn = 'type';
 
-    /** @var array<string, string> */
-    protected $casts = [
-        'accepted' => 'boolean',
-        'object' => 'array',
-    ];
-
     /** @var array<string, class-string> */
     protected array $childTypes = [
         ActivityTypes::ACCEPT->value => ActivityAccept::class,
@@ -69,6 +63,19 @@ class Activity extends Model
         ActivityTypes::LIKE->value => ActivityLike::class,
         ActivityTypes::UNDO->value => ActivityUndo::class,
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'accepted' => 'boolean',
+            'object' => 'array',
+        ];
+    }
 
     public function slug() : Attribute
     {
@@ -89,4 +96,5 @@ class Activity extends Model
 
         return $this;
     }
+
 }

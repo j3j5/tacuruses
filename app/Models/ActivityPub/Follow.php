@@ -45,9 +45,17 @@ class Follow extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $casts = [
-        'accepted' => 'bool',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'accepted' => 'bool',
+        ];
+    }
 
     public function actor() : BelongsTo
     {

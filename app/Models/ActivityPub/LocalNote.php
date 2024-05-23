@@ -141,24 +141,31 @@ class LocalNote extends Note implements Feedable
 
     protected $fillable = ['type', 'note_type'];
 
-    /** @var array<string, string> */
-    protected $casts = [
-        'id' => 'integer',
-        'sensitive' => 'boolean',
-        'startTime' => 'datetime',
-        'endTime' => 'datetime',
-        'published_at' => 'datetime',
-        'source' => 'array',
-        'to' => 'array',
-        'bto' => 'array',
-        'cc' => 'array',
-        'bcc' => 'array',
-        'visibility' => Visibility::class,
-        // Implemented manually to force array return
-        // 'contentMap' => 'array',
-        // 'attachments' => 'array',
-        // 'tags' => 'array',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'sensitive' => 'boolean',
+            'startTime' => 'datetime',
+            'endTime' => 'datetime',
+            'published_at' => 'datetime',
+            'source' => 'array',
+            'to' => 'array',
+            'bto' => 'array',
+            'cc' => 'array',
+            'bcc' => 'array',
+            'visibility' => Visibility::class,
+            // Implemented manually to force array return
+            // 'contentMap' => 'array',
+            // 'attachments' => 'array',
+            // 'tags' => 'array',
+        ];
+    }
 
     public function actor() : BelongsTo
     {

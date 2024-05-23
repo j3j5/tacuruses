@@ -67,11 +67,19 @@ class Media extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $casts = [
-        'processed' => 'boolean',
-        'file_updated_at' => 'datetime',
-        'meta' => 'array',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'processed' => 'boolean',
+            'file_updated_at' => 'datetime',
+            'meta' => 'array',
+        ];
+    }
 
     public function width() : Attribute
     {
@@ -95,4 +103,5 @@ class Media extends Model
             get: fn (?string $value) : string => $value ?? 'UDRW0cIT~q-;t8WAM{V@_3V@D%kC4To0%LR*'
         );
     }
+
 }

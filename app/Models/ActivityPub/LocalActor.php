@@ -141,12 +141,20 @@ class LocalActor extends Actor implements
 
     protected $fillable = ['actor_type'];
 
-    protected $casts = [
-        'alsoKnownAs' => 'array',
-        'properties' => 'array',
-        'bio' => PurifyHtmlOnGet::class . ':mastodon',
-        'type' => ActorTypes::class,
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'alsoKnownAs' => 'array',
+            'properties' => 'array',
+            'bio' => PurifyHtmlOnGet::class . ':mastodon',
+            'type' => ActorTypes::class,
+        ];
+    }
 
     /**
      * Get the route key for the model.
@@ -273,7 +281,7 @@ class LocalActor extends Actor implements
     public function sharedInbox() : Attribute
     {
         return Attribute::make(
-            get: fn() : string => route('shared-inbox')
+            get: fn () : string => route('shared-inbox')
         );
     }
 
@@ -455,4 +463,5 @@ class LocalActor extends Actor implements
         }
         $query->where('username', $matches['user']);
     }
+
 }

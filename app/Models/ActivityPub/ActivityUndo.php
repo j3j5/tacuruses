@@ -48,11 +48,16 @@ class ActivityUndo extends Activity
     use HasParent;
 
     /**
-     * @var array<string, string>
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    protected $casts = [
-        'object' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'object' => 'array',
+        ];
+    }
 
     public function target() : BelongsTo
     {
@@ -74,4 +79,5 @@ class ActivityUndo extends Activity
         };
         return $this;
     }
+
 }

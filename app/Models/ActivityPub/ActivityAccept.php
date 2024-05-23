@@ -45,11 +45,16 @@ class ActivityAccept extends Activity
     use HasParent;
 
     /**
-     * @var array<string, string>
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    protected $casts = [
-        'object' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'object' => 'array',
+        ];
+    }
 
     public function target() : BelongsTo
     {
@@ -59,4 +64,5 @@ class ActivityAccept extends Activity
             default => throw new RuntimeException('Unknown Accept type "' . $this->object_type . '"'),
         };
     }
+
 }

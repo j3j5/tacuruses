@@ -103,12 +103,20 @@ class RemoteActor extends Actor
 
     protected $fillable = ['activityId', 'type', 'actor_type'];
 
-    protected $casts = [
-        'bio' => PurifyHtmlOnGet::class . ':mastodon',
-        'alsoKnownAs' => 'array',
-        'properties' => 'array',
-        'type' => ActorTypes::class,
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'bio' => PurifyHtmlOnGet::class . ':mastodon',
+            'alsoKnownAs' => 'array',
+            'properties' => 'array',
+            'type' => ActorTypes::class,
+        ];
+    }
 
     /**
      * Create an Actor model from the data returned from an instance
@@ -217,4 +225,5 @@ class RemoteActor extends Actor
         );
         return $actor->toArray();
     }
+
 }

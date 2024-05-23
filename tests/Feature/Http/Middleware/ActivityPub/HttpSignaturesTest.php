@@ -18,7 +18,7 @@ class HttpSignaturesTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_requests_without_signature_are_unauthorized()
+    public function test_requests_without_signature_are_unauthorized(): void
     {
         $headers = [
             'Accept' => 'application/activity+json',
@@ -30,7 +30,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Missing signature']);
     }
 
-    public function test_requests_without_date_are_unauthorized()
+    public function test_requests_without_date_are_unauthorized(): void
     {
         $headers = [
             'Accept' => 'application/activity+json',
@@ -43,7 +43,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Missing date']);
     }
 
-    public function test_requests_in_the_future_are_unauthorized()
+    public function test_requests_in_the_future_are_unauthorized(): void
     {
         $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
@@ -71,7 +71,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Date is on the future']);
     }
 
-    public function test_requests_in_the_past_are_unauthorized()
+    public function test_requests_in_the_past_are_unauthorized(): void
     {
         $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
@@ -98,7 +98,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Request date is too old']);
     }
 
-    public function test_requests_wrong_signature_format_are_unauthorized()
+    public function test_requests_wrong_signature_format_are_unauthorized(): void
     {
         $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
@@ -126,7 +126,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Wrong signature 2']);
     }
 
-    public function test_requests_missing_digest_are_unauthorized()
+    public function test_requests_missing_digest_are_unauthorized(): void
     {
         $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
@@ -154,7 +154,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Digest does not match']);
     }
 
-    public function test_requests_from_non_valid_keyId()
+    public function test_requests_from_non_valid_keyId(): void
     {
         $headers = [
             'Accept' => 'application/activity+json',
@@ -180,7 +180,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'The key id must be a valid URL.']);
     }
 
-    public function test_requests_from_non_existent_actor()
+    public function test_requests_from_non_existent_actor(): void
     {
         $keyId = 'https://example.com/users/actor#main-key';
         Http::fake([
@@ -211,7 +211,7 @@ class HttpSignaturesTest extends TestCase
             ->assertJsonFragment(['message' => 'Actor cannot be found']);
     }
 
-    public function test_requests_from_different_actor_than_signature()
+    public function test_requests_from_different_actor_than_signature(): void
     {
         $actorId = 'https://example.com/different-actor';
         $keyId = $actorId . '#main-key';
@@ -267,7 +267,7 @@ class HttpSignaturesTest extends TestCase
             ]);
     }
 
-    public function test_request_with_invalid_signature()
+    public function test_request_with_invalid_signature(): void
     {
         $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
@@ -305,7 +305,7 @@ class HttpSignaturesTest extends TestCase
             ]);
     }
 
-    public function test_request_with_valid_signature()
+    public function test_request_with_valid_signature(): void
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')
@@ -343,7 +343,7 @@ class HttpSignaturesTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_request_with_blind_key_rotation()
+    public function test_request_with_blind_key_rotation(): void
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')
@@ -391,7 +391,7 @@ class HttpSignaturesTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_request_with_signed_by_different_key_than_locally_cached_and_remotely_returned()
+    public function test_request_with_signed_by_different_key_than_locally_cached_and_remotely_returned(): void
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')

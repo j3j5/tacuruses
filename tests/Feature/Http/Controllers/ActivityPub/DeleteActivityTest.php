@@ -19,7 +19,7 @@ class DeleteActivityTest extends TestCase
 {
     use LazilyRefreshDatabase, WithFaker;
 
-    public function test_mastodon_delete_actor_activity_for_non_existent_user()
+    public function test_mastodon_delete_actor_activity_for_non_existent_user(): void
     {
         $remoteActor = RemoteActor::factory()->withPublicKey('abc')->make();
 
@@ -53,7 +53,7 @@ class DeleteActivityTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_mastodon_delete_actor_activity_for_existent_user()
+    public function test_mastodon_delete_actor_activity_for_existent_user(): void
     {
         $remoteActor = RemoteActor::factory()->withPublicKey('abc')->create();
 
@@ -88,7 +88,7 @@ class DeleteActivityTest extends TestCase
         $this->assertDatabaseMissing('actors', ['id' => $remoteActor->id]);
     }
 
-    public function test_mastodon_fake_delete_activity_for_existent_user()
+    public function test_mastodon_fake_delete_activity_for_existent_user(): void
     {
         $remoteActor = RemoteActor::factory()->withPublicKey('abc')->create();
 
@@ -123,7 +123,7 @@ class DeleteActivityTest extends TestCase
         $this->assertDatabaseHas('actors', ['id' => $remoteActor->id]);
     }
 
-    public function test_mastodon_delete_remote_status_for_deleted_status()
+    public function test_mastodon_delete_remote_status_for_deleted_status(): void
     {
         $notes = RemoteNote::factory()->public()->count(3)
             ->for(RemoteActor::factory()->withPublicKey('abc'), 'actor')
@@ -170,7 +170,7 @@ class DeleteActivityTest extends TestCase
      *
      * @return void
      */
-    public function test_mastodon_delete_remote_status_for_existing_status()
+    public function test_mastodon_delete_remote_status_for_existing_status(): void
     {
         $notes = RemoteNote::factory()->public()->count(3)
             ->for(RemoteActor::factory()->withPublicKey('abc'), 'actor')

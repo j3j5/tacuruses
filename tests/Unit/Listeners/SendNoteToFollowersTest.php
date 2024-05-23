@@ -20,7 +20,7 @@ class SendNoteToFollowersTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_is_attached_to_event()
+    public function test_is_attached_to_event(): void
     {
         Event::fake();
         Event::assertListening(
@@ -29,7 +29,7 @@ class SendNoteToFollowersTest extends TestCase
         );
     }
 
-    public function test_it_properly_includes_sends_to_all_recipients()
+    public function test_it_properly_includes_sends_to_all_recipients(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -61,7 +61,7 @@ class SendNoteToFollowersTest extends TestCase
 
     }
 
-    public function test_it_groups_recipients_with_common_shared_inbox()
+    public function test_it_groups_recipients_with_common_shared_inbox(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -96,7 +96,7 @@ class SendNoteToFollowersTest extends TestCase
         });
     }
 
-    public function test_it_deduplicates_recipients()
+    public function test_it_deduplicates_recipients(): void
     {
         $this->markTestIncomplete('todo');
     }

@@ -13,7 +13,7 @@ class NoteActivityTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_requests_accepting_html_get_404()
+    public function test_requests_accepting_html_get_404(): void
     {
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
@@ -25,7 +25,7 @@ class NoteActivityTest extends TestCase
         $response->assertNotFound();
     }
 
-    public function test_requests_accepting_json_get_json_activity_note()
+    public function test_requests_accepting_json_get_json_activity_note(): void
     {
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()

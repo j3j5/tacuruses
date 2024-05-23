@@ -34,7 +34,7 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $response = $this->sendSignedPostRequest(
             signer: $signer,

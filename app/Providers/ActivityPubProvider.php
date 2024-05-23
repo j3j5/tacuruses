@@ -25,7 +25,7 @@ class ActivityPubProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
@@ -35,7 +35,7 @@ class ActivityPubProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         // Default config
         TypeConfiguration::set('undefined_properties', 'ignore');

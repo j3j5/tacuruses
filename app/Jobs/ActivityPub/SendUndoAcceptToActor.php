@@ -43,7 +43,7 @@ final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQue
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $accept = Type::create('Accept', [
             '@context' => Context::ACTIVITY_STREAMS,

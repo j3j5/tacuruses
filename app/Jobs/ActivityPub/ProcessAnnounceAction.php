@@ -37,7 +37,7 @@ final class ProcessAnnounceAction implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;

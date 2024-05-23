@@ -25,7 +25,7 @@ class SendsSignedRequestsTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_example(): void
     {
         // $actor = new LocalActor;
         $actor = $this->getMockBuilder(LocalActor::class)

@@ -17,7 +17,7 @@ class FollowersTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_requests_accepting_html_get_404()
+    public function test_requests_accepting_html_get_404(): void
     {
         $remoteActors = RemoteActor::factory()->count(3)->create();
         $localActor = LocalActor::factory()->create();
@@ -34,7 +34,7 @@ class FollowersTest extends TestCase
         $response->assertNotFound();
     }
 
-    public function test_requests_accepting_json_get_json_ordered_collection()
+    public function test_requests_accepting_json_get_json_ordered_collection(): void
     {
         $remoteActors = RemoteActor::factory()->count(3)->create();
         $localActor = LocalActor::factory()->create();
@@ -68,7 +68,7 @@ class FollowersTest extends TestCase
             ->assertExactJson($expected->toArray());
     }
 
-    public function test_requests_for_when_followers_is_multipage()
+    public function test_requests_for_when_followers_is_multipage(): void
     {
         $remoteActors = RemoteActor::factory()->count(FollowersController::PER_PAGE + random_int(1, 5))->create();
         $localActor = LocalActor::factory()->create();
@@ -102,7 +102,7 @@ class FollowersTest extends TestCase
             ->assertExactJson($expected);
     }
 
-    public function test_requests_different_page_for_followers()
+    public function test_requests_different_page_for_followers(): void
     {
         $extra = random_int(1, 5);
         $remoteActors = RemoteActor::factory()->count(FollowersController::PER_PAGE + $extra)->create();

@@ -51,7 +51,7 @@ class LocalNoteTest extends TestCase
         $this->assertSame([], $note->cc);
     }
 
-    public function test_it_properly_fires_the_event_when_publishing()
+    public function test_it_properly_fires_the_event_when_publishing(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();

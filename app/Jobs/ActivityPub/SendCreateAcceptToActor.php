@@ -30,7 +30,7 @@ final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQ
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $accept = [
             '@context' => Context::ACTIVITY_STREAMS,

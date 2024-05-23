@@ -16,7 +16,7 @@ class WebfingerTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_non_json_requests_get_404()
+    public function test_non_json_requests_get_404(): void
     {
         $actor = LocalActor::factory()->create();
         $host = parse_url(config('app.url'), PHP_URL_HOST);
@@ -28,7 +28,7 @@ class WebfingerTest extends TestCase
         $response->assertNotFound();
     }
 
-    public function test_searching_existing_actor()
+    public function test_searching_existing_actor(): void
     {
         $actor = LocalActor::factory()->create();
         $host = parse_url(config('app.url'), PHP_URL_HOST);
@@ -62,7 +62,7 @@ class WebfingerTest extends TestCase
             ->assertExactJson($expected);
     }
 
-    public function test_search_non_existant_account()
+    public function test_search_non_existant_account(): void
     {
         $host = parse_url(config('app.url'), PHP_URL_HOST);
         $response = $this->get(
@@ -73,7 +73,7 @@ class WebfingerTest extends TestCase
             ->assertHeader('Content-Type', 'application/json');
     }
 
-    public function test_search_on_wrong_host()
+    public function test_search_on_wrong_host(): void
     {
         $actor = LocalActor::factory()->create();
 
@@ -85,7 +85,7 @@ class WebfingerTest extends TestCase
            ->assertHeader('Content-Type', 'application/json');
     }
 
-    public function test_search_malformed_resource()
+    public function test_search_malformed_resource(): void
     {
         $actor = LocalActor::factory()->create();
         $host = parse_url(config('app.url'), PHP_URL_HOST);

@@ -13,7 +13,7 @@ class NoteTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_requests_accepting_html_get_html_note()
+    public function test_requests_accepting_html_get_html_note(): void
     {
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()
@@ -28,7 +28,7 @@ class NoteTest extends TestCase
             ->assertViewHas('note', $note);
     }
 
-    public function test_requests_accepting_json_get_json_note()
+    public function test_requests_accepting_json_get_json_note(): void
     {
         $actor = LocalActor::factory()->create();
         $note = LocalNote::factory()

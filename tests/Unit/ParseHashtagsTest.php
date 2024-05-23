@@ -31,7 +31,7 @@ class ParseHashtagsTest extends TestCase
         };
     }
 
-    public function test_plain_text_content_replaces_hashtag_with_link()
+    public function test_plain_text_content_replaces_hashtag_with_link(): void
     {
         $actor = LocalActor::factory()->create();
         $hashtag = 'hashtag';
@@ -55,7 +55,7 @@ class ParseHashtagsTest extends TestCase
         $this->assertSame($expected, $note->getModel()->content);
     }
 
-    public function test_html_content_replaces_hashtag_with_link()
+    public function test_html_content_replaces_hashtag_with_link(): void
     {
         $actor = LocalActor::factory()->create();
         $hashtag = 'hashtag';

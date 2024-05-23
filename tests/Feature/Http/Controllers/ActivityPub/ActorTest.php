@@ -16,7 +16,7 @@ class ActorTest extends TestCase
      *
      * @return void
      */
-    public function test_requests_accepting_html_get_html_note()
+    public function test_requests_accepting_html_get_html_note(): void
     {
         $actor = LocalActor::factory()->create();
 
@@ -28,7 +28,7 @@ class ActorTest extends TestCase
             ->assertViewHas('actor', $actor);
     }
 
-    public function test_requests_accepting_json_get_json_note()
+    public function test_requests_accepting_json_get_json_note(): void
     {
         $actor = LocalActor::factory()->create();
 

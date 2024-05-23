@@ -41,7 +41,7 @@ final class SendAnnounceAcceptToActor extends BaseFederationJob implements Shoul
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $accept = Type::create('Accept', [
             '@context' => Context::ACTIVITY_STREAMS,

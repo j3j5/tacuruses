@@ -39,7 +39,7 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $update = $this->actor->getAPUpdate()->toArray();
         $response = $this->sendSignedPostRequest(

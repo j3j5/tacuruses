@@ -37,7 +37,7 @@ final class ProcessLikeAction implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // First or create the actor
         $actor = $this->activity->actor;

@@ -30,7 +30,7 @@ class ActorInboxTest extends TestCase
 
     use LazilyRefreshDatabase, WithFaker;
 
-    public function test_follow()
+    public function test_follow(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -79,7 +79,7 @@ class ActorInboxTest extends TestCase
         Event::assertDispatched(LocalActorFollowed::class);
     }
 
-    public function test_undo_follow()
+    public function test_undo_follow(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -161,7 +161,7 @@ class ActorInboxTest extends TestCase
         Event::assertDispatched(LocalActorUnfollowed::class);
     }
 
-    public function test_like_note()
+    public function test_like_note(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();
@@ -220,7 +220,7 @@ class ActorInboxTest extends TestCase
         Event::assertDispatched(LocalNoteLiked::class);
     }
 
-    public function test_undo_like_note()
+    public function test_undo_like_note(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();
@@ -311,7 +311,7 @@ class ActorInboxTest extends TestCase
         ]);
     }
 
-    public function test_share_note()
+    public function test_share_note(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();

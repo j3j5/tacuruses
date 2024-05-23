@@ -15,7 +15,7 @@ class MacroServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         /**
          * @example: return response()->activityJson($data)
@@ -47,7 +47,7 @@ class MacroServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }

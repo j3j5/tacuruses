@@ -23,7 +23,7 @@ trait ActivityPubResource
      * @param  \Illuminate\Http\Response|\Illuminate\Http\JsonResponse  $response
      * @return void
      */
-    public function withResponse($request, $response)
+    public function withResponse($request, $response): void
     {
         $response->header('Content-Type', 'application/activity+json; charset=UTF-8');
     }

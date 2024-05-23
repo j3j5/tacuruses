@@ -41,7 +41,7 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
      *
      * @return void
      */
-    public function handle(Signer $signer)
+    public function handle(Signer $signer): void
     {
         $delete = Type::create('Delete', [
             '@context' => Context::ACTIVITY_STREAMS,

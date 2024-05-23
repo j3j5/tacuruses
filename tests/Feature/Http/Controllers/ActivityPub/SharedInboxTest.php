@@ -31,7 +31,7 @@ class SharedInboxTest extends TestCase
     use LazilyRefreshDatabase;
     use WithFaker;
 
-    public function test_create_activity_from_followed_actor()
+    public function test_create_activity_from_followed_actor(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -83,7 +83,7 @@ class SharedInboxTest extends TestCase
         Event::assertNotDispatched(LocalNoteReplied::class);
     }
 
-    public function test_create_activity_mention_from_followed_actor()
+    public function test_create_activity_mention_from_followed_actor(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -144,7 +144,7 @@ class SharedInboxTest extends TestCase
         Event::assertNotDispatched(LocalNoteReplied::class);
     }
 
-    public function test_create_activity_mention_from_non_followed_actor()
+    public function test_create_activity_mention_from_non_followed_actor(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();
@@ -197,7 +197,7 @@ class SharedInboxTest extends TestCase
         Event::assertNotDispatched(LocalNoteReplied::class);
     }
 
-    public function test_share_note()
+    public function test_share_note(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $actor */
         $actor = LocalActor::factory()->create();

@@ -61,7 +61,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         try {
             // Verify linked data signature
@@ -163,7 +163,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
      * @return void
      * @see https://docs.joinmastodon.org/spec/security/#ld-verify
      */
-    private function verifySignature()
+    private function verifySignature(): void
     {
         // No signature!!
         if (empty($this->action->signature)) {

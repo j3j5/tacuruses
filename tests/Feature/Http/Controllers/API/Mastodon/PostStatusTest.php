@@ -24,7 +24,7 @@ class PostStatusTest extends TestCase
      *
      * @return void
      */
-    public function test_post_status_plain_text()
+    public function test_post_status_plain_text(): void
     {
         $actor = LocalActor::factory()->create();
         Sanctum::actingAs(
@@ -61,7 +61,7 @@ class PostStatusTest extends TestCase
      *
      * @return void
      */
-    public function test_post_status_basic_html()
+    public function test_post_status_basic_html(): void
     {
         $actor = LocalActor::factory()->create();
         Sanctum::actingAs(
@@ -98,7 +98,7 @@ class PostStatusTest extends TestCase
      *
      * @return void
      */
-    public function test_post_status_plain_text_with_url()
+    public function test_post_status_plain_text_with_url(): void
     {
         $actor = LocalActor::factory()->create();
         Sanctum::actingAs(
@@ -137,7 +137,7 @@ class PostStatusTest extends TestCase
      *
      * @return void
      */
-    public function test_post_status_plain_text_with_hashtag()
+    public function test_post_status_plain_text_with_hashtag(): void
     {
         $actor = LocalActor::factory()->create();
         Sanctum::actingAs(
@@ -172,7 +172,7 @@ class PostStatusTest extends TestCase
         $this->assertModelExists($note);
     }
 
-    public function test_post_status_with_media()
+    public function test_post_status_with_media(): void
     {
         $actor = LocalActor::factory()->create();
         Sanctum::actingAs(

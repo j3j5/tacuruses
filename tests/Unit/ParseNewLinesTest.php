@@ -31,7 +31,7 @@ class ParseNewLinesTest extends TestCase
         };
     }
 
-    public function test_new_lines_on_plain_text_statuses_get_converted_to_brs()
+    public function test_new_lines_on_plain_text_statuses_get_converted_to_brs(): void
     {
         $actor = LocalActor::factory()->create();
         $sentences = $this->faker->sentences();
@@ -47,7 +47,7 @@ class ParseNewLinesTest extends TestCase
         $this->assertSame('<p>' . str_replace(PHP_EOL, '', nl2br($status, false)) . '</p>', $note->getModel()->content);
     }
 
-    public function test_html_content_with_new_lines_does_not_get_changed()
+    public function test_html_content_with_new_lines_does_not_get_changed(): void
     {
         $actor = LocalActor::factory()->create();
         $status = array_reduce(

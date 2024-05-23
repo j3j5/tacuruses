@@ -18,7 +18,7 @@ class ApiRequest extends FormRequest
         return (bool) $this->user();
     }
 
-    public function prepareForValidation()
+    public function prepareForValidation(): void
     {
         $this->merge(['actor' => $this->user()]);
     }

@@ -24,7 +24,7 @@ class ParsePostsTest extends TestCase
         $this->process = app(PublishPost::class);
     }
 
-    public function test_plain_text_note_with_hashtag_and_link()
+    public function test_plain_text_note_with_hashtag_and_link(): void
     {
         $actor = LocalActor::factory()->create();
         $hashtag = 'humblebrag';
@@ -50,7 +50,7 @@ class ParsePostsTest extends TestCase
         $this->assertSame($expected, $note->getModel()->content);
     }
 
-    public function test_html_note_with_hashtag_and_link()
+    public function test_html_note_with_hashtag_and_link(): void
     {
         $actor = LocalActor::factory()->create();
         $status = '<p>' . implode("\n", $this->faker->sentences()) . '</p>';

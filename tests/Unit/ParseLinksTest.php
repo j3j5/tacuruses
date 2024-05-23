@@ -31,7 +31,7 @@ class ParseLinksTest extends TestCase
         };
     }
 
-    public function test_plain_text_content_replaces_hashtag_with_link()
+    public function test_plain_text_content_replaces_hashtag_with_link(): void
     {
         $actor = LocalActor::factory()->create();
         $url = 'https://example.com/';
@@ -50,7 +50,7 @@ class ParseLinksTest extends TestCase
         $this->assertSame($expected, $note->getModel()->content);
     }
 
-    public function test_html_content_replaces_hashtag_with_link()
+    public function test_html_content_replaces_hashtag_with_link(): void
     {
         $actor = LocalActor::factory()->create();
         $link = 'https://example.com';

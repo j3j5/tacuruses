@@ -99,6 +99,8 @@ class RemoteActor extends Actor
 
     protected $casts = [
         'bio' => PurifyHtmlOnGet::class . ':mastodon',
+        'alsoKnownAs' => 'array',
+        'properties' => 'array'
     ];
 
     /**
@@ -124,6 +126,8 @@ class RemoteActor extends Actor
         $this->sharedInbox = Arr::get($data, 'endpoints.sharedInbox');
         $this->publicKeyId = Arr::get($data, 'publicKey.id');
         $this->publicKey = Arr::get($data, 'publicKey.publicKeyPem');
+        $this->alsoKnownAs = Arr::get($data, 'alsoKnownAs', '');
+        $this->properties = Arr::only($data, ['tag', 'attachment', 'icon', 'image']);
         $this->save();
 
         if ($this->wasRecentlyCreated) {

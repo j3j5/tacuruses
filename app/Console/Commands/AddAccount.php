@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ActorTypes;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Console\Command;
 
@@ -47,6 +48,10 @@ class AddAccount extends Command
         $bot->bio = $this->ask('What about the bio?');
         $bot->avatar = $this->ask('Is the avatar already on the repo?');
         $bot->header = $this->ask('What about the header? Is it also on the repo?');
+        $bot->type = ActorTypes::SERVICE;
+        if (!$this->confirm('Is it a bot?', true)) {
+            $bot->type = ActorTypes::PERSON;
+        }
 
         $bot->save();
 

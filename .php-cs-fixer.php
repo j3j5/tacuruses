@@ -1,5 +1,8 @@
 <?php
 
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+
+
 $finder = PhpCsFixer\Finder::create()
     ->exclude('storage')
     ->exclude('node_modules')
@@ -9,12 +12,13 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('packages')
     ->exclude('resources')
     ->exclude('vendor')
-    ->exclude('bootstrap')
+    ->exclude('bootstrap/cache')
     ->notPath('_ide_helper.php')
     ->in(__DIR__);
 
 $config = new PhpCsFixer\Config();
 return $config
+    ->setParallelConfig(ParallelConfigFactory::detect())
     ->setUsingCache(true)
     ->setRiskyAllowed(true)
     ->setRules([

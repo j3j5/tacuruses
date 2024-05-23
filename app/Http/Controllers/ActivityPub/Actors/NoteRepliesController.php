@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\ActivityPub\Actors;
 
 use ActivityPhp\Type\Core\Collection;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\API\Mastodon\LookupAccount;
 use App\Http\Controllers\API\Mastodon\PostMedia;
 use App\Http\Controllers\API\Mastodon\PostStatus;

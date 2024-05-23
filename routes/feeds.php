@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Feed\ActorController;
 use App\Http\Controllers\Feed\ActorNotificationsController;
 use Illuminate\Support\Facades\Route;

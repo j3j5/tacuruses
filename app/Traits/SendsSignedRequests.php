@@ -50,7 +50,7 @@ trait SendsSignedRequests
         ];
 
         $signer->setDigestAlgo('sha256')
-            ->setKeyId($actorSigning->key_id)
+            ->setKeyId($actorSigning->publicKeyId)
             ->setPrivateKey($actorSigning->privateKey);
 
         $middlewares = array_values(Arr::prepend($middlewares, Middleware::mapRequest([$signer, 'signRequest'])));

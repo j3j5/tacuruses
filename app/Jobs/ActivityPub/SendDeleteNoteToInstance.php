@@ -66,7 +66,7 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
                 $body = json_decode((string) $request->getBody(), true);
                 $body['signature'] = [
                     'type' => 'RsaSignature2017',
-                    'creator' => $this->note->actor->key_id,
+                    'creator' => $this->note->actor->publicKeyId,
                     'signatureValue' => $signature,
                 ];
                 /** @var \GuzzleHttp\Psr7\HttpFactory $httpFactory */

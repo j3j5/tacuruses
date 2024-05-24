@@ -199,7 +199,7 @@ class RemoteActor extends Actor
             'discoverable' => true,
             // Crypto to sign messages
             'publicKey' => [
-                'id' => $this->key_id,
+                'id' => $this->publicKeyId,
                 'owner' => $this->activityId,
                 'publicKeyPem' => $this->publicKey,
             ],

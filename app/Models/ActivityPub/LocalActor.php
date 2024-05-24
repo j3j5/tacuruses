@@ -49,12 +49,12 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property array|null $alsoKnownAs
  * @property array|null $properties
  * @property string $language
- * @property string|null $activityId
+ * @property string $activityId
  * @property string $url
  * @property string $inbox
  * @property string|null $sharedInbox
- * @property string|null $publicKeyId
- * @property string|null $publicKey
+ * @property string $publicKeyId
+ * @property string $publicKey
  * @property string $actor_type
  * @property string $followers_url
  * @property string $following_url
@@ -81,6 +81,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read int|null $notes_count
  * @property-read string $privateKey
  * @property-read string $private_key
+ * @property-read string $publicKey
  * @property-read string $public_key
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
@@ -222,7 +223,7 @@ class LocalActor extends Actor implements
         );
     }
 
-    public function keyId() : Attribute
+    public function publicKeyId() : Attribute
     {
         return Attribute::make(
             get: fn () : string => $this->activityId . '#main-key',
@@ -342,7 +343,7 @@ class LocalActor extends Actor implements
             'discoverable' => true,
             // Crypto to sign messages
             'publicKey' => [
-                'id' => $this->key_id,
+                'id' => $this->publicKeyId,
                 'owner' => $this->activityId,
                 'publicKeyPem' => $this->publicKey,
             ],

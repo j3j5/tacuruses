@@ -64,7 +64,7 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
                 $body = json_decode((string) $request->getBody(), true);
                 $body['signature'] = [
                     'type' => 'RsaSignature2017',
-                    'creator' => $this->actor->key_id,
+                    'creator' => $this->actor->publicKeyId,
                     'signatureValue' => $signature,
                 ];
                 /** @var \GuzzleHttp\Psr7\HttpFactory $httpFactory */

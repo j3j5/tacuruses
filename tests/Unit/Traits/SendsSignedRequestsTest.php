@@ -33,7 +33,7 @@ class SendsSignedRequestsTest extends TestCase
             ->getMock();
         $actor->username = 'actor';
         $actor->inbox = 'https://example.com/actor/inbox';
-        $actor->key_id = 'https://example.com/actor#main-key';
+        $actor->publicKeyId = 'https://example.com/actor#main-key';
         $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
         $actor->privateKey = $key->toString('PKCS1');

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Traits;
 
+use App\Exceptions\FederationDeliveryException;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
@@ -63,7 +64,7 @@ trait SendsSignedRequests
 
         if ($response->failed()) {
             Log::warning('Request failed', ['response' => $response]);
-            $response->throw();
+            throw new FederationDeliveryException($response);
         }
 
         return $response;

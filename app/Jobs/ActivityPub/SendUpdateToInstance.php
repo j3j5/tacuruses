@@ -42,6 +42,7 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
     public function handle(Signer $signer): void
     {
         $update = $this->actor->getAPUpdate()->toArray();
+
         $response = $this->sendSignedPostRequest(
             signer: $signer,
             actorSigning: $this->actor,
@@ -53,7 +54,7 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
                 $body = json_decode((string) $request->getBody(), true);
                 $body['signature'] = [
                     'type' => 'RsaSignature2017',
-                    'creator' => $this->actor->key_id,
+                    'creator' => $this->actor->publicKeyId,
                     'signatureValue' => $signature,
                 ];
                 /** @var \GuzzleHttp\Psr7\HttpFactory $httpFactory */
@@ -64,6 +65,6 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
             }),]
         );
 
-        Log::debug('status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
+        Log::debug('update sent; status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
     }
 }

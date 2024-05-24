@@ -42,7 +42,8 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
             url: $this->inbox,
             data: $this->activity->toArray(),
         );
-        Log::debug('Delivering activity; response ' . $response->status(), [
+
+        Log::debug('Delivered activity; response ' . $response->status(), [
             'activity' => $this->activity->toArray(),
             'inbox' => $this->inbox,
         ]);

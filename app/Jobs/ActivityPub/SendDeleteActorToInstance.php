@@ -52,6 +52,7 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
             ],
             'object' => $this->actor->activityId,
         ])->toArray();
+
         $response = $this->sendSignedPostRequest(
             signer: $signer,
             actorSigning: $this->actor,
@@ -74,6 +75,6 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
             }),]
         );
 
-        Log::debug('status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
+        Log::debug('delete actor sent; status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
     }
 }

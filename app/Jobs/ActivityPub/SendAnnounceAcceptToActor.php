@@ -54,6 +54,7 @@ final class SendAnnounceAcceptToActor extends BaseFederationJob implements Shoul
                 'object' => $this->target->activityId,
             ],
         ])->toArray();
+
         $this->sendSignedPostRequest(
             signer: $signer,
             actorSigning: $this->targetActor,

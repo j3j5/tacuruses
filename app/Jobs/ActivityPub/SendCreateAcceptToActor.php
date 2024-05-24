@@ -44,6 +44,7 @@ final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQ
                 'object' => $this->create->target->activityId,
             ],
         ];
+
         $this->sendSignedPostRequest(
             signer: $signer,
             actorSigning: $this->actor,

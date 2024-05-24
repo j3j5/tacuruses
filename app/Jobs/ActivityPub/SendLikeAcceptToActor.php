@@ -54,6 +54,7 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
                 'object' => $this->target->activityId,
             ],
         ])->toArray();
+
         $this->sendSignedPostRequest(
             signer: $signer,
             actorSigning: $this->targetActor,

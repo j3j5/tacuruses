@@ -79,6 +79,6 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
             }),]
         );
 
-        Log::debug('status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
+        Log::debug('delete note sent; status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
     }
 }

@@ -27,9 +27,13 @@ use Illuminate\Validation\ValidationException;
  * @property ?string $scheduled_at
  * @property ?bool $draft
  * @property bool $plain_text
+ * @extends Fluent<string, string|array|bool|\Illuminate\Support\Carbon>
  */
 class Note extends Fluent
 {
+    /**
+     * @var array<string, string|array<int, \Illuminate\Contracts\Validation\ValidatorAwareRule>>
+     */
     public static array $rules = [
         'actor' => 'required',
         'status' => 'string|required_without_all:media_ids,media',
@@ -51,6 +55,13 @@ class Note extends Fluent
 
     private LocalNote $model;
 
+    /**
+     *
+     * @param \App\Models\ActivityPub\LocalActor $actor
+     * @param array<string, string|array|bool|\Illuminate\Support\Carbon> $attributes
+     * @return void
+     * @throws \App\Exceptions\AppException
+     */
     public function __construct(private LocalActor $actor, array $attributes)
     {
         self::$rules['visibility'] = [new Enum(Visibility::class)];

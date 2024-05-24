@@ -18,9 +18,11 @@ use Illuminate\Validation\ValidationException;
  * @property ?\Illuminate\Http\UploadedFile $thumbnail
  * @property ?string $description
  * @property ?string $focus
+ * @extends Fluent<string, string>
  */
 class Media extends Fluent
 {
+    /** @var array<string, string> $rules */
     public static array $rules = [
         'file' => 'required|file',
         'thumbnail' => 'file|image',
@@ -32,9 +34,8 @@ class Media extends Fluent
     private ModelsMedia $model;
 
     /**
-     *
      * @param \App\Models\ActivityPub\LocalActor $actor
-     * @param array $attributes
+     * @param array<string, string> $attributes
      * @phpstan-param array{file: \Illuminate\Http\UploadedFile, thumbnail?: \Illuminate\Http\UploadedFile, description?: string, focus?: string}  $attributes
      * @throws \App\Exceptions\AppException
      * @return void
@@ -47,7 +48,6 @@ class Media extends Fluent
         } catch (ValidationException $e) {
             throw new AppException('Invalid attributes for Media', 0, $e);
         }
-
         parent::__construct($attributes);
     }
 
@@ -61,6 +61,14 @@ class Media extends Fluent
         return $this->file->hashName($this->getPath());
     }
 
+    /**
+     *
+     * @return array<string, int|string|\Illuminate\Support\Carbon|null>
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Mime\Exception\LogicException
+     * @throws \RuntimeException
+     */
     public function getDataForModel() : array
     {
         return [

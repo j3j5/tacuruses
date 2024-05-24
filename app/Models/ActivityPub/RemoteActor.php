@@ -4,10 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Models\ActivityPub;
 
+use ActivityPhp\Type;
+use App\Domain\ActivityPub\Mastodon\AbstractActor;
 use App\Enums\ActorTypes;
 use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
 use App\Jobs\ActivityPub\DeliverActivity;
+use App\Services\ActivityPub\Context;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -179,6 +182,16 @@ class RemoteActor extends Actor
         return $this;
     }
 
+    public function getAPActor() : AbstractActor
+    {
+        $context = ['@context' => Context::$actor];
+
+        $actor = $this->getActorArray();
+
+        /** @phpstan-ignore-next-line */
+        return Type::create($this->type->value, array_merge($context, $actor));
+    }
+
     private function getActorArray() : array
     {
         $person = [
@@ -188,14 +201,22 @@ class RemoteActor extends Actor
             'name' => $this->name,
             'summary' => $this->bio,
             // Avatar
-            'icon' => Arr::get($this->properties, 'icon'),
+            'icon' => Arr::get($this->properties, 'icon', [
+                'type' => 'Image',
+                'mediaType' => 'image/png',
+                'url' => $this->avatar,
+            ]),
             // Header
-            'image' => Arr::get($this->properties, 'image'),
+            'image' => Arr::get($this->properties, 'image', [
+                'type' => 'Image',
+                'mediaType' => 'image/png',
+                'url' => $this->header,
+            ]),
         ];
 
         $metadata = [
-            'tag' => Arr::get($this->properties, 'tag'),
-            'attachment' => Arr::get($this->properties, 'attachment'),
+            'tag' => Arr::get($this->properties, 'tag', []),
+            'attachment' => Arr::get($this->properties, 'attachment', []),
             'discoverable' => true,
             // Crypto to sign messages
             'publicKey' => [
@@ -219,11 +240,8 @@ class RemoteActor extends Actor
                 'sharedInbox' => $this->sharedInbox,
             ],
         ];
-        $actor = Type::create(
-            'Service', // store on the db
-            array_merge($person, $metadata, $links)
-        );
-        return $actor->toArray();
+
+        return array_merge($person, $metadata, $links);
     }
 
 }

@@ -290,17 +290,16 @@ class LocalActor extends Actor implements
     {
         $context = ['@context' => Context::$actor];
 
-        $person = $this->getActorArray();
+        $actor = $this->getActorArray();
 
-        $type = ActorTypes::SERVICE->value; // TODO: move to the DB
         /** @phpstan-ignore-next-line */
-        return Type::create($type, array_merge($context, $person));
+        return Type::create($this->type->value, array_merge($context, $actor));
     }
 
     public function getAPUpdate() : Update
     {
         $context = Context::$actor;
-        $person = $this->getActorArray();
+        $actor = $this->getActorArray();
         /** @var \ActivityPhp\Type\Extended\Activity\Update $update */
         $update = Type::create('Update', [
             '@context' => $context,
@@ -308,7 +307,7 @@ class LocalActor extends Actor implements
             'actor' => $this->activityId,
             // TODO: should it change depending on visibility of the account?
             'to' => [Context::ACTIVITY_STREAMS_PUBLIC],
-            'object' => $person,
+            'object' => $actor,
         ]);
 
         return $update;
@@ -316,7 +315,7 @@ class LocalActor extends Actor implements
 
     private function getActorArray() : array
     {
-        $person = [
+        $actor = [
             'id' => $this->activityId,
             'preferredUsername' => $this->username,
             'url' => $this->url,
@@ -362,11 +361,8 @@ class LocalActor extends Actor implements
                 'sharedInbox' => $this->sharedInbox,
             ],
         ];
-        $actor = Type::create(
-            $this->type->value, // store on the db
-            array_merge($person, $metadata, $links)
-        );
-        return $actor->toArray();
+
+        return array_merge($actor, $metadata, $links);
     }
 
     public function follow(Actor $target) : self

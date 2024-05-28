@@ -8,13 +8,16 @@ parameters:
         - app/Events
     level: 8
 
-    checkGenericClassInNonGenericObjectType: false
-    checkMissingIterableValueType: false
+    # checkGenericClassInNonGenericObjectType: false
+    # checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: true
 
     ignoreErrors:
+        - identifier: missingType.iterableValue
+        - identifier: missingType.generics
         - '/Access to protected property ActivityPhp.*/'
         - '/Access to protected property App\\Domain\\ActivityPub\\/'
+        - '/Parameter #1 \$array of static method Illuminate\\Support\\Arr::get\(\) expects array\|ArrayAccess, array\|null given/'
 
     stubFiles:
         - resources/stubs/AbstractActivity.stub

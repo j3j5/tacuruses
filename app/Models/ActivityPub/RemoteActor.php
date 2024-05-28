@@ -130,7 +130,7 @@ class RemoteActor extends Actor
     public function updateFromInstanceData(array $data) : self
     {
         $this->activityId = $data['id'];
-        $this->type = $data['type'];
+        $this->type = ActorTypes::from($data['type']);
         $this->username = $data['preferredUsername'];
         $this->name = $data['name'];
         $this->bio = Arr::get($data, 'summary');

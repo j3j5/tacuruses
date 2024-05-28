@@ -14,7 +14,7 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
 
 /**
- *
+ * @phpstan-type NoteArray array{actor: \App\Models\ActivityPub\LocalActor, status: string, media_ids?: array<int, string|int>, media?: array<string,string>, inReplyTo?: string, in_reply_to_id?: string, replyTo_id?: string|int, sensitive?: boolean, spoiler_text?: string, visibility?: string, language?: string, scheduled_at?: string, draft?: boolean, plain_text: boolean}
  * @property \App\Models\ActivityPub\LocalActor $actor
  * @property ?string $status
  * @property ?array $media_ids
@@ -27,10 +27,11 @@ use Illuminate\Validation\ValidationException;
  * @property ?string $scheduled_at
  * @property ?bool $draft
  * @property bool $plain_text
- * @extends Fluent<string, string|array|bool|\Illuminate\Support\Carbon>
+ *
  */
 class Note extends Fluent
 {
+
     /**
      * @var array<string, string|array<int, \Illuminate\Contracts\Validation\ValidatorAwareRule>>
      */
@@ -59,8 +60,8 @@ class Note extends Fluent
      *
      * @param \App\Models\ActivityPub\LocalActor $actor
      * @param array<string, string|array|bool|\Illuminate\Support\Carbon> $attributes
-     * @return void
      * @throws \App\Exceptions\AppException
+     * @return void
      */
     public function __construct(private LocalActor $actor, array $attributes)
     {
@@ -81,7 +82,7 @@ class Note extends Fluent
         if (strip_tags($attributes['status']) === $attributes['status']) {
             $attributes['plain_text'] = true;
         }
-
+        /** @phpstan-param NoteArray $attributes */
         parent::__construct($attributes);
     }
 

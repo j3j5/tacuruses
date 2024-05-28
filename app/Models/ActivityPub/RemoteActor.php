@@ -170,4 +170,51 @@ class RemoteActor extends Actor
 
         return $this;
     }
+
+    private function getActorArray() : array
+    {
+        $person = [
+            'id' => $this->activityId,
+            'preferredUsername' => $this->username,
+            'url' => $this->url,
+            'name' => $this->name,
+            'summary' => $this->bio,
+            // Avatar
+            'icon' => Arr::get($this->properties, 'icon'),
+            // Header
+            'image' => Arr::get($this->properties, 'image'),
+        ];
+
+        $metadata = [
+            'tag' => Arr::get($this->properties, 'tag'),
+            'attachment' => Arr::get($this->properties, 'attachment'),
+            'discoverable' => true,
+            // Crypto to sign messages
+            'publicKey' => [
+                'id' => $this->key_id,
+                'owner' => $this->activityId,
+                'publicKeyPem' => $this->publicKey,
+            ],
+        ];
+
+        if ($this->created_at instanceof Carbon) {
+            $metadata['published'] = $this->created_at->toAtomString();
+        }
+
+        $links = [
+            'inbox' => $this->inbox,
+            'outbox' => $this->outbox,
+            'following' => $this->following_url,
+            'followers' => $this->followers_url,
+            'manuallyApprovesFollowers' => false,   // TODO: Move to the DB
+            'endpoints' => [
+                'sharedInbox' => $this->sharedInbox,
+            ],
+        ];
+        $actor = Type::create(
+            'Service', // store on the db
+            array_merge($person, $metadata, $links)
+        );
+        return $actor->toArray();
+    }
 }

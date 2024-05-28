@@ -82,7 +82,7 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
             'federation-out',
             'update',
             'instance:' . $instance,
-            'signing:' . $this->actor->id
+            'signing:' . $this->actor->id,
         ];
     }
 }

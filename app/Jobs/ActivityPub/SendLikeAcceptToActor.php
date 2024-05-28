@@ -80,7 +80,7 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
             'federation-out',
             'accept',
             'instance:' . $instance,
-            'signing:' . $this->targetActor->id
+            'signing:' . $this->targetActor->id,
         ];
     }
 }

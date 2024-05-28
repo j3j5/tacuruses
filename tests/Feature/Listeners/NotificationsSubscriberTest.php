@@ -15,7 +15,6 @@ use App\Events\LocalNoteShared;
 use App\Listeners\NotificationsSubscriber;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
-use App\Notifications\NewFollow;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

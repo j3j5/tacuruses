@@ -72,7 +72,7 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
             'federation-out',
             'delivery',
             'instance:' . $instance,
-            'signing:' . $this->actor->id
+            'signing:' . $this->actor->id,
         ];
     }
 }

@@ -63,11 +63,11 @@ class Media extends Fluent
 
     /**
      *
-     * @return array<string, int|string|\Illuminate\Support\Carbon|null>
      * @throws \LogicException
      * @throws \InvalidArgumentException
      * @throws \Symfony\Component\Mime\Exception\LogicException
      * @throws \RuntimeException
+     * @return array<string, int|string|\Illuminate\Support\Carbon|null>
      */
     public function getDataForModel() : array
     {

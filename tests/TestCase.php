@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
         ],
         'url' => 'https://example.com/@actor',
         'endpoints' => [
-            'sharedInbox' => 'https://hachyderm.io/inbox',
+            'sharedInbox' => 'https://example.com/inbox',
         ],
     ];
 

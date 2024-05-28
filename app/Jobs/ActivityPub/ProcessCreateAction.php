@@ -143,9 +143,9 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
                 $actor->mentions()->attach($note);
                 if ($note->replyingTo instanceof LocalNote && $note->replyingTo->actor_id === $actor->id) {
                     LocalNoteReplied::dispatch($note, $note->replyingTo);
-                    return;
+                } else {
+                    LocalActorMentioned::dispatch($actor, $note);
                 }
-                LocalActorMentioned::dispatch($actor, $note);
             });
 
         // TODO: Forward inbox activities, see https://www.w3.org/TR/activitypub/#inbox-forwarding

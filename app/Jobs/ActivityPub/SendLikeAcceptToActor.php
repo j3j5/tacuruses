@@ -14,6 +14,8 @@ use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
+use function Safe\parse_url;
+
 final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQueue
 {
     use SendsSignedRequests;
@@ -63,5 +65,22 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
         );
 
         $this->like->markAsAccepted();
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        /** @var string $instance */
+        $instance = (string) (parse_url($this->actor->inbox, PHP_URL_HOST) ?? $this->actor->inbox);  // @phpstan-ignore cast.string
+        return [
+            'federation-out',
+            'accept',
+            'instance:' . $instance,
+            'signing:' . $this->targetActor->id
+        ];
     }
 }

@@ -12,6 +12,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
+use function Safe\parse_url;
+
 final class DeliverActivity extends BaseFederationJob implements ShouldQueue, ShouldBeUnique
 {
     use SendsSignedRequests;
@@ -55,5 +57,22 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
     public function uniqueId(): string
     {
         return $this->activity->id . '|' . $this->inbox;
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        /** @var string $instance */
+        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox); // @phpstan-ignore cast.string
+        return [
+            'federation-out',
+            'delivery',
+            'instance:' . $instance,
+            'signing:' . $this->actor->id
+        ];
     }
 }

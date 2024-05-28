@@ -25,12 +25,7 @@ trait SendsSignedRequests
      * @param array $data
      * @param array<callable> $middlewares
      * @throws \RuntimeException
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \phpseclib3\Exception\NoKeyLoadedException
-     * @throws \Exception
-     * @throws \Illuminate\Http\Client\RequestException
+     * @throws \App\Exceptions\FederationDeliveryException
      * @return \Illuminate\Http\Client\Response
      */
     private function sendSignedPostRequest(

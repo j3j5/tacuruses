@@ -15,6 +15,7 @@ use Psr\Http\Message\RequestInterface;
 
 use function Safe\json_decode;
 use function Safe\json_encode;
+use function Safe\parse_url;
 
 final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueue
 {
@@ -66,5 +67,22 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
         );
 
         Log::debug('update sent; status: ' . $response->status() . PHP_EOL . 'response: ' . $response->body());
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        /** @var string $instance */
+        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
+        return [
+            'federation-out',
+            'update',
+            'instance:' . $instance,
+            'signing:' . $this->actor->id
+        ];
     }
 }

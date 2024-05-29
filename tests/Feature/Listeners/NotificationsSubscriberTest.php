@@ -71,9 +71,7 @@ class NotificationsSubscriberTest extends TestCase
             ->withPublicKey($remoteActorKey->getPublicKey()->toString('PKCS1'))
             ->create();
 
-        $actorInfo = $this->actorResponse;
-        $actorInfo['id'] = $remoteActor->activityId;
-        $actorInfo['publicKey']['publicKeyPem'] = $remoteActor->publicKey;
+        $actorInfo = $remoteActor->getAPActor()->toArray();
 
         Http::fake([
             $actorInfo['id'] => Http::response($actorInfo),
@@ -104,12 +102,12 @@ class NotificationsSubscriberTest extends TestCase
         $this->assertSame(NotificationTypes::FOLLOW, $localActor->notifications->first()->type);
         $this->assertSame($remoteActor->name, Arr::get($localActor->notifications->first()->data, 'replace.user'));
         $this->assertSame($remoteActor->canonical_username, Arr::get($localActor->notifications->first()->data, 'replace.username'));
-        $this->assertSame($remoteActor->domain, Arr::get($localActor->notifications->first()->data, 'replace.username'));
+        $this->assertSame($remoteActor->domain, Arr::get($localActor->notifications->first()->data, 'replace.instance'));
 
     }
 
     public function test_reply_events_create_notification()
     {
-
+        $this->markTestIncomplete('todo');
     }
 }

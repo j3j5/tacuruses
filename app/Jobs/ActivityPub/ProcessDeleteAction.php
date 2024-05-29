@@ -98,4 +98,14 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 
         RemoteNote::where('activityId', $object->id)->delete();
     }
+
+    /**
+     * The unique ID of the job.
+     *
+     * @return string
+     */
+    public function uniqueId()
+    {
+        return $this->action->id;
+    }
 }

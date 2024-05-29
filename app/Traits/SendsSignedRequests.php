@@ -57,7 +57,6 @@ trait SendsSignedRequests
         }
         Log::debug('sending signed request', ['url' => $url, 'data' => $data]);
         /** @var \Illuminate\Http\Client\Response $response */
-
         try {
             $response = $request->post($url, $data);
         } catch (ConnectionException $e) {

@@ -69,7 +69,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::acceptJson()->get($actorActivityId);
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
-            Log::info($actorActivityId . ' does not seems to be gone, skipping deletion', [
+            Log::debug($actorActivityId . ' does not seem to be gone, skipping ACTOR deletion', [
                 'code' => $response->status(),
                 'response' => $response->body(),
             ]);
@@ -88,7 +88,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::acceptJson()->get($object->id);
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
-            Log::info($object->id . ' does not seems to be gone, skipping deletion', [
+            Log::debug($object->id . ' does not seem to be gone, skipping NOTE deletion', [
                 'code' => $response->status(),
                 'response' => $response->body(),
             ]);

@@ -56,11 +56,11 @@ trait SendsSignedRequests
             $request->withMiddleware($middleware);
         }
         Log::debug('sending signed request', ['url' => $url, 'data' => $data]);
-        /** @var \Illuminate\Http\Client\Response $response */
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = $request->post($url, $data);
         } catch (ConnectionException $e) {
-            throw new FederationConnectionException($url);
+            throw new FederationConnectionException($url, $e);
         }
 
         if ($response->failed()) {

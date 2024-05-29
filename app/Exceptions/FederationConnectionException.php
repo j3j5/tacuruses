@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 class FederationConnectionException extends ConnectionException
 {
 
-    public function __construct(public string $url)
+    public function __construct(public string $url, ConnectionException $previous)
     {
-        //
+        parent::__construct($previous->getMessage(), $previous->getCode(), $previous);
     }
 
     /**

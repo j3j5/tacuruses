@@ -9,5 +9,5 @@ use ActivityPhp\Type\Extended\Activity\Create as ActivityCreate;
 class Create extends ActivityCreate
 {
     /** @var array<int, string>|\App\Domain\ActivityPub\Mastodon\RsaSignature2017 */
-    protected array|RsaSignature2017 $signature;
+    protected $signature;
 }

@@ -8,5 +8,6 @@ use ActivityPhp\Type\Core\ObjectType;
 
 class Emoji extends ObjectType
 {
+    /** @var string */
     protected $type = 'Emoji';
 }

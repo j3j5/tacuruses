@@ -8,6 +8,7 @@ use ActivityPhp\Type\Core\ObjectType;
 
 class PropertyValue extends ObjectType
 {
+    /** @var string */
     protected $type = 'PropertyValue';
 
     /** @var string */

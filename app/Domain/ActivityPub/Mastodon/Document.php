@@ -8,12 +8,15 @@ use ActivityPhp\Type\Extended\Object\Image;
 
 class Document extends Image
 {
-    protected string $blurhash;
+    /** @var string */
+    protected $blurhash;
 
     /** @var array<int, float> $focalPoint */
-    protected array $focalPoint;
+    protected $focalPoint;
 
-    protected int $width;
+    /** @var int */
+    protected $width;
 
-    protected int $height;
+    /** @var int */
+    protected $height;
 }

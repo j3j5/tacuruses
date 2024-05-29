@@ -4,11 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Traits;
 
+use App\Exceptions\FederationConnectionException;
 use App\Exceptions\FederationDeliveryException;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use GuzzleHttp\Middleware;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -55,7 +57,12 @@ trait SendsSignedRequests
         }
         Log::debug('sending signed request', ['url' => $url, 'data' => $data]);
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = $request->post($url, $data);
+
+        try {
+            $response = $request->post($url, $data);
+        } catch (ConnectionException $e) {
+            throw new FederationConnectionException($url);
+        }
 
         if ($response->failed()) {
             Log::warning('Request failed', ['response' => $response]);

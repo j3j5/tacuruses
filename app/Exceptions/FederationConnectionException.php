@@ -22,11 +22,11 @@ class FederationConnectionException extends ConnectionException
     {
         if (app()->environment('production')) {
             Log::error($this->getMessage());
-
-            return false;
+            // Stop the reporting here and don't go to the default exception handling reporting
+            return true;
         }
-
-        return true;
+        // use the default exception handling configuration
+        return false;
     }
 
     /**

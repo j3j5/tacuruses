@@ -9,6 +9,7 @@ use App\Exceptions\FederationDeliveryException;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
@@ -59,12 +60,11 @@ trait SendsSignedRequests
         try {
             /** @var \Illuminate\Http\Client\Response $response */
             $response = $request->post($url, $data);
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException|RequestException $e) {
             throw new FederationConnectionException($url, $e);
         }
 
         if ($response->failed()) {
-            Log::warning('Request failed', ['response' => $response]);
             throw new FederationDeliveryException($response);
         }
 

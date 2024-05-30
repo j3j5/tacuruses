@@ -6,11 +6,12 @@ namespace App\Exceptions;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class FederationConnectionException extends ConnectionException
 {
 
-    public function __construct(public string $url, ConnectionException $previous)
+    public function __construct(public string $url, Throwable $previous)
     {
         parent::__construct($previous->getMessage(), $previous->getCode(), $previous);
     }

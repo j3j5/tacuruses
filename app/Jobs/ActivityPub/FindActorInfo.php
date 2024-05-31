@@ -30,7 +30,10 @@ final class FindActorInfo
      */
     public function __construct(private readonly string $actorId, private readonly bool $tryLocal = true)
     {
-        Validator::validate(['actorId' => $actorId], ['actorId' => 'required|url']);
+        Validator::validate(
+            data: ['actorId' => $actorId],
+            rules: ['actorId' => 'required|url']
+        );
     }
 
     /**

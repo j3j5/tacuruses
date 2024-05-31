@@ -29,6 +29,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use function Safe\json_encode;
@@ -46,6 +47,9 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(protected Actor $activityActor, protected readonly Create $action)
     {
+        Context::add('actor', $this->activityActor->id);
+        Context::add('type', $this->action->type);
+
         // Supported objects
         $supportedObjects = [
             Article::class,

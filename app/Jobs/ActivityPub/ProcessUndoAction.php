@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Webmozart\Assert\Assert;
 
@@ -32,7 +33,10 @@ final class ProcessUndoAction implements ShouldQueue
         private readonly Undo $action,
         private readonly ActivityUndo $activity
     ) {
-        //
+        Context::add('actor', $this->activity->actor_id);
+        Context::add('target', $this->activity->target_id);
+        Context::add('type', $this->activity->type);
+        Context::add('object_type', $this->activity->object_type);
     }
 
     /**

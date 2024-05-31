@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
@@ -28,7 +29,9 @@ final class ProcessAcceptAction implements ShouldQueue
     public function __construct(
         private readonly ActivityAccept $activity
     ) {
-        //
+        Context::add('actor', $this->activity->actor_id);
+        Context::add('target', $this->activity->target_id);
+        Context::add('type', $this->activity->type);
     }
 
     /**

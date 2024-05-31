@@ -10,6 +10,7 @@ use App\Traits\SendsSignedRequests;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 
@@ -21,18 +22,18 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
 {
     use SendsSignedRequests;
 
-    private readonly LocalActor $actor;
-    private readonly string $inbox;
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LocalActor $actor, string $inbox)
+    public function __construct(private readonly LocalActor $actor, private readonly string $inbox)
     {
-        $this->actor = $actor;
-        $this->inbox = $inbox;
+        $this->instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->actor->id);
     }
 
     /**
@@ -76,12 +77,10 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'update',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->actor->id,
         ];
     }

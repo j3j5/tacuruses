@@ -6,12 +6,13 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalActor;
-use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 
@@ -23,18 +24,18 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
 {
     use SendsSignedRequests;
 
-    private readonly LocalActor $actor;
-    private readonly string $inbox;
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LocalActor $actor, string $inbox)
+    public function __construct(private readonly LocalActor $actor, private readonly string $inbox)
     {
-        $this->actor = $actor;
-        $this->inbox = $inbox;
+        $this->instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->actor->id);
     }
 
     /**
@@ -45,11 +46,11 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
     public function handle(Signer $signer): void
     {
         $delete = Type::create('Delete', [
-            '@context' => Context::ACTIVITY_STREAMS,
+            '@context' => ActivityPubContext::ACTIVITY_STREAMS,
             'id' => $this->actor->activityId . '#delete',
             'actor' => $this->actor->activityId,
             'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
+                ActivityPubContext::ACTIVITY_STREAMS_PUBLIC,
             ],
             'object' => $this->actor->activityId,
         ])->toArray();
@@ -86,12 +87,10 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'delete',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->actor->id,
         ];
     }

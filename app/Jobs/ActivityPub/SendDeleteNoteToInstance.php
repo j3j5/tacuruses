@@ -6,12 +6,13 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Models\ActivityPub\LocalNote;
-use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 
@@ -23,18 +24,18 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
 {
     use SendsSignedRequests;
 
-    private readonly LocalNote $note;
-    private readonly string $inbox;
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LocalNote $note, string $inbox)
+    public function __construct(private readonly LocalNote $note, private readonly string $inbox)
     {
-        $this->note = $note;
-        $this->inbox = $inbox;
+        $this->instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->note->actor->id);
     }
 
     /**
@@ -45,11 +46,11 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
     public function handle(Signer $signer): void
     {
         $delete = Type::create('Delete', [
-            '@context' => Context::ACTIVITY_STREAMS,
+            '@context' => ActivityPubContext::ACTIVITY_STREAMS,
             'id' => $this->note->activityId . '#delete',
             'actor' => $this->note->actor->activityId,
             'to' => [
-                Context::ACTIVITY_STREAMS_PUBLIC,
+                ActivityPubContext::ACTIVITY_STREAMS_PUBLIC,
             ],
             'object' => Type::create('Tombstone', [
                 'id' => $this->note->activityId,
@@ -90,12 +91,10 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'delete',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->note->actor->id,
         ];
     }

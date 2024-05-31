@@ -10,6 +10,7 @@ use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 
 use function Safe\parse_url;
@@ -17,6 +18,8 @@ use function Safe\parse_url;
 final class DeliverActivity extends BaseFederationJob implements ShouldQueue, ShouldBeUnique
 {
     use SendsSignedRequests;
+
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
@@ -28,7 +31,10 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
         private readonly Activity $activity,
         private readonly string $inbox,
     ) {
-        //
+
+        $this->instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox); // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->actor->id);
     }
 
     /**
@@ -66,12 +72,10 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->inbox, PHP_URL_HOST) ?? $this->inbox); // @phpstan-ignore cast.string
         return [
             'federation-out',
             'delivery',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->actor->id,
         ];
     }

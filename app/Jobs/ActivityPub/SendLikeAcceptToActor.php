@@ -9,10 +9,11 @@ use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
-use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 
 use function Safe\parse_url;
 
@@ -20,22 +21,24 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
 {
     use SendsSignedRequests;
 
-    private readonly RemoteActor $actor;
-    private readonly LocalNote $target;
     private readonly LocalActor $targetActor;
-    private readonly ActivityLike $like;
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(RemoteActor $actor, LocalNote $target, ActivityLike $like)
-    {
-        $this->actor = $actor;
-        $this->target = $target;
+    public function __construct(
+        private readonly RemoteActor $actor,
+        private readonly LocalNote $target,
+        private readonly ActivityLike $like
+    ) {
         $this->targetActor = $target->actor;
-        $this->like = $like;
+
+        $this->instance = (string) (parse_url($this->actor->inbox, PHP_URL_HOST) ?? $this->actor->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->actor->id);
     }
 
     /**
@@ -46,7 +49,7 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
     public function handle(Signer $signer): void
     {
         $accept = Type::create('Accept', [
-            '@context' => Context::ACTIVITY_STREAMS,
+            '@context' => ActivityPubContext::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/likes/' . $this->like->slug,
             'actor' => $this->target->activityId,
             'object' => [
@@ -74,12 +77,10 @@ final class SendLikeAcceptToActor extends BaseFederationJob implements ShouldQue
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->actor->inbox, PHP_URL_HOST) ?? $this->actor->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'accept',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->targetActor->id,
         ];
     }

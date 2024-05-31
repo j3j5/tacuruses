@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Context;
 use RuntimeException;
 
 final class ProcessAnnounceAction implements ShouldQueue
@@ -29,7 +30,9 @@ final class ProcessAnnounceAction implements ShouldQueue
         private readonly Announce $action,
         private readonly ActivityAnnounce $activity
     ) {
-        //
+        Context::add('actor', $this->activity->actor_id);
+        Context::add('target', $this->activity->target_id);
+        Context::add('type', $this->activity->type);
     }
 
     /**

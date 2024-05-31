@@ -9,10 +9,11 @@ use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
-use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 
 use function Safe\parse_url;
 
@@ -20,24 +21,26 @@ final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQue
 {
     use SendsSignedRequests;
 
-    private readonly Actor $actor;
-    private readonly LocalActor|LocalNote $target;
     private readonly LocalActor $targetActor;
-    private readonly ActivityUndo $undo;
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Actor $actor, LocalActor|LocalNote $target, ActivityUndo $undo)
-    {
-        $this->actor = $actor;
-        $this->target = $target;
-        $this->undo = $undo;
+    public function __construct(
+        private readonly Actor $actor,
+        private readonly LocalActor|LocalNote $target,
+        private readonly ActivityUndo $undo
+    ) {
         $this->targetActor = $target instanceof LocalNote ?
             $target->actor :
             $target;
+
+        $this->instance = (string) (parse_url($this->actor->inbox, PHP_URL_HOST) ?? $this->actor->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->targetActor->id);
     }
 
     /**
@@ -48,7 +51,7 @@ final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQue
     public function handle(Signer $signer): void
     {
         $accept = Type::create('Accept', [
-            '@context' => Context::ACTIVITY_STREAMS,
+            '@context' => ActivityPubContext::ACTIVITY_STREAMS,
             'id' => $this->target->activityId . '#accepts/undo/' . $this->undo->slug,
             'actor' => $this->target->activityId,
             'object' => [
@@ -76,12 +79,10 @@ final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQue
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->actor->inbox, PHP_URL_HOST) ?? $this->actor->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'accept',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->targetActor->id,
         ];
     }

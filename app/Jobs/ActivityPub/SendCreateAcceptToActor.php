@@ -6,16 +6,19 @@ namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\ActivityCreate;
 use App\Models\ActivityPub\LocalActor;
-use App\Services\ActivityPub\Context;
+use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Context;
 
 use function Safe\parse_url;
 
 final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQueue
 {
     use SendsSignedRequests;
+
+    private readonly string $instance;
 
     /**
      * Create a new job instance.
@@ -24,7 +27,9 @@ final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQ
      */
     public function __construct(private readonly LocalActor $actor, private ActivityCreate $create)
     {
-        //
+        $this->instance = (string) (parse_url($this->create->target->actor->inbox, PHP_URL_HOST) ?? $this->create->target->actor->inbox);  // @phpstan-ignore cast.string
+        Context::add('toInstance', $this->instance);
+        Context::add('actorSigning', $this->actor->id);
     }
 
     /**
@@ -35,7 +40,7 @@ final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQ
     public function handle(Signer $signer): void
     {
         $accept = [
-            '@context' => Context::ACTIVITY_STREAMS,
+            '@context' => ActivityPubContext::ACTIVITY_STREAMS,
             'id' => $this->create->target->activityId . '#accepts/create/' . $this->create->slug,
             'type' => 'Accept',
             'actor' => $this->create->target->actor->activityId,
@@ -64,12 +69,10 @@ final class SendCreateAcceptToActor extends BaseFederationJob implements ShouldQ
      */
     public function tags(): array
     {
-        /** @var string $instance */
-        $instance = (string) (parse_url($this->create->target->actor->inbox, PHP_URL_HOST) ?? $this->create->target->actor->inbox);  // @phpstan-ignore cast.string
         return [
             'federation-out',
             'accept',
-            'instance:' . $instance,
+            'instance:' . $this->instance,
             'signing:' . $this->actor->id,
         ];
     }

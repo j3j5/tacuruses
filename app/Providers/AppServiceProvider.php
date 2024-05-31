@@ -75,17 +75,6 @@ class AppServiceProvider extends ServiceProvider
                 </use></svg>\';
             ?>';
         });
-
-        /** @var \Monolog\Logger $logger */
-        $logger = $this->app->log->driver()->getLogger();        /** @phpstan-ignore-line */
-        $logger->pushProcessor(new MemoryPeakUsageProcessor());
-        $logger->pushProcessor(new MemoryUsageProcessor());
-        $logger->pushProcessor(new UidProcessor(16));
-        $logger->pushProcessor(new IntrospectionProcessor(skipClassesPartials: [
-            \Illuminate\Support\Facades\Facade::class,
-            \Illuminate\Log\LogManager::class,
-            \Illuminate\Log\Logger::class,
-        ]));
     }
 
     /**
@@ -123,6 +112,17 @@ class AppServiceProvider extends ServiceProvider
                 Log::channel('slowqueries')->$level($message);
             }
         });
+
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->app->log->driver()->getLogger();        /** @phpstan-ignore-line */
+        $logger->pushProcessor(new MemoryPeakUsageProcessor());
+        $logger->pushProcessor(new MemoryUsageProcessor());
+        $logger->pushProcessor(new UidProcessor(16));
+        $logger->pushProcessor(new IntrospectionProcessor(skipClassesPartials: [
+            \Illuminate\Support\Facades\Facade::class,
+            \Illuminate\Log\LogManager::class,
+            \Illuminate\Log\Logger::class,
+        ]));
 
     }
 

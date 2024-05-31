@@ -16,7 +16,7 @@ class FederationDeliveryException extends RequestException
     {
         if (app()->environment('production')) {
             Log::error($this->getMessage());
-            Log::debug("Full body: " . $this->response->body());
+            Log::debug('Full body: ' . $this->response->body());
             // Stop the reporting here and don't go to the default exception handling reporting
             return true;
         }

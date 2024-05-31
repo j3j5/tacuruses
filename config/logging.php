@@ -82,7 +82,13 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/debug.log'),
             'level' => 'debug',
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
+        'fallback' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/fallback.log'),
+            'level' => 'debug',
             'replace_placeholders' => true,
         ],
 

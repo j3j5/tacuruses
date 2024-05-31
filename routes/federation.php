@@ -16,6 +16,7 @@ use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
 use App\Http\Controllers\ActivityPub\Instance\SharedInboxController;
 use App\Http\Controllers\ActivityPub\Instance\WebfingerController;
+use App\Http\Controllers\FallbackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,7 +59,4 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/tags/{tag}', TagController::class)->name('tag.show');
 });
 
-Route::fallback(function (Request $request) {
-    info('fallback', ['request' => $request]);
-    abort(418);
-});
+Route::fallback(FallbackController::class);

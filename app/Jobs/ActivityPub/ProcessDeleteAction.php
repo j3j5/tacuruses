@@ -125,17 +125,21 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         ];
         $object = $this->action->object;
         if (is_string($object)) {
-            $domain = parse_url($object, PHP_URL_HOST);
+            $activityId = $object;
         } else {
-            $domain = match(true) {
-                $object instanceof AbstractActor => parse_url($object->id, PHP_URL_HOST),
-                $object instanceof Tombstone => parse_url($object->id, PHP_URL_HOST),
-                $object instanceof Link => parse_url((string) $object->href, PHP_URL_HOST),
+            $activityId = match(true) {
+                $object instanceof AbstractActor => $object->id,
+                $object instanceof Tombstone => $object->id,
+                $object instanceof Link => $object->href,
                 default => 'unknown',
             };
         }
-        /** @var string $domain */
-        Arr::prepend($tags, 'instance-origin:' . $domain);
+
+        $domain = parse_url($activityId, PHP_URL_HOST);
+        if (is_string($domain)) {
+            Arr::prepend($tags, 'instance-origin:' . $domain);
+        }
+        Arr::prepend($tags, 'object:' . $activityId);
 
         return $tags;
     }

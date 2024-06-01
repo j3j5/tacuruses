@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
             Route::middleware('feeds')
                 ->group(base_path('routes/feeds.php'));
 

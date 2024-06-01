@@ -7,6 +7,9 @@
 
   <h1><b>Tacuruses</b></h1>
   <h2>An ActivityPub server</h2>
+  <a href="https://gitlab.com/j3j5/tacuruses/-/commits/main"><img alt="pipeline status" src="https://gitlab.com/j3j5/tacuruses/badges/main/pipeline.svg" /></a>
+  <a href="https://gitlab.com/j3j5/tacuruses/-/commits/main"><img alt="coverage report" src="https://gitlab.com/j3j5/tacuruses/badges/main/coverage.svg" /></a>
+  <a href="https://gitlab.com/j3j5/tacuruses/-/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/gitlab/license/j3j5%2Ftacuruses?style=plastic"></a>
 </div>
 
 # 📗 [Table of Contents](#-table-of-contents)

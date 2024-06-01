@@ -12,11 +12,9 @@ stages: # List of stages for jobs, and their order of execution
   before_script:
     - dep -V
     - eval $(ssh-agent -s)
-    - cat "${PRODUCTION_DEPLOYMENT_KEY}"
-    - cat "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r"
     - >-
       [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
-      cat "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
+      cat "${PRODUCTION_DEPLOYMENT_KEY}" | ssh-add -
   script:
     - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
 

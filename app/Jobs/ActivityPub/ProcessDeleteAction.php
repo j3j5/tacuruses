@@ -137,9 +137,9 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 
         $domain = parse_url($activityId, PHP_URL_HOST);
         if (is_string($domain)) {
-            Arr::prepend($tags, 'instance-origin:' . $domain);
+            $tags = Arr::prepend($tags, 'instance-origin:' . $domain);
         }
-        Arr::prepend($tags, 'object:' . $activityId);
+        $tags = Arr::prepend($tags, 'object:' . $activityId);
 
         return $tags;
     }

@@ -6,9 +6,10 @@ parameters:
 
     excludePaths:
         - app/Events
-    level: 8
 
+    level: 8
     reportUnmatchedIgnoredErrors: true
+    tmpDir: storage/phpstan-cache
 
     ignoreErrors:
         - identifier: missingType.iterableValue

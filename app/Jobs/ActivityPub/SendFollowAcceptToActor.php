@@ -75,10 +75,10 @@ final class SendFollowAcceptToActor extends BaseFederationJob implements ShouldQ
     public function tags(): array
     {
         return [
-            'federation-out',
-            'accept',
             'instance:' . $this->instance,
             'signing:' . $this->target->id,
+            'accept',
+            'federation-out',
         ];
     }
 }

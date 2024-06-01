@@ -16,9 +16,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+
+use function Safe\parse_url;
 
 final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 {
@@ -107,5 +110,33 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
     public function uniqueId()
     {
         return $this->action->id;
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        $tags = [
+            'delete',
+            'federation-in',
+        ];
+        $object = $this->action->object;
+        if (is_string($object)) {
+            $domain = parse_url($object, PHP_URL_HOST);
+        } else {
+            $domain = match(true) {
+                $object instanceof AbstractActor => parse_url($object->id, PHP_URL_HOST),
+                $object instanceof Tombstone => parse_url($object->id, PHP_URL_HOST),
+                $object instanceof Link => parse_url((string) $object->href, PHP_URL_HOST),
+                default => 'unknown',
+            };
+        }
+        /** @var string $domain */
+        Arr::prepend($tags, 'instance-origin:' . $domain);
+
+        return $tags;
     }
 }

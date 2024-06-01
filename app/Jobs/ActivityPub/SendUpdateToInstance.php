@@ -78,10 +78,10 @@ final class SendUpdateToInstance extends BaseFederationJob implements ShouldQueu
     public function tags(): array
     {
         return [
-            'federation-out',
-            'update',
             'instance:' . $this->instance,
             'signing:' . $this->actor->id,
+            'update',
+            'federation-out',
         ];
     }
 }

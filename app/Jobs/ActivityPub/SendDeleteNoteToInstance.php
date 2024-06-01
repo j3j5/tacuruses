@@ -92,10 +92,10 @@ final class SendDeleteNoteToInstance extends BaseFederationJob implements Should
     public function tags(): array
     {
         return [
-            'federation-out',
-            'delete',
             'instance:' . $this->instance,
             'signing:' . $this->note->actor->id,
+            'delete',
+            'federation-out',
         ];
     }
 }

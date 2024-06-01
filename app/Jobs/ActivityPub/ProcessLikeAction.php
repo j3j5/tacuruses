@@ -60,4 +60,20 @@ final class ProcessLikeAction implements ShouldQueue
             SendLikeAcceptToActor::dispatch($actor, $target, $this->activity);
         }
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        return [
+            'instance-origin:' . $this->activity->actor->domain,
+            'target-actor:' . $this->activity->target->actor_id,
+            'target-note:' . $this->activity->target->id,
+            'like',
+            'federation-in',
+        ];
+    }
 }

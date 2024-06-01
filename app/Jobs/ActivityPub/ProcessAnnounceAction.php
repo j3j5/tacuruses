@@ -59,4 +59,20 @@ final class ProcessAnnounceAction implements ShouldQueue
             SendAnnounceAcceptToActor::dispatch($actor, $target, $this->activity);
         }
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        return [
+            'instance-origin:' . $this->activity->actor->domain,
+            'target-actor:' . $this->activity->target->actor_id,
+            'target-note:' . $this->activity->target->id,
+            'announce',
+            'federation-in',
+        ];
+    }
 }

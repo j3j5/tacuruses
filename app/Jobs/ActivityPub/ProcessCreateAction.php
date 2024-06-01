@@ -245,4 +245,18 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
     {
         return $this->action->id;
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        return [
+            'instance-origin:' . $this->activityActor->domain,
+            'create',
+            'federation-in',
+        ];
+    }
 }

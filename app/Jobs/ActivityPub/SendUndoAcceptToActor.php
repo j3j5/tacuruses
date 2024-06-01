@@ -80,10 +80,10 @@ final class SendUndoAcceptToActor extends BaseFederationJob implements ShouldQue
     public function tags(): array
     {
         return [
-            'federation-out',
-            'accept',
             'instance:' . $this->instance,
             'signing:' . $this->targetActor->id,
+            'accept',
+            'federation-out',
         ];
     }
 }

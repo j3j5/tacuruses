@@ -73,10 +73,10 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
     public function tags(): array
     {
         return [
-            'federation-out',
-            'delivery',
             'instance:' . $this->instance,
             'signing:' . $this->actor->id,
+            'delivery',
+            'federation-out',
         ];
     }
 }

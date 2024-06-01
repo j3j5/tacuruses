@@ -88,10 +88,10 @@ final class SendDeleteActorToInstance extends BaseFederationJob implements Shoul
     public function tags(): array
     {
         return [
-            'federation-out',
-            'delete',
             'instance:' . $this->instance,
             'signing:' . $this->actor->id,
+            'delete',
+            'federation-out',
         ];
     }
 }

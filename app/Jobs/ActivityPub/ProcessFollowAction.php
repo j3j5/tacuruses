@@ -58,4 +58,19 @@ final class ProcessFollowAction implements ShouldQueue
         }
         $follow->accept();
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        return [
+            'instance-origin:' . $this->activity->actor->domain,
+            'target-actor:' . $this->activity->target_id,
+            'follow',
+            'federation-in',
+        ];
+    }
 }

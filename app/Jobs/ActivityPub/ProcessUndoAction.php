@@ -97,4 +97,25 @@ final class ProcessUndoAction implements ShouldQueue
             ->where('activityId', $this->action->object->id)    /* @phpstan-ignore-line */
             ->delete();
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        $tags = ['instance-origin:' . $this->activity->actor->domain];
+        $type = ActivityTypes::tryFrom(data_get($this->activity, 'object_type', ''));
+        if ($type === ActivityTypes::FOLLOW) {
+            $tags[] = 'target-actor:' . $this->activity->target_id;
+        } elseif ($type === ActivityTypes::LIKE) {
+            $tags[] = 'target-actor:' . $this->activity->target->actor_id;
+            $tags[] = 'target-note:' . $this->activity->target->id;
+        }
+
+        $tags[] = 'undo-' . $this->activity->object_type;
+        $tags[] = 'federation-in';
+        return $tags;
+    }
 }

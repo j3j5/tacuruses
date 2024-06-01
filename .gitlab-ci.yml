@@ -5,6 +5,9 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+variables:
+  COMPOSER_ROOT_VERSION: $CI_COMMIT_REF_NAME
+
 # Deploy templates
 .deploy: &deploy
   stage: deploy

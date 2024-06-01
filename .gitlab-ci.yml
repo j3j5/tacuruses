@@ -111,3 +111,36 @@ Security Check:
   dependencies:
     - Composer
   needs: ["Composer"]
+
+
+# Deploy templates
+.deploy: &deploy
+  stage: deploy
+  image: registry.gitlab.com/pipeline-components/deployer:latest
+  dependencies: []
+  before_script:
+    - dep -V
+    - eval $(ssh-agent -s)
+    # - >-
+      # [[ ${CI_ENVIRONMENT_NAME:-local} == "testing"  && ! -z ${TESTING_DEPLOYMENT_KEY} ]] &&
+      # echo "${TESTING_DEPLOYMENT_KEY}"    | tr -d "\r" | ssh-add -
+    # - >-
+      # [[ ${CI_ENVIRONMENT_NAME:-local} == "acceptance" && ! -z ${ACCEPTANCE_DEPLOYMENT_KEY} ]] &&
+      # echo "${ACCEPTANCE_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
+    - >-
+      [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
+      echo "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
+  script:
+    - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
+
+deploy production:
+  <<: *deploy
+  only:
+    - /^[0-9.]+$/
+  when: on_success
+  dependencies:
+    - Composer
+  needs: ["Composer"]
+  environment:
+    name: production
+    url: https://bots.uy

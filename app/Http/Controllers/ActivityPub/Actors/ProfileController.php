@@ -33,9 +33,7 @@ class ProfileController extends Controller
     private function profile(LocalActor $actor) : View
     {
         // Load 5 latest posts
-        $actor->load([
-            'notes' => fn ($query) => $query->take(5)->latest(),
-        ]);
+        $notes = $actor->notes()->simpleFastPaginate(5);
 
         // Load profile counts
         $actor->loadCount([
@@ -44,7 +42,7 @@ class ProfileController extends Controller
         ]);
 
         // Load notes counts
-        $actor->notes->loadCount([
+        $notes->loadCount([
             'likes',
             'shares',
             // 'replies',
@@ -52,6 +50,6 @@ class ProfileController extends Controller
             fn (LocalNote $note) => $note->setRelation('actor', $actor)
         )->load('mediaAttachments');
 
-        return view('actors.profile', compact(['actor']));
+        return view('actors.profile', compact(['actor', 'notes']));
     }
 }

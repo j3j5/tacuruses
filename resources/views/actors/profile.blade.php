@@ -36,7 +36,7 @@
 
 @section('content')
 <div class="w-full flex justify-center m-6">
-    <div class="flex-auto relative p-8 max-w-md">
+    <div class="flex-auto relative p-8 max-w-3xl">
         <div class="w-full">
             <div class="w-full p-2 mb-2"><img class="w-full" src="{{ $actor->header }}" /></div>
             <div class="mb-4 pb-4">
@@ -64,9 +64,11 @@
             </div>
 
             <div class="mt-2 pt-2 pb-2 w-full">
-            @foreach ($actor->notes->loadMissing('peers') as $note)
+            @foreach ($notes->loadMissing('peers') as $note)
                 @include('actors._note', ['peers' => $note->peers, 'avatar_size' => 'w-10'])
             @endforeach
+
+            {{ $notes->links() }}
             </div>
         </div>
     </div>

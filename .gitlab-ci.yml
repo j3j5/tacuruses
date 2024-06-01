@@ -14,9 +14,10 @@ stages: # List of stages for jobs, and their order of execution
     - eval $(ssh-agent -s)
     - >-
       [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
-      cat "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
+      cat "${PRODUCTION_DEPLOYMENT_KEY}" | ssh-add -
+    - mv "$DEPLOYER_CONFIG" deploy.php
   script:
-    - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
+    - dep deploy ${CI_ENVIRONMENT_NAME:-local} -v
 
 Composer:
   stage: dependencies
@@ -146,9 +147,7 @@ deploy production:
   only:
     - /^[0-9.]+$/
   when: on_success
-  dependencies:
-    - Composer
-  needs: ["Composer"]
+  resource_group: prod
   environment:
     name: production
     url: https://bots.uy

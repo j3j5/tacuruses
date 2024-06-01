@@ -16,7 +16,7 @@ stages: # List of stages for jobs, and their order of execution
       [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
       cat "${PRODUCTION_DEPLOYMENT_KEY}" | ssh-add -
     - mv "$DEPLOYER_CONFIG" ./deploy.php
-    - cat ${CI_ENVIRONMENT_NAME:-local}
+    - echo ${CI_ENVIRONMENT_NAME:-local}
   script:
     - dep deploy ${CI_ENVIRONMENT_NAME:-local} -v
 

@@ -3,6 +3,7 @@ image: eu.gcr.io/tnw-automation/php:8.3-fpm
 stages: # List of stages for jobs, and their order of execution
   - dependencies
   - test
+  - deploy
 
 Composer:
   stage: dependencies

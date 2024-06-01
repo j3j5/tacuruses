@@ -111,18 +111,30 @@ class Actor extends Model
 
     protected string $childColumn = 'actor_type';
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Follow>
+     */
     public function follows() : HasMany
     {
         return $this->hasMany(Follow::class)
             ->tap(new Accepted());
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Follow>
+     */
     public function receivedFollows() : HasMany
     {
         return $this->hasMany(Follow::class, 'target_id')
             ->tap(new Accepted());
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Actor>
+     */
     public function followers() : HasManyThrough
     {
         return $this->hasManyThrough(
@@ -135,6 +147,10 @@ class Actor extends Model
         )->tap(new Accepted());
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Actor>
+     */
     public function following() : HasManyThrough
     {
         return $this->hasManyThrough(
@@ -147,11 +163,19 @@ class Actor extends Model
         )->tap(new Accepted());
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Like>
+     */
     public function liked() : HasMany
     {
         return $this->hasMany(Like::class);
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Share>
+     */
     public function shares() : HasManyThrough
     {
         return $this->hasManyThrough(
@@ -162,26 +186,46 @@ class Actor extends Model
         );
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
+     */
     public function notes() : HasMany
     {
         return $this->allNotes()->whereNotNull('published_at')->whereNull('replyTo_id');
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
+     */
     public function notesWithReplies() : HasMany
     {
         return $this->allNotes()->whereNotNull('published_at');
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
+     */
     public function drafts() : HasMany
     {
         return $this->allNotes()->whereNull('published_at');
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
+     */
     public function allNotes() : HasMany
     {
         return $this->hasMany(Note::class);
     }
 
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Share>
+     */
     public function shared() : HasMany
     {
         return $this->hasMany(Share::class);

@@ -103,7 +103,7 @@ class NotificationsSubscriberTest extends TestCase
 
     }
 
-    public function test_reply_events_create_notification()
+    public function test_reply_events_create_notification(): void
     {
         /** @var \App\Models\ActivityPub\LocalActor $localActor */
         $localActor = LocalActor::factory()->create();

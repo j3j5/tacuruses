@@ -127,7 +127,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         if (is_string($object)) {
             $activityId = $object;
         } else {
-            $activityId = match(true) {
+            $activityId = (string) match(true) {
                 $object instanceof AbstractActor => $object->id,
                 $object instanceof Tombstone => $object->id,
                 $object instanceof Link => $object->href,

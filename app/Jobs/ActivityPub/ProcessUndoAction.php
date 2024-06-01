@@ -110,8 +110,10 @@ final class ProcessUndoAction implements ShouldQueue
         if ($type === ActivityTypes::FOLLOW) {
             $tags[] = 'target-actor:' . $this->activity->target_id;
         } elseif ($type === ActivityTypes::LIKE) {
-            $tags[] = 'target-actor:' . $this->activity->target->actor_id;
-            $tags[] = 'target-note:' . $this->activity->target->id;
+            /** @var \App\Models\ActivityPub\LocalNote $target */
+            $target = $this->activity->target;
+            $tags[] = 'target-actor:' . $target->actor_id;
+            $tags[] = 'target-note:' . $target->id;
         }
 
         $tags[] = 'undo-' . $this->activity->object_type;

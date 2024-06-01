@@ -41,7 +41,8 @@ use Spatie\Feed\Feedable;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $activityId
+ * @property string $activityId
+ * @property-read string $activity_id
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property string $content
  * @property array $contentMap
@@ -67,7 +68,6 @@ use Spatie\Feed\Feedable;
  * @property string $note_type
  * @property int $actor_id
  * @property Visibility $visibility
- * @property-read string $activity_id
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
  * @property-read array $content_map

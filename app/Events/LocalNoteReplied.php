@@ -31,8 +31,8 @@ final class LocalNoteReplied extends BaseEvent
      */
     public function __construct(Note $note, LocalNote $noteReplied)
     {
-        Assert::isInstanceOf($noteReplied->replyingTo, LocalNote::class);
-        Assert::eq($noteReplied->replyingTo->id, $note->id, 'Note ' . $noteReplied->id . ' does not seem to be replying to ' . $note->id);
+        Assert::isInstanceOf($noteReplied, LocalNote::class);
+        Assert::eq($note->replyingTo->id, $noteReplied->id, 'Note ' . $note->id . ' does not seem to be replying to ' . $noteReplied->id);
 
         $this->note = $note;
         $this->noteReplied = $noteReplied;

@@ -17,7 +17,6 @@ use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
 use App\Http\Controllers\ActivityPub\Instance\SharedInboxController;
 use App\Http\Controllers\ActivityPub\Instance\WebfingerController;
 use App\Http\Controllers\FallbackController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

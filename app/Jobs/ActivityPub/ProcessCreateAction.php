@@ -18,6 +18,7 @@ use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\Note as ActivityPubNote;
+use App\Models\ActivityPub\RemoteNote;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -106,10 +107,16 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             // TODO: add support for inReplyTo in array form
             if (is_string($object->inReplyTo)) {
                 try {
-                    $replyTo = ActivityPubNote::where('activityId', $object->inReplyTo)->firstOrFail();
+                    $replyTo = LocalNote::byActivityId($object->inReplyTo)->firstOrFail();
                     $note->replyTo_id = $replyTo->id;
                     $note->setRelation('replyingTo', $replyTo);
                 } catch (ModelNotFoundException) {
+                    try {
+                        $replyTo = RemoteNote::byActivityId($object->inReplyTo)->firstOrFail();
+                        $note->replyTo_id = $replyTo->id;
+                        $note->setRelation('replyingTo', $replyTo);
+                    } catch (ModelNotFoundException) {
+                    }
                 }
             }
         }

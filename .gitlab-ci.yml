@@ -15,8 +15,9 @@ stages: # List of stages for jobs, and their order of execution
     - >-
       [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
       cat "${PRODUCTION_DEPLOYMENT_KEY}" | ssh-add -
+    - mv "$DEPLOYER_CONFIG" ./deploy.php
   script:
-    - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
+    - dep deploy ${CI_ENVIRONMENT_NAME:-local} -v
 
 Composer:
   stage: dependencies

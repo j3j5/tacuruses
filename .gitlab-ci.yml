@@ -5,6 +5,19 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+# Deploy templates
+.deploy: &deploy
+  stage: deploy
+  image: registry.gitlab.com/pipeline-components/deployer:latest
+  before_script:
+    - dep -V
+    - eval $(ssh-agent -s)
+    - >-
+      [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
+      cat "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
+  script:
+    - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
+
 Composer:
   stage: dependencies
   before_script:
@@ -23,9 +36,8 @@ Composer:
     expire_in: 1 days
     when: always
   cache:
-    key:
-      files:
-        - composer.lock
+    # Share the cache no matter the changes, composer will download whatever version is not there again
+    key: composer-cache
     paths:
       - .composer-cache/
   needs: []
@@ -75,6 +87,22 @@ Larastan:
     reports:
       codequality: phpstan.json
     expire_in: 1 days
+  cache:
+    # Share caches between jobs in ALL branches
+    key: phpstan
+    paths:
+      - storage/phpstan-cache
+  dependencies:
+    - Composer
+  needs: ["Composer"]
+
+Rector:
+  stage: test
+  before_script:
+    - php -v
+    - ./vendor/bin/rector -V
+  script:
+    - ./vendor/bin/rector process --dry-run
   dependencies:
     - Composer
   needs: ["Composer"]
@@ -112,27 +140,6 @@ Security Check:
   dependencies:
     - Composer
   needs: ["Composer"]
-
-
-# Deploy templates
-.deploy: &deploy
-  stage: deploy
-  image: registry.gitlab.com/pipeline-components/deployer:latest
-  dependencies: []
-  before_script:
-    - dep -V
-    - eval $(ssh-agent -s)
-    # - >-
-      # [[ ${CI_ENVIRONMENT_NAME:-local} == "testing"  && ! -z ${TESTING_DEPLOYMENT_KEY} ]] &&
-      # echo "${TESTING_DEPLOYMENT_KEY}"    | tr -d "\r" | ssh-add -
-    # - >-
-      # [[ ${CI_ENVIRONMENT_NAME:-local} == "acceptance" && ! -z ${ACCEPTANCE_DEPLOYMENT_KEY} ]] &&
-      # echo "${ACCEPTANCE_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
-    - >-
-      [[ ${CI_ENVIRONMENT_NAME:-local} == "production" && ! -z  ${PRODUCTION_DEPLOYMENT_KEY} ]] &&
-      echo "${PRODUCTION_DEPLOYMENT_KEY}" | tr -d "\r" | ssh-add -
-  script:
-    - dep --file="$DEPLOYER_CONFIG" deploy ${CI_ENVIRONMENT_NAME:-local} -v
 
 deploy production:
   <<: *deploy

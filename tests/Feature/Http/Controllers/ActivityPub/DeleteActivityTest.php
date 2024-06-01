@@ -10,14 +10,13 @@ use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class DeleteActivityTest extends TestCase
 {
-    use LazilyRefreshDatabase, WithFaker;
+    use LazilyRefreshDatabase;
 
     public function test_mastodon_delete_actor_activity_for_non_existent_user(): void
     {

@@ -10,7 +10,6 @@ use App\Services\ActivityPub\Context;
 use App\Services\ActivityPub\Signer;
 use App\Services\ActivityPub\Verifier;
 use App\Traits\SendsSignedRequests;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use phpseclib3\Crypt\RSA;
@@ -18,7 +17,6 @@ use Tests\TestCase;
 
 class SendsSignedRequestsTest extends TestCase
 {
-    use WithFaker;
 
     /**
      * A basic unit test example.

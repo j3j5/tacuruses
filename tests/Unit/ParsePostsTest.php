@@ -8,12 +8,11 @@ use App\Domain\Application\Note;
 use App\Models\ActivityPub\LocalActor;
 use App\Processes\PublishPost;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ParsePostsTest extends TestCase
 {
-    use LazilyRefreshDatabase, WithFaker;
+    use LazilyRefreshDatabase;
 
     private PublishPost $process;
 

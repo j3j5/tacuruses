@@ -8,16 +8,13 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\Media;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Stevebauman\Purify\Facades\Purify;
 use Tests\TestCase;
 
 class PostStatusTest extends TestCase
 {
-
     use LazilyRefreshDatabase;
-    use WithFaker;
 
     /**
      * A basic feature test posting plain text.

@@ -17,7 +17,6 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -27,7 +26,6 @@ use Tests\TestCase;
 class NotificationsSubscriberTest extends TestCase
 {
     use LazilyRefreshDatabase;
-    use WithFaker;
 
     public function test_is_attached_to_event(): void
     {

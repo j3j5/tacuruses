@@ -13,16 +13,12 @@
         {
             "type": "vcs",
             "url": "https://github.com/j3j5/activitypub"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/laravel-shift/fast-paginate.git"
         }
     ],
     "require": {
         "php": "^8.3",
         "godruoyi/php-snowflake": "^2.2",
-        "hammerstone/fast-paginate": "dev-l11-compatibility",
+        "hammerstone/fast-paginate": "^1.1",
         "landrok/activitypub": "dev-master",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.15",

@@ -1365,16 +1365,16 @@
         },
         {
             "name": "j3j5/hmac-bcrypt-laravel",
-            "version": "0.2",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/j3j5/hmac-bcrypt-laravel.git",
-                "reference": "a60996d5cd85190fbdfc94670170a24b9d8a1c13"
+                "reference": "218b53b7de7da84a466f5e72283f9cdbaae0b2fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/j3j5/hmac-bcrypt-laravel/zipball/a60996d5cd85190fbdfc94670170a24b9d8a1c13",
-                "reference": "a60996d5cd85190fbdfc94670170a24b9d8a1c13",
+                "url": "https://api.github.com/repos/j3j5/hmac-bcrypt-laravel/zipball/218b53b7de7da84a466f5e72283f9cdbaae0b2fd",
+                "reference": "218b53b7de7da84a466f5e72283f9cdbaae0b2fd",
                 "shasum": ""
             },
             "require": {
@@ -1412,9 +1412,9 @@
             "description": "A laravel hasher for the HMAC-BCrypt implementation for password hashing",
             "support": {
                 "issues": "https://github.com/j3j5/hmac-bcrypt-laravel/issues",
-                "source": "https://github.com/j3j5/hmac-bcrypt-laravel/tree/0.2"
+                "source": "https://github.com/j3j5/hmac-bcrypt-laravel/tree/0.2.1"
             },
-            "time": "2024-04-17T23:07:24+00:00"
+            "time": "2024-06-01T23:51:48+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",

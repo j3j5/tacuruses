@@ -127,6 +127,7 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
  * @property-read int|null $received_follows_count
  * @property-read string $shared_inbox
+ * @property-read string $public_key_id
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements

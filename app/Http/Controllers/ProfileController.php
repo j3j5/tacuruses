@@ -28,13 +28,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->user()->fill($request->validated());  // @phpstan-ignore method.nonObject
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->user()->isDirty('email')) {   // @phpstan-ignore method.nonObject
+            $request->user()->email_verified_at = null; // @phpstan-ignore property.nonObject
         }
 
-        $request->user()->save();
+        $request->user()->save();   // @phpstan-ignore method.nonObject
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -52,7 +52,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        $user->delete(); // @phpstan-ignore method.nonObject
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

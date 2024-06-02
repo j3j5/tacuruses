@@ -14,7 +14,7 @@
         <script src="{{ mix('js/app.js') }}" defer></script>
         @stack('head-scripts')
     </head>
-    <body class="font-sans text-base antialiased bg-gray-100 dark:bg-gray-900">
+    <body class="font-sans text-base antialiased bg-gray-100">
         <div class="min-h-screen">
             @yield('content')
         </div>

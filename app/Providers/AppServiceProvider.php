@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\Snowflake as ContractsSnowflake;
+use App\Models\User;
 use Godruoyi\Snowflake\LaravelSequenceResolver;
 use Godruoyi\Snowflake\Snowflake;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Monolog\Processor\IntrospectionProcessor;
@@ -123,6 +125,10 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Log\LogManager::class,
             \Illuminate\Log\Logger::class,
         ]));
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
+        });
 
     }
 

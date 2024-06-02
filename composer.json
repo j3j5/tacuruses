@@ -23,6 +23,7 @@
         "landrok/activitypub": "dev-master",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.15",
+        "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "nojimage/twitter-text-php": "^3.2",

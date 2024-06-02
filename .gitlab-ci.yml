@@ -113,7 +113,7 @@ PHPUnit:
   before_script:
     - php -v
     - php vendor/bin/phpunit --version
-    - php -r \"file_exists('.env') || copy('.env.example', '.env');\"
+    - php -r "file_exists('.env') || copy('.env.example', '.env');"
     - php artisan key:generate --ansi
   script:
     - php -d xdebug.mode=coverage vendor/bin/phpunit --config=phpunit.xml.dist --coverage-text --colors=never --coverage-cobertura=cobertura-coverage.xml --log-junit report.xml

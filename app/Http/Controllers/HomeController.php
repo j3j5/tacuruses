@@ -15,7 +15,10 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request) : View
     {
-        $actors = LocalActor::inRandomOrder()->simplePaginate(9);
+        $actors = LocalActor::withCount([
+            'followers',
+            'following',
+        ])->latest()->get();
 
         return view('home', compact(['actors']));
     }

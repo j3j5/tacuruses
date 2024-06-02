@@ -29,7 +29,7 @@
                     />
                     <div class="font-bold text-xl pb-1">{{ $actor->name }}</div>
                     </div>
-                    <div class="text-base text-black"r-4username }}<4span><span class="opacity-0">@</span><span class="p-1 bg-slate-200 rounded">{{ $actor->domain }}</span>
+                    <div class="text-base text-black"><span>{{'@' . $actor->username }}</span><span class="opacity-0">@</span><span class="p-1 bg-slate-200 rounded">{{ $actor->domain }}</span>
                     {{-- <span class="inline-block pl-2 pb-2 ml-2">{{ '@' . $actor->username }}</span> --}}
                 </div>
                 <div class="p-2 m-2">

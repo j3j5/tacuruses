@@ -33,7 +33,7 @@ class ProfileController extends Controller
     private function profile(LocalActor $actor) : View
     {
         // Load 5 latest posts
-        $notes = $actor->notes()->simpleFastPaginate(5);
+        $notes = $actor->notes()->latest()->simpleFastPaginate(5);
 
         // Load profile counts
         $actor->loadCount([

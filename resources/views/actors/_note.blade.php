@@ -40,7 +40,7 @@
             <strong class="">{{ $note->shares_count ?? 0 }}</strong>
             <span>{{ Str::plural('Share', $note->shares_count ?? 0) }}</span>
             <strong class="ml-3">{{ $note->likes_count ?? 0 }}</strong>
-            <span class="pr-3">{{ Str::plural('Like', $note->shares_count ?? 0) }}</span>
+            <span class="pr-3">{{ Str::plural('Like', $note->likes_count ?? 0) }}</span>
         </div>
         @isset($peers)
         <div class="border-solid border-l-2 border-gray-300 p-3 pr-0">

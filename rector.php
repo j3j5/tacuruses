@@ -10,7 +10,6 @@ use RectorLaravel\Set\LaravelSetList;
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/app',
-        __DIR__ . '/bootstrap',
         __DIR__ . '/routes',
         __DIR__ . '/tests',
     ])

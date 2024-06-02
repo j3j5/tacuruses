@@ -7,8 +7,9 @@
 /public/js
 /public/mix-manifest.json
 /storage/*.key
-/storage/debugbar
 /vendor
+/storage/debugbar
+/storage/phpstan-cache
 .env
 .env.backup
 .env.production

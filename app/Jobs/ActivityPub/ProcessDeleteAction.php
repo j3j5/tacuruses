@@ -93,7 +93,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 
         try {
             $response = Http::acceptJson()->get($object->id);
-        }  catch (ConnectionException|RequestException $e) {
+        } catch (ConnectionException|RequestException $e) {
             throw new FederationConnectionException($object->id, $e);
         }
 

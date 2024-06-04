@@ -13,7 +13,6 @@ use App\Jobs\Application\Posts\ParseNewLines;
 use App\Jobs\Application\Posts\PublishPost;
 use App\Jobs\Application\Posts\SchedulePost;
 use Illuminate\Support\Facades\DB;
-use RuntimeException;
 use Webmozart\Assert\Assert;
 
 final class UpdatePost extends Process

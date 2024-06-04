@@ -2,7 +2,9 @@
 - Add support for hs2019 algo on signatures (https://fedidevs.org/reference/signatures/)
 - Add a federation.md (see https://socialhub.activitypub.rocks/t/guide-for-new-activitypub-implementers/479#federationmd-25)
 - Implement basic moderation tools (suspend, mute, block), per user and per domain level
-- Add notification support
+- ~~Add notification support~~
 - Add support for message expiration (deletion)
 - Add support for message updates (receive and create)
 - Fix width and height on media models
+- Add auto-removal of non-working servers (autoexpiration of removal maybe?) If connection fails for 2 weeks...Stop trying to communicate for 1 month...then try again? Check around for other implementations.
+- oEmbed support

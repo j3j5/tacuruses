@@ -14,6 +14,7 @@ use App\Jobs\Application\Posts\PublishPost;
 use App\Jobs\Application\Posts\SchedulePost;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 final class UpdatePost extends Process
 {
@@ -37,9 +38,7 @@ final class UpdatePost extends Process
      */
     public function run(object $request) : mixed
     {
-        if (!$request instanceof UpdateStatusRequest) {
-            throw new RuntimeException('Invalid param for UpdatePost process. An UpdateStatusRequest was expected');
-        }
+        Assert::isInstanceOf($request, UpdateStatusRequest::class);
 
         $attempts = 3;
         DB::transaction(function () use ($request) {

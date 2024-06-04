@@ -14,7 +14,7 @@ use App\Jobs\Application\Posts\ParseNewLines;
 use App\Jobs\Application\Posts\PublishPost as PostsPublishPost;
 use App\Jobs\Application\Posts\SchedulePost;
 use Illuminate\Support\Facades\DB;
-use RuntimeException;
+use Webmozart\Assert\Assert;
 
 final class PublishPost extends Process
 {
@@ -38,9 +38,7 @@ final class PublishPost extends Process
      */
     public function run(object $note) : mixed
     {
-        if (!$note instanceof Note) {
-            throw new RuntimeException('Invalid param for PublishPost process. An Application\\Note was expected');
-        }
+        Assert::isInstanceOf($note, Note::class);
 
         $attempts = 3;
         DB::transaction(function () use ($note) {

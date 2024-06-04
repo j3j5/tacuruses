@@ -44,8 +44,8 @@ class Note extends Fluent
         'media.*.url' => 'required_with:media,url',
         'media.*.name' => 'required_with:media,string',
         'inReplyTo' => 'string',    // activityId in case we're replying to a note from another server that does not exist yet
-        'in_reply_to_id' => 'string|exists:notes,id',
-        'replyTo_id' => 'string|exists:notes,id', // ☝️ alias
+        'in_reply_to_id' => 'numeric|exists:notes,id',
+        'replyTo_id' => 'numeric|exists:notes,id', // ☝️ alias
         'sensitive' => 'boolean',
         'spoiler_text' => 'string',
         'visibility' => 'string',

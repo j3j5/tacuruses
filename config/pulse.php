@@ -1,5 +1,6 @@
 <?php
 
+use App\Recorders\Deliveries;
 use Laravel\Pulse\Http\Middleware\Authorize;
 use Laravel\Pulse\Pulse;
 use Laravel\Pulse\Recorders;
@@ -226,6 +227,14 @@ return [
             'ignore' => [
                 '#^/'.env('PULSE_PATH', 'pulse').'$#', // Pulse dashboard...
                 '#^/telescope#', // Telescope dashboard...
+            ],
+        ],
+
+        Deliveries::class => [
+            'enabled' => env('PULSE_TOP_DELIVERIES_ENABLED', true),
+            'sample_rate' => env('PULSE_TOP_DELIVERIES_SAMPLE_RATE', 1),
+            'ignore' => [
+                // '/^Package\\\\Jobs\\\\/',
             ],
         ],
     ],

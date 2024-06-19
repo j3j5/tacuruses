@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Core\Activity;
+use App\Events\OutgoingActivityDelivered;
 use App\Models\ActivityPub\LocalActor;
 use App\Services\ActivityPub\Signer;
 use App\Traits\SendsSignedRequests;
@@ -50,6 +51,8 @@ final class DeliverActivity extends BaseFederationJob implements ShouldQueue, Sh
             url: $this->inbox,
             data: $this->activity->toArray(),
         );
+
+        OutgoingActivityDelivered::dispatch($this->actor, $this->activity, $this->inbox);
 
         Log::debug('Delivered activity; response ' . $response->status(), [
             'activity' => $this->activity->toArray(),

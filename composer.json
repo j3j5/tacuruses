@@ -88,6 +88,7 @@
             "@php vendor/bin/php-cs-fixer fix"
         ],
         "phpstan": [
+            "Composer\\Config::disableProcessTimeout",
             "@php vendor/bin/phpstan"
         ],
         "phpunit": [
@@ -98,6 +99,10 @@
         ],
         "phpunit-coverage-report": [
             "@php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-html storage/_reports/coverage/"
+        ],
+        "rector": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/rector"
         ]
     },
     "extra": {

@@ -26,7 +26,7 @@
                     <li class="inline-block p-4">Made with&nbsp;<span class="inline-flex">@icon('heart', 'inline-block fill-slate-600 w-4 h-4')</span>&nbsp;in Uruguay&nbsp;<span class="inline-flex">@icon('mate', 'inline-block fill-slate-600 w-5 h-5')</span>
                     </li>&bull;<li class="inline-block p-4">
                         <span class="inline-block rotate-180">&copy;</span> Julio Foulquie 2023 @if(now()->year > 2023)- {{now()->year}} @endif
-                    </li>&bull;<li class="inline-block p-4">To the Fediverse and beyond! @icon('rocket-launch', 'inline-block fill-slate-600 w-5 h-5')
+                    </li>&bull;<li class="inline-block p-4">@icon('ant', 'inline-block fill-slate-600 w-5 h-5') To the Fediverse and beyond! @icon('rocket-launch', 'inline-block fill-slate-600 w-5 h-5')
                     </li>
                 </ul>
                 @php

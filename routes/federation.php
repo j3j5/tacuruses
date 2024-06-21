@@ -2,15 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\ActivityPub\Actors\FollowersController;
-use App\Http\Controllers\ActivityPub\Actors\FollowingController;
 use App\Http\Controllers\ActivityPub\Actors\InboxController;
-use App\Http\Controllers\ActivityPub\Actors\NoteActivityController;
-use App\Http\Controllers\ActivityPub\Actors\NoteController;
-use App\Http\Controllers\ActivityPub\Actors\NoteRepliesController;
 use App\Http\Controllers\ActivityPub\Actors\OutboxController;
-use App\Http\Controllers\ActivityPub\Actors\ProfileController;
-use App\Http\Controllers\ActivityPub\Actors\TagController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
 use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
@@ -34,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware([NoCookies::class, ForceJsonResponse::class])->group(function() {
+Route::middleware([NoCookies::class, ForceJsonResponse::class])->group(function () {
     // Federation Instance
     Route::get('/.well-known/webfinger/', WebfingerController::class)->name('webfinger');
     Route::get('/.well-known/nodeinfo/', [NodeInfoController::class, 'wellKnown']);

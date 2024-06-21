@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class);
 
 // Actors and notes
-Route::middleware([])->group(function() {
+Route::middleware([])->group(function () {
     // Federation actors
     Route::get('/{actor}', ActorsProfileController::class)->name('actor.show');
     Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
@@ -29,7 +29,6 @@ Route::middleware([])->group(function() {
     Route::get('/p/{actor}/{note}', NoteController::class)->name('note.show');
 
     Route::get('/{actor}/{note}/embed', EmbedController::class)->name('note.show.embed');
-
 
     Route::get('/tags/{tag}', TagController::class)->name('tag.show');
 });

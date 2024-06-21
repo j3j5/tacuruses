@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\oEmbed;
 
 use App\Models\ActivityPub\LocalNote;
@@ -33,7 +35,7 @@ class PreviewRequest extends FormRequest
                     $urlHost = parse_url($value, PHP_URL_HOST);
 
                     if ($urlHost !== $this->getHost()) {
-                        $fail("The URL must be on the same host as the request to the API.");
+                        $fail('The URL must be on the same host as the request to the API.');
                     }
                 },
                 'regex:' . LocalNote::NOTE_REGEX,

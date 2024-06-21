@@ -12,16 +12,20 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         using: function () {
+            Route::prefix('/api/')->middleware('oembed')
+                ->group(base_path('routes/oembed.php'));
+
+            Route::prefix('/api/')->middleware('mastodon-api')
+                ->group(base_path('routes/mastodon-api.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
             Route::middleware('feeds')
                 ->group(base_path('routes/feeds.php'));
 
             Route::middleware('federation')
                 ->group(base_path('routes/federation.php'));
-
-            Route::middleware('mastodon-api')
-                ->group(base_path('routes/mastodon-api.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

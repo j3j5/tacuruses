@@ -37,6 +37,18 @@ return Application::configure(basePath: dirname(__DIR__))
             'valid.http.signature' => \App\Http\Middleware\ActivityPub\VerifySignature::class,
         ]);
 
+        $middleware->priority([
+            \App\Http\Middleware\NoCookies::class,
+            \App\Http\Middleware\ForceJsonResponse::class,
+
+            // Cookies
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+        ]);
+
         $middleware->appendToGroup('web', [
             Illuminate\Cookie\Middleware\EncryptCookies::class,
             Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,

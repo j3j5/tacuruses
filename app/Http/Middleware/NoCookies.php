@@ -18,10 +18,8 @@ class NoCookies
      */
     public function handle(Request $request, Closure $next)
     {
-        $response = $next($request);
-
-        $response->headers->remove('set-cookie');
-
-        return $response;
+        return tap($next($request), function ($response) {
+            $response->headers->remove('set-cookie');
+        });
     }
 }

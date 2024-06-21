@@ -71,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('mastodon-api', [
             App\Http\Middleware\NoCookies::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class . ':mastodon-api',
+            App\Http\Middleware\ForceJsonResponse::class,
             Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 

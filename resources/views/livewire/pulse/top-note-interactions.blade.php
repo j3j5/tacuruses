@@ -13,9 +13,7 @@
         @else
         <x-pulse::table>
                 <colgroup>
-                    <col width="0%" />
                     <col width="100%" />
-                    <col width="0%" />
                     <col width="0%" />
                 </colgroup>
                 <x-pulse::thead>
@@ -33,14 +31,14 @@
                         @endphp
                         <tr wire:key="{{ $record->key }}-spacer" class="h-2 first:h-0"></tr>
                         <tr wire:key="{{ $record->key }}-row">
-                            <x-pulse::td class="!p-0 truncate" style="max-width: 40em;">
+                            <x-pulse::td class="!p-0 truncate max-w-[1px]">
                                 <div class="flex flex-col" title="{{ $note->content }}">
                                     <a href="{{ route('note.show', [$user, $note]) }}" target="_blank">
                                     <div class="flex items-center gap-3 overflow-hidden">
                                         <img src="{{ $user->avatar }}" alt="{{ $user->name }}" loading="lazy" class="rounded-full w-8 h-8 object-cover">
                                         <span class="text-s">{{ $user->name }}</span> <span class="text-xs text-gray-900 dark:text-gray-100 truncate">{{ $user->canonical_username }}</span>
                                     </div>
-                                    <code class="block text-m text-gray-900 dark:text-gray-100 truncate">
+                                    <code class="block text-m text-gray-900 dark:text-gray-100">
                                        {!! $note->content !!}
                                     </code>
                                     </a>

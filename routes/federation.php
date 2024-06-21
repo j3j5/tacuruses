@@ -17,6 +17,10 @@ use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
 use App\Http\Controllers\ActivityPub\Instance\SharedInboxController;
 use App\Http\Controllers\ActivityPub\Instance\WebfingerController;
 use App\Http\Controllers\FallbackController;
+use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
+use App\Http\Middleware\Debug;
+use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\NoCookies;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,7 +34,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['no.cookies'])->group(function () {
+Route::middleware([NoCookies::class, ForceJsonResponse::class])->group(function() {
     // Federation Instance
     Route::get('/.well-known/webfinger/', WebfingerController::class)->name('webfinger');
     Route::get('/.well-known/nodeinfo/', [NodeInfoController::class, 'wellKnown']);
@@ -38,24 +42,12 @@ Route::middleware(['no.cookies'])->group(function () {
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
     Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
-    Route::middleware(['valid.http.signature', 'debug'])->group(function () {
+    Route::middleware([VerifyHttpSignature::class, Debug::class])->group(function () {
         Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
         Route::post('/{actor}/inbox', InboxController::class)->name('actor.inbox');
     });
 
     Route::get('/{actor}/outbox', OutboxController::class)->name('actor.outbox');
-
-    // Federation actors
-    Route::get('/{actor}', ProfileController::class)->name('actor.show');
-    Route::get('/{actor}/following', FollowingController::class)->name('actor.following');
-    Route::get('/{actor}/followers', FollowersController::class)->name('actor.followers');
-    Route::get('/{actor}/{note}/activity', NoteActivityController::class)->name('note.activity');
-    Route::get('/{actor}/{note}/replies', NoteRepliesController::class)->name('note.replies');
-    Route::get('/{actor}/{note}', NoteController::class)->middleware('legacy')->name('legacy.note.show');
-    // Add the `/p` to mimick Pixelfed urls so Tusky (and others?) open in-app
-    Route::get('/p/{actor}/{note}', NoteController::class)->name('note.show');
-
-    Route::get('/tags/{tag}', TagController::class)->name('tag.show');
 });
 
 Route::fallback(FallbackController::class);

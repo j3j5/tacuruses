@@ -12,11 +12,11 @@ use Laravel\Pulse\Livewire\Card;
 use Livewire\Attributes\Lazy;
 
 #[Lazy]
-class TopDeliveries extends Card
+class TopServerDeliveries extends Card
 {
     public function render() : View
     {
-        return view('livewire.pulse.top-deliveries', [
+        return view('livewire.pulse.top-server-deliveries', [
             'config' => Config::get('pulse.recorders.' . Deliveries::class),
             'topServers' => $this->aggregate(RecordTypes::DELIVERY_INSTANCE->value, ['count']),
         ]);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Recorders\Deliveries;
+use App\Recorders\Interactions;
 use Laravel\Pulse\Http\Middleware\Authorize;
 use Laravel\Pulse\Pulse;
 use Laravel\Pulse\Recorders;
@@ -234,8 +235,13 @@ return [
             'enabled' => env('PULSE_TOP_DELIVERIES_ENABLED', true),
             'sample_rate' => env('PULSE_TOP_DELIVERIES_SAMPLE_RATE', 1),
             'ignore' => [
-                // '/^Package\\\\Jobs\\\\/',
+                // Canonical Usernames or instances
             ],
+        ],
+
+        Interactions::class => [
+            'enabled' => env('PULSE_TOP_DELIVERIES_ENABLED', true),
+            'sample_rate' => env('PULSE_TOP_DELIVERIES_SAMPLE_RATE', 1),
         ],
     ],
 ];

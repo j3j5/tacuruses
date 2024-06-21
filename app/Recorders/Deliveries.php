@@ -6,7 +6,6 @@ namespace App\Recorders;
 
 use App\Enums\Pulse\RecordTypes;
 use App\Events\OutgoingActivityDelivered;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Laravel\Pulse\Facades\Pulse;
 use Laravel\Pulse\Recorders\Concerns;
@@ -31,20 +30,27 @@ class Deliveries
      */
     public function record(OutgoingActivityDelivered $event): void
     {
-        // $config = Config::get('pulse.recorders.'.static::class);
+        if ($this->shouldSample() === false) {
+            return;
+        }
+
+        if ($this->shouldIgnore($event->actor->canonical_username)) {
+            return;
+        }
+
+        // Record by actor
+        Pulse::record(
+            type: RecordTypes::ACTOR_DELIVERIES->value,
+            key: (string) $event->actor->id
+        )->count();
+
         $instance = (string) parse_url($event->inbox, PHP_URL_HOST);
 
         if ($instance === '') {
             Log::warning('Pulse record for delivery trying to record emtpy instance', [$event->inbox]);
         }
 
-        if ($this->shouldSample() === false) {
-            return;
-        }
-
-        if (
-            $this->shouldIgnore($instance)
-        ) {
+        if ($this->shouldIgnore($instance)) {
             return;
         }
 
@@ -54,10 +60,5 @@ class Deliveries
             key: $instance
         )->count();
 
-        // Record by actor
-        Pulse::record(
-            type: RecordTypes::ACTOR_DELIVERIES->value,
-            key: $event->actor->canonical_username
-        )->count();
     }
 }

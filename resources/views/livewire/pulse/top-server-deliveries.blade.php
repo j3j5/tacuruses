@@ -1,5 +1,4 @@
-
-<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.5s="">
+<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.60s="" wire:poll.visible>
     <x-pulse::card-header name="Top Servers (delivery)"
         title="Top instances by activities delivered"
     >
@@ -21,6 +20,7 @@
                 </colgroup>
                 <x-pulse::thead>
                     <tr>
+                        <x-pulse::th></x-pulse::th>
                         <x-pulse::th>Instance</x-pulse::th>
                         <x-pulse::th class="text-right">Count</x-pulse::th>
                     </tr>
@@ -29,10 +29,16 @@
                     @foreach ($topServers->take(100) as $server)
                         <tr wire:key="{{ $server->key }}-spacer" class="h-2 first:h-0"></tr>
                         <tr wire:key="{{ $server->key }}-row">
-                            <x-pulse::td class="overflow-hidden">
-                                <code class="block text-xs text-gray-900 dark:text-gray-100 truncate" title="{{ $server->key }}">
-                                    {{ $server->key }}
-                                </code>
+                            <x-pulse::td>
+                                {{-- <x-pulse::http-method-badge method="POST" /> --}}
+                            </x-pulse::td>
+                            <x-pulse::td class="max-w-[1px]">
+                                <div class="flex items-center" title="{{ $server->key }}">
+                                    <img wire:ignore src="https://unavatar.io/{{ $server->key }}?fallback=false" loading="lazy" class="w-4 h-4 mr-2" onerror="this.style.display='none'" />
+                                    <code class="block text-xs text-gray-900 dark:text-gray-100 truncate">
+                                        {{ $server->key }}
+                                    </code>
+                                </div>
                             </x-pulse::td>
                             <x-pulse::td numeric class="text-gray-700 dark:text-gray-300 font-bold">
                                 @if ($config['sample_rate'] < 1)

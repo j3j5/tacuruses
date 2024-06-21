@@ -54,7 +54,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->appendToGroup('federation', [
+            // \Illuminate\Routing\Middleware\ThrottleRequests::class . ':federation',
+            Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+
+        $middleware->appendToGroup('oembed', [
             App\Http\Middleware\NoCookies::class,
+            // \Illuminate\Routing\Middleware\ThrottleRequests::class . ':oembed',
+            App\Http\Middleware\ForceJsonResponse::class,
             Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
@@ -62,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             App\Http\Middleware\NoCookies::class,
             Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);

@@ -1,4 +1,4 @@
-<div class="pt-8 pb-8 max-w-xl m-auto">
+<div class="pt-8 pb-8 @unless($embed ?? false) max-w-xl m-auto @endif">
     <header class="mb-4 overflow-hidden no-underline">
         <a href="{{ $note->actor->url }}">
             <x-avatar
@@ -41,6 +41,7 @@
             <span>{{ Str::plural('Share', $note->shares_count ?? 0) }}</span>
             <strong class="ml-3">{{ $note->likes_count ?? 0 }}</strong>
             <span class="pr-3">{{ Str::plural('Like', $note->likes_count ?? 0) }}</span>
+
         </div>
         @isset($peers)
         <div class="border-solid border-l-2 border-gray-300 p-3 pr-0">
@@ -52,7 +53,7 @@
         </div>
         @endisset
     </section>
-
+    @unless ($embed ?? false)
     <footer class="flex items-center text-slate-500 text-sm font-bold mt-4">
         @php $iconClasses = 'inline-block fill-slate-500 hover:fill-slate-700 w-6 h-6'; @endphp
         <div class="flex-auto hover:text-slate-700 ">
@@ -83,4 +84,5 @@
             </div>
         </a>
     </footer>
+    @endunless
 </div>

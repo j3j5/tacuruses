@@ -6,8 +6,9 @@
 
     {{-- ActivityPub --}}
     {{-- <link rel="webmention" href="https://{{ request()->getHost() }}/webmentions"> --}}
-    <link rel="alternate" type="application/activity+json" href="{{ route('actor.show', [$note->actor]) }}" title="ActivityPub profile">
+    <link rel="alternate" type="application/activity+json" title="ActivityPub profile for {{ $note->actor->name }}" href="{{ route('actor.show', [$note->actor]) }}">
     <link rel="alternate" type="application/rss+xml" title="{{ $note->actor->name }} Feed" href="{{ route('feed.actor.rss', [$note->actor]) }}">
+    <link rel='alternate' type="application/json+oembed" title="{{ route('api.oembed', ['url' => route('note.show', [$note->actor, $note]), 'format' => 'json']) }}" >
 
     {{-- OpenGraph, see https://ogp.me --}}
     <meta name="author" content="{{ $note->actor->canonical_username }}">
@@ -46,6 +47,7 @@
             'name_class' => 'text-l truncate',
             'avatar_size' => 'w-10',
             'note' => $reply,
+            'peers' => $reply->peers
         ])
 @endforeach
 </div>

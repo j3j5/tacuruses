@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Middleware\ActivityPub;
 
-use App\Http\Middleware\ActivityPub\VerifySignature;
+use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Signer;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -309,7 +309,7 @@ class HttpSignaturesTest extends TestCase
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')
-            ->middleware(VerifySignature::class);
+            ->middleware(VerifyHttpSignature::class);
 
         $key = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
 
@@ -347,7 +347,7 @@ class HttpSignaturesTest extends TestCase
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')
-            ->middleware(VerifySignature::class);
+            ->middleware(VerifyHttpSignature::class);
 
         $oldKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
         $newKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
@@ -395,7 +395,7 @@ class HttpSignaturesTest extends TestCase
     {
         // Create fake route
         Route::post('testing-middleware-route', fn () => 'all good!')
-            ->middleware(VerifySignature::class);
+            ->middleware(VerifyHttpSignature::class);
 
         $oldKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
         $newKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);

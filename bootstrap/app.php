@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->redirectTo(
+            guests: '/',
+            users: '/dashboard'
+        );
+
         $middleware->alias([
             'debug' => \App\Http\Middleware\Debug::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

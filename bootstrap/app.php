@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'legacy' => \App\Http\Middleware\LegacyCheck::class,
             'no.cookies' => \App\Http\Middleware\NoCookies::class,
-            'valid.http.signature' => \App\Http\Middleware\ActivityPub\VerifySignature::class,
+            'valid.http.signature' => \App\Http\Middleware\ActivityPub\VerifyHttpSignature::class,
         ]);
 
         $middleware->priority([

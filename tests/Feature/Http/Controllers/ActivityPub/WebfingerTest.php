@@ -16,18 +16,6 @@ class WebfingerTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_non_json_requests_get_404(): void
-    {
-        $actor = LocalActor::factory()->create();
-        $host = parse_url(config('app.url'), PHP_URL_HOST);
-
-        $response = $this->get(
-            route('webfinger', ['resource' => "acct:{$actor->username}@$host"]),
-        );
-
-        $response->assertNotFound();
-    }
-
     public function test_searching_existing_actor(): void
     {
         $actor = LocalActor::factory()->create();

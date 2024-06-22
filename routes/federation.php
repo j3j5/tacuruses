@@ -33,6 +33,7 @@ Route::middleware([NoCookies::class, ForceJsonResponse::class])->group(function 
     Route::get('/.well-known/nodeinfo/', [NodeInfoController::class, 'wellKnown']);
     Route::get('/.well-known/host-meta/', HostMetaController::class);
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
+
     Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
 
     Route::middleware([VerifyHttpSignature::class, Debug::class])->group(function () {

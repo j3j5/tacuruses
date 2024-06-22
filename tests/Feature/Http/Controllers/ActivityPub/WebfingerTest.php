@@ -70,7 +70,8 @@ class WebfingerTest extends TestCase
             ['Accept' => 'application/json']
         );
         $response->assertNotFound()
-           ->assertHeader('Content-Type', 'application/json');
+           ->assertHeader('Content-Type', 'application/json')
+           ->assertExactJson(['message' => 'Unknown host']);
     }
 
     public function test_search_malformed_resource(): void
@@ -83,7 +84,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => "acct:@{$actor->username}@$host"]),
             ['Accept' => 'application/json']
         );
-        $response->assertBadRequest()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
 
         // Missing host
@@ -91,7 +92,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => "acct:{$actor->username}"]),
             ['Accept' => 'application/json']
         );
-        $response->assertBadRequest()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
 
         // No username
@@ -99,7 +100,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => "acct:@$host"]),
             ['Accept' => 'application/json']
         );
-        $response->assertNotFound()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
 
         // Missing host with trailing @
@@ -107,7 +108,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => "acct:{$actor->username}@"]),
             ['Accept' => 'application/json']
         );
-        $response->assertNotFound()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
 
         // no acct
@@ -115,7 +116,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => "{$actor->username}@host"]),
             ['Accept' => 'application/json']
         );
-        $response->assertBadRequest()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
 
         // random
@@ -123,7 +124,7 @@ class WebfingerTest extends TestCase
             route('webfinger', ['resource' => Str::random(32)]),
             ['Accept' => 'application/json']
         );
-        $response->assertBadRequest()
+        $response->assertUnprocessable()
            ->assertHeader('Content-Type', 'application/json');
     }
 

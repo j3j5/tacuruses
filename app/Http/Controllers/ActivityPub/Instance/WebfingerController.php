@@ -10,7 +10,6 @@ use App\Http\Requests\WebFingerRequest;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use function Safe\preg_match;
@@ -21,22 +20,17 @@ class WebfingerController extends Controller
     {
         $resource = $request->input('resource');
 
-        if (0 === preg_match('/^acct:(.+)/i', $resource, $match)) {
+        if (0 === preg_match(WebFingerRequest::RESOURCE_REGEX, $resource, $match)) {
             return response()->json(['message' => 'Wrong resource'], Response::HTTP_BAD_REQUEST);
         }
 
-        $handle = $match[1];
+        $preferredUsername = $match['handle'];
+        $hostname = $match['server'];
 
-        if (2 !== count($handleParts = explode('@', $handle))) {
-            return response()->json(['message' => 'Wrong account format'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $hostname = $handleParts[1];
         if ($request->getHost() !== $hostname) {
             return response()->json(['message' => 'Unknown host'], Response::HTTP_NOT_FOUND);
         }
 
-        $preferredUsername = $handleParts[0];
         try {
             $actor = LocalActor::where('username', $preferredUsername)->firstOrFail();
         } catch (ModelNotFoundException) {

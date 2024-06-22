@@ -6,7 +6,6 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 
 use ActivityPhp\Server\Http\WebFinger;
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\OnlyRequestsWantJson;
 use App\Models\ActivityPub\LocalActor;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -17,11 +16,6 @@ use function Safe\preg_match;
 
 class WebfingerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(OnlyRequestsWantJson::class);
-    }
-
     public function __invoke(Request $request) : JsonResponse
     {
         $resource = $request->input('resource');

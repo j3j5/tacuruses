@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
-use App\Http\Middleware\ActivityPub\VerifySignature;
+use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use App\Services\ActivityPub\Context;
@@ -151,7 +151,7 @@ class DeleteActivityTest extends TestCase
             ],
         ]);
 
-        $this->withoutMiddleware(VerifySignature::class);
+        $this->withoutMiddleware(VerifyHttpSignature::class);
 
         $url = route('shared-inbox');
         $response = $this->postJson($url, $activity->toArray(), [
@@ -198,7 +198,7 @@ class DeleteActivityTest extends TestCase
             ],
         ]);
 
-        $this->withoutMiddleware(VerifySignature::class);
+        $this->withoutMiddleware(VerifyHttpSignature::class);
 
         $url = route('shared-inbox');
         $response = $this->postJson($url, $activity->toArray(), [

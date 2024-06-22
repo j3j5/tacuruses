@@ -21,18 +21,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::prefix('/api/v1')->group(function () {
+    // /api/v1
+    Route::prefix('v1')->group(function () {
         Route::post('/statuses', PostStatus::class)->name('mastodon.v1.statuses.post');
         Route::put('/statuses/{status}', UpdateStatus::class)->name('mastodon.v1.statuses.update');
     });
 
-    Route::prefix('/api/v2')->group(function () {
+    // /api/v2
+    Route::prefix('/v2')->group(function () {
         Route::post('/media', PostMedia::class)->name('mastodon.v2.media');
     });
 
 });
 
-Route::prefix('/api/v1')->group(function () {
+// /api/v1
+Route::prefix('/v1')->group(function () {
     Route::prefix('/accounts')->group(function () {
         Route::get('/lookup', LookupAccount::class)->name('mastodon.v1.accounts.lookup');
     });

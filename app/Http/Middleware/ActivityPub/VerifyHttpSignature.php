@@ -20,7 +20,7 @@ use function Safe\preg_match;
 
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
-class VerifySignature
+class VerifyHttpSignature
 {
 
     public function __construct(private Verifier $verifier)

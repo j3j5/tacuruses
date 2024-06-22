@@ -16,7 +16,7 @@
 
 <div class="grid grid-flow-row auto-rows-fr grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full justify-center m-6">
     @foreach($actors as $actor)
-    <div class="p-8 max-w-xl border-solid border-b-2 border-gray-300">
+    <div class="p-8 max-w-xl shadow-md ">
         <a class="no-underline" href="{{ route('actor.show', [$actor]) }}">
             <div class="w-full">
                 <div class="h-32 w-full p-2 mb-2">

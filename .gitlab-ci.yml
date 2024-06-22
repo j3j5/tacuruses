@@ -1,4 +1,4 @@
-image: eu.gcr.io/tnw-automation/php:8.3-fpm
+image: registry.gitlab.com/j3j5/php-docker:8.3-fpm
 
 stages: # List of stages for jobs, and their order of execution
   - dependencies
@@ -143,6 +143,14 @@ Security Check:
   dependencies:
     - Composer
   needs: ["Composer"]
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+secret_detection:
+  variables:
+    SECRET_DETECTION_HISTORIC_SCAN: true
 
 deploy production:
   <<: *deploy

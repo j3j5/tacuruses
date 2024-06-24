@@ -1,4 +1,4 @@
-<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.15s="" wire:poll.visible>
+<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.30s="" wire:poll.visible>
     <x-pulse::card-header name="Top Notes (interactions received)"
         title="Top Notes by interactions"
     >

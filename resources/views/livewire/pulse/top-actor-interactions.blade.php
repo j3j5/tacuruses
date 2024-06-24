@@ -1,4 +1,4 @@
-<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.15s="" wire:poll.visible>
+<x-pulse::card :cols="$cols" :rows="$rows" :class="$class" wire:poll.30s="" wire:poll.visible>
     <x-pulse::card-header name="Top Actors (interactions received)"
         title="Top Actors by interactions"
     >
@@ -13,9 +13,7 @@
         @else
         <x-pulse::table>
                 <colgroup>
-                    <col width="0%" />
                     <col width="100%" />
-                    <col width="0%" />
                     <col width="0%" />
                 </colgroup>
                 <x-pulse::thead>

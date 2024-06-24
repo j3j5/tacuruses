@@ -17,8 +17,12 @@ class TopNoteInteractions extends Card
 {
     public function render() : View
     {
-        $aggregates = $this->aggregate(RecordTypes::NOTE_INTERACTIONS->value, ['count']);
-        $notes = LocalNote::with('actor')->whereIn('id', $aggregates->take(20)->pluck('key'))->get();
+        $aggregates = $this->aggregate(RecordTypes::NOTE_INTERACTIONS->value, ['count'], 'count')
+            ->sortBy('key')
+            ->sortByDesc('count');
+        $notes = LocalNote::with('actor')
+            ->whereIn('id', $aggregates->take(20)->pluck('key'))
+            ->get();
 
         return view('livewire.pulse.top-note-interactions', [
             'config' => Config::get('pulse.recorders.' . Interactions::class),

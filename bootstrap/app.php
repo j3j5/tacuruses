@@ -25,12 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Route::middleware('web')
             // ->group(base_path('routes/auth.php'));
+            Route::middleware('feeds')
+                ->group(base_path('routes/feeds.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            Route::middleware('feeds')
-                ->group(base_path('routes/feeds.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

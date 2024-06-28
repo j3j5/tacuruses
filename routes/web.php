@@ -12,6 +12,7 @@ use App\Http\Controllers\ActivityPub\Actors\TagController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\oEmbed\EmbedController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\NoCookies;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/auth.php';
@@ -40,7 +41,9 @@ Route::middleware([])->group(function () {
     // Add the `/p` to mimick Pixelfed urls so Tusky (and others?) open in-app
     Route::get('/p/{actor}/{note}', NoteController::class)->name('note.show');
 
-    Route::get('/{actor}/{note}/embed', EmbedController::class)->name('note.show.embed');
+    Route::get('/{actor}/{note}/embed', EmbedController::class)
+        ->middleware(NoCookies::class)
+        ->name('note.show.embed');
 
     Route::get('/tags/{tag}', TagController::class)->name('tag.show');
 });

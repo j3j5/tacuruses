@@ -47,7 +47,8 @@
             'name_class' => 'text-l truncate',
             'avatar_size' => 'w-10',
             'note' => $reply,
-            'peers' => $reply->peers
+            'peers' => collect(),
+            'noInteractions' => true,
         ])
 @endforeach
 </div>

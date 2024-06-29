@@ -65,6 +65,10 @@
 
 @section('content')
 <div class="">
-    @include('actors._note', ['avatar_size' => 'w-16', 'embed' => true])
+    @include('actors._note', [
+        'avatar_size' => 'w-16',
+        'noInteractions' => true,
+        'fullscreen' => true,
+    ])
 </div>
 @endsection

@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Models\ActivityPub;
 
-use App\Scopes\Accepted;
+use App\Scopes\Activities\Accepted;
+use App\Scopes\Notes\IsDraft;
+use App\Scopes\Notes\IsNotReply;
+use App\Scopes\Notes\Published;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -192,7 +195,9 @@ class Actor extends Model
      */
     public function notes() : HasMany
     {
-        return $this->allNotes()->whereNotNull('published_at')->whereNull('replyTo_id');
+        return $this->allNotes()
+            ->tap(new Published())
+            ->tap(new IsNotReply());
     }
 
     /**
@@ -201,7 +206,7 @@ class Actor extends Model
      */
     public function notesWithReplies() : HasMany
     {
-        return $this->allNotes()->whereNotNull('published_at');
+        return $this->allNotes()->tap(new Published());
     }
 
     /**
@@ -210,7 +215,7 @@ class Actor extends Model
      */
     public function drafts() : HasMany
     {
-        return $this->allNotes()->whereNull('published_at');
+        return $this->allNotes()->tap(new IsDraft());
     }
 
     /**

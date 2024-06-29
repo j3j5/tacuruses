@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Scopes;
+namespace App\Scopes\Notes;
 
 use Illuminate\Database\Eloquent\Builder;
 

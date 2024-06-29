@@ -6,7 +6,7 @@ namespace App\Providers;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
-use App\Scopes\Published;
+use App\Scopes\Notes\Published;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;

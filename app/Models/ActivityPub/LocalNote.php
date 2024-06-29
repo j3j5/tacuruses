@@ -182,16 +182,6 @@ class LocalNote extends Note implements Feedable
         return $this->hasMany(Share::class, 'target_id');
     }
 
-    public function directReplies() : HasMany
-    {
-        return $this->hasMany(Note::class, 'replyTo_id');
-    }
-
-    public function mediaAttachments() : HasMany
-    {
-        return $this->hasMany(Media::class);
-    }
-
     public function likeActors() : HasManyThrough
     {
         return $this->hasManyThrough(

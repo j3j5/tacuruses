@@ -7,6 +7,7 @@ namespace App\Models\ActivityPub;
 use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Enums\Visibility;
+use App\Models\Media;
 use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
@@ -185,6 +187,16 @@ class Note extends Model
     public function activity() :  HasOne
     {
         return $this->hasOne(Activity::class, 'target_id')->where('object_type', 'Note');
+    }
+
+    public function directReplies() : HasMany
+    {
+        return $this->hasMany(Note::class, 'replyTo_id');
+    }
+
+    public function mediaAttachments() : HasMany
+    {
+        return $this->hasMany(Media::class);
     }
 
     public function url() : Attribute

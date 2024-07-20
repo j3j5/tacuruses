@@ -6,12 +6,13 @@ namespace App\Jobs\ActivityPub;
 
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\RemoteActor;
+use App\Services\ActivityPub\Signer;
+use App\Traits\SendsSignedRequests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Response;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,14 +23,17 @@ use Illuminate\Support\Facades\Validator;
 final class FindActorInfo
 {
     use Dispatchable, SerializesModels;
+    use SendsSignedRequests;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(private readonly string $actorId, private readonly bool $tryLocal = true)
-    {
+    public function __construct(
+        private readonly string $actorId,
+        private readonly bool $tryLocal = true,
+    ) {
         Validator::validate(
             data: ['actorId' => $actorId],
             rules: ['actorId' => 'required|url']
@@ -41,7 +45,7 @@ final class FindActorInfo
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function handle() : Actor
+    public function handle(Signer $signer) : Actor
     {
         Log::debug('finding actor: ' . $this->actorId);
         if ($this->tryLocal) {
@@ -53,8 +57,11 @@ final class FindActorInfo
         }
 
         // Retrieve actor info from instance and store it on the DB
-        /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::acceptJson()->get($this->actorId);
+        $response = $this->sendSignedGetRequest(
+            signer: $signer,
+            url: $this->actorId,
+        );
+
         if ($response->failed()) {
             Log::info($this->actorId . ' could not be retrieved', [
                 'code' => $response->status(),

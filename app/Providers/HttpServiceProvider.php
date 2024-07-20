@@ -23,6 +23,7 @@ class HttpServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force a single User Agent for all requests going out
         Http::globalRequestMiddleware(fn ($request) => $request->withHeader(
             'User-Agent',
             config('federation.user-agent', Utils::defaultUserAgent())

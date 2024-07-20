@@ -8,19 +8,18 @@ use ActivityPhp\Type\Core\Link;
 use ActivityPhp\Type\Extended\AbstractActor;
 use ActivityPhp\Type\Extended\Activity\Delete;
 use ActivityPhp\Type\Extended\Object\Tombstone;
-use App\Exceptions\FederationConnectionException;
+use App\Exceptions\FederationDeliveryException;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
-use GuzzleHttp\Exception\RequestException;
+use App\Services\ActivityPub\Signer;
+use App\Traits\SendsSignedRequests;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
@@ -29,6 +28,9 @@ use function Safe\parse_url;
 final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable;
+    use SendsSignedRequests;
+
+    private Signer $signer;
 
     /**
      * Create a new job instance.
@@ -40,8 +42,10 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         //
     }
 
-    public function handle() : void
+    public function handle(Signer $signer) : void
     {
+        $this->signer = $signer;
+
         if (is_string($this->action->object)
             || $this->action->object instanceof Link
             || $this->action->object instanceof AbstractActor
@@ -73,7 +77,10 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         }
 
         /** @var \Illuminate\Http\Client\Response $response */
-        $response = Http::acceptJson()->get($actorActivityId);
+        $response = $this->sendSignedGetRequest(
+            signer: $this->signer,
+            url: $actorActivityId,
+        );
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
             Log::debug($actorActivityId . ' does not seem to be gone, skipping ACTOR deletion', [
                 'code' => $response->status(),
@@ -92,9 +99,12 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
         $object = $this->action->object;
 
         try {
-            $response = Http::acceptJson()->get($object->id);
-        } catch (ConnectionException|RequestException $e) {
-            throw new FederationConnectionException($object->id, $e);
+            $response = $this->sendSignedGetRequest(
+                signer: $this->signer,
+                url: $object->id,
+            );
+        } catch (FederationDeliveryException $e) {
+            $response = $e->response;
         }
 
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
@@ -104,6 +114,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
             ]);
             return;
         }
+
         Log::debug('deleting ' . $object->id . ' from DB');
 
         RemoteNote::where('activityId', $object->id)->delete();

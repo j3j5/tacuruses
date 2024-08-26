@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs\Application\Posts;
 
 use App\Domain\Application\Note;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Closure;
 
 final class SchedulePost

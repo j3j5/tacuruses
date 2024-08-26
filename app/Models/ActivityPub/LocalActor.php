@@ -12,7 +12,7 @@ use App\Jobs\ActivityPub\DeliverActivity;
 use App\Models\Notification;
 use App\Services\ActivityPub\Context;
 use App\Traits\Notifiable;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;

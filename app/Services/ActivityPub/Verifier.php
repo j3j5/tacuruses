@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\ActivityPub;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\Common\PublicKey;
 use Psr\Http\Message\RequestInterface;

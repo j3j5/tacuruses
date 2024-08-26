@@ -15,7 +15,7 @@ use App\Events\LocalNoteUpdated;
 use App\Http\Resources\ActivityPub\AttachmentResource;
 use App\Models\Media;
 use App\Services\ActivityPub\Context;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;

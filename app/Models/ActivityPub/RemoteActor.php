@@ -11,7 +11,7 @@ use App\Events\RemoteActorCreated;
 use App\Events\RemoteActorUpdated;
 use App\Jobs\ActivityPub\DeliverActivity;
 use App\Services\ActivityPub\Context;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;

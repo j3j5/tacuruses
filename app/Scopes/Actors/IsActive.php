@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Scopes\Actors;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 final readonly class IsActive

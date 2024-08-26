@@ -7,7 +7,7 @@ namespace App\Http\Controllers\ActivityPub\Instance;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 
 class NodeInfoController extends Controller
 {

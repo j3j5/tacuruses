@@ -10,7 +10,7 @@ use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Traits\HasSnowflakePrimary;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -50,8 +50,11 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Avoid HTTP requests to the outside, they should be faked
         Http::preventStrayRequests();
-        Storage::fake('local');
+
+        //
+        // Storage::fake('local');
 
         if (!env('ENABLE_LOGGING_ON_TESTS', false)) {
             Log::shouldReceive('channel')->andReturnSelf();

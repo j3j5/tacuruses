@@ -46,6 +46,7 @@ trait SendsSignedRequests
         if ($actorSigning === null) {
             $actorSigning = LocalActor::oldest()->first();
         }
+        Assert::isInstanceOf($actorSigning, LocalActor::class);
 
         $headers = array_merge($headers, [
             'Accept' => 'application/activity+json',

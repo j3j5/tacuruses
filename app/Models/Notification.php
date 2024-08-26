@@ -10,12 +10,12 @@ use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
 use App\Traits\HasSnowflakePrimary;
-use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Spatie\Feed\Feedable;
 

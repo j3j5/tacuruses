@@ -234,14 +234,14 @@ class LocalActor extends Actor implements
     public function publicKey() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/public.pem"),
+            get: fn () : string => (string) Storage::disk('keys')->get("{$this->id}/public.pem"),
         );
     }
 
     public function privateKey() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => (string) Storage::disk('local')->get("keys/local/{$this->id}/private.pem"),
+            get: fn () : string => (string) Storage::disk('keys')->get("{$this->id}/private.pem"),
         );
     }
 
@@ -442,13 +442,13 @@ class LocalActor extends Actor implements
 
     public function generateKeys() : self
     {
-        if (Storage::disk('local')->exists("keys/local/{$this->id}/private.pem")) {
+        if (Storage::disk('keys')->exists("{$this->id}/private.pem")) {
             throw new RuntimeException('This actor already has keys');
         }
         $keyLength = 2048;
         $privateKey = RSA::createKey($keyLength);
-        Storage::disk('local')->put("keys/local/{$this->id}/private.pem", $privateKey->toString('PKCS1'));
-        Storage::disk('local')->put("keys/local/{$this->id}/public.pem", $privateKey->getPublicKey()->toString('PKCS1'));
+        Storage::disk('keys')->put("{$this->id}/private.pem", $privateKey->toString('PKCS1'));
+        Storage::disk('keys')->put("{$this->id}/public.pem", $privateKey->getPublicKey()->toString('PKCS1'));
 
         return $this;
     }

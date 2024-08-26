@@ -49,6 +49,12 @@ return [
             'throw' => false,
         ],
 
+        'keys' => [
+            'driver' => 'local',
+            'root' => storage_path('app/keys/' . env('KEYS_FOLDER', 'local')),
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

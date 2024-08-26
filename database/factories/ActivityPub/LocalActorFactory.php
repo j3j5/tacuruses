@@ -48,7 +48,7 @@ class LocalActorFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (LocalActor $actor) {
-            if (!Storage::disk('local')->exists("keys/local/{$actor->id}/private.pem")) {
+            if (!Storage::disk('keys')->exists("{$actor->id}/private.pem")) {
                 $actor->generateKeys();
             }
         });

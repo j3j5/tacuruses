@@ -34,5 +34,6 @@
     <env name="DEBUGBAR_ENABLED" value="false"/>
     <env name="ENABLE_LOGGING_ON_TESTS" value="true"/>
     <env name="DB_LOG_ALL_QUERIES" value="false"/>
+    <env name="KEYS_FOLDER" value="test"/>
   </php>
 </phpunit>

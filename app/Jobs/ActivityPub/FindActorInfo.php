@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\ActivityPub;
 
+use App\Exceptions\FederationDeliveryException;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Signer;
@@ -57,10 +58,14 @@ final class FindActorInfo
         }
 
         // Retrieve actor info from instance and store it on the DB
-        $response = $this->sendSignedGetRequest(
-            signer: $signer,
-            url: $this->actorId,
-        );
+        try {
+            $response = $this->sendSignedGetRequest(
+                signer: $signer,
+                url: $this->actorId,
+            );
+        } catch (FederationDeliveryException $e) {
+            $response = $e->response;
+        }
 
         if ($response->failed()) {
             Log::info($this->actorId . ' could not be retrieved', [

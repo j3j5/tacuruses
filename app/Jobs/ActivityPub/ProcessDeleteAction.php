@@ -76,11 +76,14 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
             $actorActivityId = (string) $this->action->object->id;
         }
 
-        /** @var \Illuminate\Http\Client\Response $response */
-        $response = $this->sendSignedGetRequest(
-            signer: $this->signer,
-            url: $actorActivityId,
-        );
+        try {
+            $response = $this->sendSignedGetRequest(
+                signer: $this->signer,
+                url: $actorActivityId,
+            );
+        } catch (FederationDeliveryException $e) {
+            $response = $e->response;
+        }
         if (!in_array($response->status(), [Response::HTTP_GONE, Response::HTTP_NOT_FOUND])) {
             Log::debug($actorActivityId . ' does not seem to be gone, skipping ACTOR deletion', [
                 'code' => $response->status(),

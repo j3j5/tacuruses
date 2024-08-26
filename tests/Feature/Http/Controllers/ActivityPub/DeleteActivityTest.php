@@ -12,6 +12,7 @@ use App\Services\ActivityPub\Context;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
 
 class DeleteActivityTest extends TestCase
@@ -20,7 +21,11 @@ class DeleteActivityTest extends TestCase
 
     public function test_mastodon_delete_actor_activity_for_non_existent_user(): void
     {
-        $remoteActor = RemoteActor::factory()->withPublicKey('abc')->make();
+        $remoteActorKey = RSA::createKey()->withPadding(RSA::SIGNATURE_RELAXED_PKCS1);
+        /** @var \App\Models\ActivityPub\RemoteActor $remoteActor */
+        $remoteActor = RemoteActor::factory()
+            ->withPublicKey($remoteActorKey->getPublicKey()->toString('PKCS1'))
+            ->create();
 
         Http::fake([
             $remoteActor->activityId => Http::response('', 410),

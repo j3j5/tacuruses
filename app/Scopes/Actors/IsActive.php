@@ -24,7 +24,7 @@ final readonly class IsActive
     public function __invoke(Builder $builder): void
     {
         $builder->whereHas('notes', function (Builder $query) {
-            $query->where('published_at', '<=', $this->lastSeen);
+            $query->where('published_at', '>=', $this->lastSeen);
         });
     }
 }

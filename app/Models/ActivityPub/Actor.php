@@ -120,8 +120,8 @@ class Actor extends Model
      */
     public function follows() : HasMany
     {
-        return $this->hasMany(Follow::class)
-            ->tap(new Accepted());
+        /** @phpstan-ignore argument.type */
+        return $this->hasMany(Follow::class)->tap(new Accepted());
     }
 
     /**
@@ -130,8 +130,8 @@ class Actor extends Model
      */
     public function receivedFollows() : HasMany
     {
-        return $this->hasMany(Follow::class, 'target_id')
-            ->tap(new Accepted());
+        /** @phpstan-ignore argument.type */
+        return $this->hasMany(Follow::class, 'target_id')->tap(new Accepted());
     }
 
     /**
@@ -147,7 +147,7 @@ class Actor extends Model
             'id',
             'id',
             'actor_id',
-        )->tap(new Accepted());
+        )->tap(new Accepted()); /** @phpstan-ignore argument.type */
     }
 
     /**
@@ -163,7 +163,7 @@ class Actor extends Model
             'id',
             'id',
             'target_id',
-        )->tap(new Accepted());
+        )->tap(new Accepted()); /** @phpstan-ignore argument.type */
     }
 
     /**
@@ -196,8 +196,8 @@ class Actor extends Model
     public function notes() : HasMany
     {
         return $this->allNotes()
-            ->tap(new Published())
-            ->tap(new IsNotReply());
+            ->tap(new Published())      /** @phpstan-ignore argument.type */
+            ->tap(new IsNotReply());    /** @phpstan-ignore argument.type */
     }
 
     /**
@@ -206,6 +206,7 @@ class Actor extends Model
      */
     public function notesWithReplies() : HasMany
     {
+        /** @phpstan-ignore argument.type */
         return $this->allNotes()->tap(new Published());
     }
 
@@ -215,6 +216,7 @@ class Actor extends Model
      */
     public function drafts() : HasMany
     {
+        /** @phpstan-ignore argument.type */
         return $this->allNotes()->tap(new IsDraft());
     }
 

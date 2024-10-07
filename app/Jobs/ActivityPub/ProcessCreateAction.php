@@ -166,7 +166,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
             return;
         }
         // Accept the creation, any of the receivers can sign the accept in the name of the instance
-        SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel); /** @phpstan-ignore-line */
+        SendCreateAcceptToActor::dispatch($localRecipients->first(), $activityModel);
     }
 
     /**

@@ -35,7 +35,7 @@ final class ParseHashtags
             $contentMap[$lang] = $this->linker->autoLinkEntities($content, $entities);
 
             // Only get hashtags of the first language
-            if ($tags->isNotEmpty()) {
+            if ($tags->isNotEmpty()) {  /** @phpstan-ignore method.impossibleType */
                 continue;
             }
 

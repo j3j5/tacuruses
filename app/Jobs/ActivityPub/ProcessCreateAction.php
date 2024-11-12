@@ -71,7 +71,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         try {
             // Verify linked data signature
             $this->verifySignature();
-        } catch(SignatureException $e) {
+        } catch (SignatureException $e) {
             Log::error($e->getMessage(), ['action' => $this->action->toArray()]);
         }
 

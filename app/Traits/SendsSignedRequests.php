@@ -58,7 +58,7 @@ trait SendsSignedRequests
 
         $middlewares = array_values(Arr::prepend($middlewares, Middleware::mapRequest([$signer, 'signRequest'])));
         $request = Http::withHeaders($headers);
-        foreach($middlewares as $middleware) {
+        foreach ($middlewares as $middleware) {
             $request->withMiddleware($middleware);
         }
         Log::debug('doing signed GET request', ['url' => $url]);
@@ -109,7 +109,7 @@ trait SendsSignedRequests
 
         $middlewares = array_values(Arr::prepend($middlewares, Middleware::mapRequest([$signer, 'signRequest'])));
         $request = Http::withHeaders($headers);
-        foreach($middlewares as $middleware) {
+        foreach ($middlewares as $middleware) {
             $request->withMiddleware($middleware);
         }
         Log::debug('sending signed request', ['url' => $url, 'data' => $data]);

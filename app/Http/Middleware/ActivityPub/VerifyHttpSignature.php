@@ -67,7 +67,7 @@ class VerifyHttpSignature
         }
 
         $keyIdRegex = '/keyId="(?<keyId>.+?)",/';
-        if(!preg_match($keyIdRegex, $signature, $sigParameters)) {
+        if (!preg_match($keyIdRegex, $signature, $sigParameters)) {
             Log::warning('Unable to find keyId on given signature', ['signature' => $signature]);
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Wrong signature format');
         }
@@ -87,7 +87,7 @@ class VerifyHttpSignature
         $psrRequest = app(PsrHttpFactory::class)->createRequest($request);
         try {
             $verified = $this->verifier->verifyRequest($psrRequest, $actor->public_key_object);
-        } catch(RuntimeException $e) {
+        } catch (RuntimeException $e) {
             Log::warning($e->getMessage());
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, $e->getMessage());
         }
@@ -101,7 +101,7 @@ class VerifyHttpSignature
 
             try {
                 $verified = $this->verifier->verifyRequest($psrRequest, $actor->public_key_object);
-            } catch(RuntimeException $e) {
+            } catch (RuntimeException $e) {
                 Log::warning($e->getMessage());
                 abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, $e->getMessage());
             }

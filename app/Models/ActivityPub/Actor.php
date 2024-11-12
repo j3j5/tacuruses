@@ -116,27 +116,22 @@ class Actor extends Model
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Follow>
      */
     public function follows() : HasMany
     {
-        /** @phpstan-ignore argument.type */
         return $this->hasMany(Follow::class)->tap(new Accepted());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Follow>
      */
     public function receivedFollows() : HasMany
     {
-        /** @phpstan-ignore argument.type */
         return $this->hasMany(Follow::class, 'target_id')->tap(new Accepted());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Actor>
      */
     public function followers() : HasManyThrough
     {
@@ -147,12 +142,11 @@ class Actor extends Model
             'id',
             'id',
             'actor_id',
-        )->tap(new Accepted()); /** @phpstan-ignore argument.type */
+        )->tap(new Accepted());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Actor>
      */
     public function following() : HasManyThrough
     {
@@ -163,12 +157,11 @@ class Actor extends Model
             'id',
             'id',
             'target_id',
-        )->tap(new Accepted()); /** @phpstan-ignore argument.type */
+        )->tap(new Accepted());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Like>
      */
     public function liked() : HasMany
     {
@@ -177,7 +170,6 @@ class Actor extends Model
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\App\Models\ActivityPub\Share>
      */
     public function shares() : HasManyThrough
     {
@@ -191,38 +183,32 @@ class Actor extends Model
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
      */
     public function notes() : HasMany
     {
         return $this->allNotes()
-            ->tap(new Published())      /** @phpstan-ignore argument.type */
-            ->tap(new IsNotReply());    /** @phpstan-ignore argument.type */
+            ->tap(new Published())
+            ->tap(new IsNotReply());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
      */
     public function notesWithReplies() : HasMany
     {
-        /** @phpstan-ignore argument.type */
         return $this->allNotes()->tap(new Published());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
      */
     public function drafts() : HasMany
     {
-        /** @phpstan-ignore argument.type */
         return $this->allNotes()->tap(new IsDraft());
     }
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Note>
      */
     public function allNotes() : HasMany
     {
@@ -231,7 +217,6 @@ class Actor extends Model
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ActivityPub\Share>
      */
     public function shared() : HasMany
     {

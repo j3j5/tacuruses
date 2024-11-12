@@ -97,7 +97,7 @@ final class Verifier
         $sigHeadersNames = explode(' ', $sigParameters['headers']);
         $headers = [];
         foreach ($sigHeadersNames as $header) {
-            switch($header) {
+            switch ($header) {
                 case '(request-target)':
                     $headers[$header] = mb_strtolower($request->getMethod()) . ' ' . $request->getRequestTarget();
                     break;

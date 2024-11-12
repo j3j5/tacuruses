@@ -72,7 +72,7 @@ final class ProcessDeleteAction implements ShouldQueue, ShouldBeUnique
             $actorActivityId = $this->action->object;
         } elseif ($this->action->object instanceof Link) {
             $actorActivityId = (string) $this->action->object->href;
-        } elseif($this->action->object instanceof AbstractActor) {
+        } elseif ($this->action->object instanceof AbstractActor) {
             $actorActivityId = (string) $this->action->object->id;
         }
 

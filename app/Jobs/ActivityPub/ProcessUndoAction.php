@@ -48,7 +48,7 @@ final class ProcessUndoAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        switch(ActivityTypes::tryFrom(data_get($this->activity, 'object_type', ''))) {
+        switch (ActivityTypes::tryFrom(data_get($this->activity, 'object_type', ''))) {
             case ActivityTypes::FOLLOW:
                 Assert::isInstanceOf($target, LocalActor::class);
                 $this->processUndoFollow();

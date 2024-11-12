@@ -129,7 +129,7 @@ final class Signer
             method: $request->getMethod(),
         );
 
-        foreach($headersToSign as $name => $value) {
+        foreach ($headersToSign as $name => $value) {
             if ($name === '(request-target)') {
                 continue;
             }

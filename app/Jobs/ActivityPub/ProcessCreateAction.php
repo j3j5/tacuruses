@@ -12,7 +12,7 @@ use App\Domain\ActivityPub\Mastodon\Note;
 use App\Domain\ActivityPub\Mastodon\RsaSignature2017;
 use App\Events\LocalActorMentioned;
 use App\Events\LocalNoteReplied;
-use App\Exceptions\SignatureException;
+use App\Exceptions\SignatureVerificationException;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
 use App\Models\ActivityPub\LocalActor;
@@ -71,7 +71,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
         try {
             // Verify linked data signature
             $this->verifySignature();
-        } catch (SignatureException $e) {
+        } catch (SignatureVerificationException $e) {
             Log::error($e->getMessage(), ['action' => $this->action->toArray()]);
         }
 
@@ -178,35 +178,35 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
     {
         // No signature!!
         if (empty($this->action->signature)) {
-            throw new SignatureException('No signature available on object');
+            throw new SignatureVerificationException('No signature available on object');
         }
 
         // Wrong signature type, mastodon-specific
         if (!$this->action->signature instanceof RsaSignature2017) {
-            throw new SignatureException('Signature is not RsaSignature2017');
+            throw new SignatureVerificationException('Signature is not RsaSignature2017');
         }
 
         $actor = $this->action->actor;
         if (!is_string($actor)) {
-            throw new SignatureException('unsupported actor type: ' . json_encode($actor));
+            throw new SignatureVerificationException('unsupported actor type: ' . json_encode($actor));
         }
 
         // Signature's creator and actor don't match
         if (mb_strpos($this->action->signature->creator, $actor) !== 0) {
-            throw new SignatureException("Signature actor and activity actor don't match: \n
+            throw new SignatureVerificationException("Signature actor and activity actor don't match: \n
                 {$this->action->signature->creator} != {$actor}");
         }
 
         // Sender an author match
         if ($this->action->actor !== data_get($this->action, 'object.attributedTo')) {
-            throw new SignatureException('Actor and object attribution don\'t match');
+            throw new SignatureVerificationException('Actor and object attribution don\'t match');
         }
 
         // Actor should have been retrieved on middleware so if real, it should exists on the DB
         try {
             $this->activityActor = Actor::where('activityId', $this->action->actor)->firstOrFail();
         } catch (ModelNotFoundException) {
-            throw new SignatureException('Could not find the actor on the DB');
+            throw new SignatureVerificationException('Could not find the actor on the DB');
         }
 
         $array = $this->action->toArray();

@@ -4,12 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Services\ActivityPub;
 
+use App\Exceptions\SignatureException;
 use Illuminate\Support\Arr;
 use phpseclib3\Crypt\Common\PrivateKey;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 use Psr\Http\Message\RequestInterface;
-use RuntimeException;
 
 use function Safe\parse_url;
 
@@ -50,10 +50,13 @@ final class Signer
         $this->setKeyId($keyId);
     }
 
+    /**
+     * @throws \App\Exceptions\SignatureException
+     */
     public function setDigestAlgo(string $algo) : self
     {
         if (!in_array($algo, hash_algos())) {
-            throw new RuntimeException('Unsupported hash algorithm for digest');
+            throw new SignatureException('Unsupported hash algorithm for digest');
         }
 
         $this->digestAlgo = $algo;
@@ -79,7 +82,7 @@ final class Signer
      *
      * @param string|\phpseclib3\Crypt\Common\PrivateKey $privateKey
      * @param string|null $password
-     * @throws \RuntimeException
+     * @throws \App\Exceptions\SignatureException
      * @throws \phpseclib3\Exception\NoKeyLoadedException
      * @return \App\Services\ActivityPub\Signer
      */
@@ -90,7 +93,7 @@ final class Signer
             $privateKey = PublicKeyLoader::load($privateKey, $password ?? false);
             // In case a public key is provided
             if (!$privateKey instanceof PrivateKey) {
-                throw new RuntimeException('Invalid key provided');
+                throw new SignatureException('Invalid key provided');
             }
         }
 
@@ -104,14 +107,17 @@ final class Signer
         return $this;
     }
 
+    /**
+     * @throws \App\Exceptions\SignatureException
+     */
     public function signRequest(RequestInterface $request) : RequestInterface
     {
         if (!isset($this->privateKey)) {
-            throw new RuntimeException('Missing private key, cannot sign');
+            throw new SignatureException('Missing private key, cannot sign');
         }
 
         if (!isset($this->keyId)) {
-            throw new RuntimeException('Missing KeyId, cannot sign');
+            throw new SignatureException('Missing KeyId, cannot sign');
         }
 
         $body = (string) $request->getBody();
@@ -176,16 +182,20 @@ final class Signer
         return $request;
     }
 
+    /**
+     * @throws \App\Exceptions\SignatureException
+     * @return array<string, string>
+     */
     private function headersToSign(string $url, ?string $digest = null, string $method = 'post') : array
     {
         $path = parse_url($url, PHP_URL_PATH);
         if (!is_string($path)) {
-            throw new RuntimeException('URL does not have a valid path: ' . $url);
+            throw new SignatureException('URL does not have a valid path: ' . $url);
         }
 
         $host = parse_url($url, PHP_URL_HOST);
         if (!is_string($host)) {
-            throw new RuntimeException('URL does not have a valid host: ' . $url);
+            throw new SignatureException('URL does not have a valid host: ' . $url);
         }
 
         $headers = [

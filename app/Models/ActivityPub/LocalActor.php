@@ -341,6 +341,7 @@ class LocalActor extends Actor implements
             'attachment' => Arr::get($this->properties, 'attachment', []),
             // TODO: move to properties
             'discoverable' => true,
+            'indexable' => true,
             // Crypto to sign messages
             'publicKey' => [
                 'id' => $this->publicKeyId,

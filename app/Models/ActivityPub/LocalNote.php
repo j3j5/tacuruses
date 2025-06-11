@@ -12,6 +12,7 @@ use App\Domain\Feed\FeedItem;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Events\LocalNoteUpdated;
+use App\Exceptions\LocalIdException;
 use App\Http\Resources\ActivityPub\AttachmentResource;
 use App\Models\Media;
 use App\Services\ActivityPub\Context;
@@ -28,7 +29,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Parental\HasParent;
-use RuntimeException;
 use function Safe\json_decode;
 use function Safe\json_encode;
 
@@ -394,7 +394,7 @@ class LocalNote extends Note implements Feedable
     {
         $matches = [];
         if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
-            throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
+            throw new LocalIdException('ID not found in provided ActivityID: ' . $activityId);
         }
         return $matches['noteId'];
     }

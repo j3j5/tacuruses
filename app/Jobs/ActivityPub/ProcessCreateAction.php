@@ -12,6 +12,7 @@ use App\Domain\ActivityPub\Mastodon\Note;
 use App\Domain\ActivityPub\Mastodon\RsaSignature2017;
 use App\Events\LocalActorMentioned;
 use App\Events\LocalNoteReplied;
+use App\Exceptions\LocalIdException;
 use App\Exceptions\SignatureVerificationException;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
@@ -110,7 +111,7 @@ final class ProcessCreateAction implements ShouldQueue, ShouldBeUnique
                     $replyTo = LocalNote::byActivityId($object->inReplyTo)->firstOrFail();
                     $note->replyTo_id = $replyTo->id;
                     $note->setRelation('replyingTo', $replyTo);
-                } catch (ModelNotFoundException) {
+                } catch (ModelNotFoundException|LocalIdException) {
                     try {
                         $replyTo = RemoteNote::byActivityId($object->inReplyTo)->firstOrFail();
                         $note->replyTo_id = $replyTo->id;

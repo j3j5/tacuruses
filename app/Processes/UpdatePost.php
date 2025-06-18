@@ -31,14 +31,13 @@ final class UpdatePost extends Process
 
     /**
      *
-     * @param \App\Http\Requests\API\Mastodon\UpdateStatusRequest $request
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \App\Http\Requests\API\Mastodon\UpdateStatusRequest
      */
     public function run(object $request) : mixed
     {
         Assert::isInstanceOf($request, UpdateStatusRequest::class);
-
+        /** @var \App\Http\Requests\API\Mastodon\UpdateStatusRequest $request */
         $attempts = 3;
         DB::transaction(function () use ($request) {
             $request = parent::run($request);

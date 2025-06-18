@@ -32,14 +32,13 @@ final class PublishPost extends Process
 
     /**
      *
-     * @param \App\Domain\Application\Note $note
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return \App\Domain\Application\Note
      */
     public function run(object $note) : mixed
     {
         Assert::isInstanceOf($note, Note::class);
-
+        /** @var \App\Domain\Application\Note $note */
         $attempts = 3;
         DB::transaction(function () use ($note) {
             $note = parent::run($note);

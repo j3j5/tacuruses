@@ -7,7 +7,6 @@ namespace App\Jobs\ActivityPub;
 use ActivityPhp\Type\Extended\Activity\Like as ExtendedActivityLike;
 use App\Models\ActivityPub\ActivityLike;
 use App\Models\ActivityPub\Like;
-use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,7 +14,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Context;
-use RuntimeException;
 
 final class ProcessLikeAction implements ShouldQueue
 {
@@ -45,9 +43,6 @@ final class ProcessLikeAction implements ShouldQueue
         // First or create the actor
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$target instanceof LocalNote) {
-            throw new RuntimeException('The ActivityLike does not seem to have a valid target');
-        }
 
         // Store the like
         $like = Like::updateOrCreate(

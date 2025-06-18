@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Http\Controllers\ActivityPub\Actors\InboxController;
 use App\Http\Controllers\ActivityPub\Actors\OutboxController;
 use App\Http\Controllers\ActivityPub\Instance\HostMetaController;
-use App\Http\Controllers\ActivityPub\Instance\InstanceController;
 use App\Http\Controllers\ActivityPub\Instance\NodeInfoController;
 use App\Http\Controllers\ActivityPub\Instance\SharedInboxController;
 use App\Http\Controllers\ActivityPub\Instance\WebfingerController;

@@ -6,7 +6,6 @@ namespace App\Jobs\ActivityPub;
 
 use ActivityPhp\Type\Extended\Activity\Announce;
 use App\Models\ActivityPub\ActivityAnnounce;
-use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\Share;
 use Illuminate\Bus\Queueable;
@@ -15,7 +14,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Context;
-use RuntimeException;
 
 final class ProcessAnnounceAction implements ShouldQueue
 {
@@ -44,9 +42,6 @@ final class ProcessAnnounceAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$target instanceof LocalNote) {
-            throw new RuntimeException('The ActivityAnnounce does not seem to have a valid target');
-        }
 
         // Store the share
         Share::updateOrCreate(

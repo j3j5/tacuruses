@@ -50,7 +50,7 @@ final class Verifier
         // 1. Split Signature: into its separate parameters.
         try {
             $parts = explode(',', $signature);
-        } catch(ValueError) {
+        } catch (ValueError) {
             Log::warning('The signature is not well formed. Aborting in prod.', ['signature' => $signature]);
             throw new RuntimeException('Wrong signature 1');
         }

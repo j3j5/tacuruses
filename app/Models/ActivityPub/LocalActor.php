@@ -460,7 +460,7 @@ class LocalActor extends Actor implements
         if (preg_match(self::USER_REGEX, $activityId, $matches) === 0) {
             throw new RuntimeException('ID not found in provided ActivityID: ' . $activityId);
         }
-        $query->where('username', $matches['user']);
+        $query->where('username', $matches['user']);    // @phpstan-ignore offsetAccess.nonOffsetAccessible ()
     }
 
 }

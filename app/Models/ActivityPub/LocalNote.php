@@ -396,7 +396,7 @@ class LocalNote extends Note implements Feedable
         if (preg_match(self::NOTE_REGEX, $activityId, $matches) === 0) {
             throw new LocalIdException('ID not found in provided ActivityID: ' . $activityId);
         }
-        return $matches['noteId'];
+        return $matches['noteId'];  // @phpstan-ignore offsetAccess.nonOffsetAccessible ()
     }
 
     public function scopeByActivityId(Builder $query, string $activityId) : Builder

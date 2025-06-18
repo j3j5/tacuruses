@@ -167,7 +167,7 @@ class RemoteActor extends Actor
     public function sendNote(LocalNote $note) : self
     {
         $inbox = empty($this->sharedInbox) ? $this->inbox : $this->sharedInbox;
-        if (!is_string($inbox) || empty($inbox)) {
+        if (empty($inbox)) {
             Log::warning('Actor does not seem to have a valid inbox');
             return $this;
         }

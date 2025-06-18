@@ -65,7 +65,7 @@ trait SendsSignedRequests
         try {
             /** @var \Illuminate\Http\Client\Response $response */
             $response = $request->get($url);
-        } catch (ConnectionException|RequestException $e) {
+        } catch (ConnectionException|RequestException $e) {     // @phpstan-ignore catch.neverThrown
             throw new FederationConnectionException($url, $e);
         }
 
@@ -116,7 +116,7 @@ trait SendsSignedRequests
         try {
             /** @var \Illuminate\Http\Client\Response $response */
             $response = $request->post($url, $data);
-        } catch (ConnectionException|RequestException $e) {
+        } catch (ConnectionException|RequestException $e) {     // @phpstan-ignore catch.neverThrown
             throw new FederationConnectionException($url, $e);
         }
 

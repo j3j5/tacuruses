@@ -123,10 +123,7 @@ final class Signer
         $body = (string) $request->getBody();
 
         // Calculate digest, if needed
-        $digest = null;
-        if ($body !== null) {
-            $digest = base64_encode(hash($this->digestAlgo, $body, true));
-        }
+        $digest = base64_encode(hash($this->digestAlgo, $body, true));
 
         // Get headers to be signed
         $headersToSign = $this->headersToSign(
@@ -184,7 +181,7 @@ final class Signer
 
     /**
      * @throws \App\Exceptions\SignatureException
-     * @return array<string, string>
+     * @return array{'(request-target)': non-falsy-string, Date: non-falsy-string, Host: non-falsy-string, Content-Type: non-falsy-string}
      */
     private function headersToSign(string $url, ?string $digest = null, string $method = 'post') : array
     {
@@ -194,7 +191,7 @@ final class Signer
         }
 
         $host = parse_url($url, PHP_URL_HOST);
-        if (!is_string($host)) {
+        if (!is_string($host) || empty($host)) {
             throw new SignatureException('URL does not have a valid host: ' . $url);
         }
 

@@ -14,6 +14,8 @@ use function Safe\base64_decode;
 use Safe\Exceptions\UrlException;
 use function Safe\preg_match;
 
+use ValueError;
+
 final class Verifier
 {
     /**
@@ -29,14 +31,6 @@ final class Verifier
     public function verifyRequest(RequestInterface $request, PublicKey $key) : bool
     {
         $signature = $request->getHeaderLine('Signature');
-        if (!is_string($signature)) {
-            $errorMsg = 'Multiple signatures found';
-            Log::debug($errorMsg, [
-                'headers' => $request->getHeaders(),
-                'signature' => $signature,
-            ]);
-            throw new RuntimeException($errorMsg);
-        }
 
         $date = $request->getHeaderLine('Date');
 
@@ -54,16 +48,18 @@ final class Verifier
 
         // See https://docs.joinmastodon.org/spec/security/#http-verify
         // 1. Split Signature: into its separate parameters.
-        $parts = explode(',', $signature);
-        if (!is_array($parts)) {
+        try {
+            $parts = explode(',', $signature);
+        } catch(ValueError) {
             Log::warning('The signature is not well formed. Aborting in prod.', ['signature' => $signature]);
             throw new RuntimeException('Wrong signature 1');
         }
+
         $sigParameters = [];
         $pattern = '/(?<key>\w+)="(?<value>.+)"/';
         foreach ($parts as $part) {
             if (preg_match($pattern, $part, $matches)) {
-                $sigParameters[$matches['key']] = $matches['value'];
+                $sigParameters[$matches['key']] = $matches['value'];    // @phpstan-ignore offsetAccess.nonOffsetAccessible, offsetAccess.nonOffsetAccessible (they come from the regex)
             }
         }
 
@@ -76,10 +72,11 @@ final class Verifier
         $digest = base64_encode(hash('sha256', (string) $request->getBody(), true));
         $headerDigest = $request->getHeaderLine('Digest');
         $arrayDigest = explode('=', $headerDigest, 2);
-        if (!is_array($arrayDigest) || count($arrayDigest) !== 2) {
+        if (count($arrayDigest) !== 2) {
             Log::notice('Invalid digest. Aborting in prod.', ['given' => $headerDigest]);
             throw new RuntimeException('Digest does not match');
         }
+
         [$hashFunction, $hash] = $arrayDigest;
 
         if (mb_strtolower($hashFunction) !== 'sha-256') {

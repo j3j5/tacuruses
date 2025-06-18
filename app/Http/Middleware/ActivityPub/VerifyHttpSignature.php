@@ -67,11 +67,14 @@ class VerifyHttpSignature
         }
 
         $keyIdRegex = '/keyId="(?<keyId>.+?)",/';
-        if (!preg_match($keyIdRegex, $signature, $sigParameters)) {
+        if (preg_match($keyIdRegex, $signature, $sigParameters) === 0) {
             Log::warning('Unable to find keyId on given signature', ['signature' => $signature]);
             abort_if(app()->environment(['production', 'testing']), Response::HTTP_UNAUTHORIZED, 'Wrong signature format');
         }
-        /** @var \App\Models\ActivityPub\Actor $actor */
+        /**
+         * @var \App\Models\ActivityPub\Actor $actor
+         * @var array{0: string, 1: string, keyId: string} $sigParameters
+         */
         $actor = GetActorByKeyId::dispatchSync($sigParameters['keyId']);
 
         // Verify the actor's public key is the same than the action's actor

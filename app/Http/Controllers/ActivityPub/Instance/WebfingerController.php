@@ -20,12 +20,12 @@ class WebfingerController extends Controller
     {
         $resource = $request->input('resource');
 
-        if (0 === preg_match(WebFingerRequest::RESOURCE_REGEX, $resource, $match)) {
+        if (preg_match(WebFingerRequest::RESOURCE_REGEX, $resource, $match) === 0) {
             return response()->json(['message' => 'Wrong resource'], Response::HTTP_BAD_REQUEST);
         }
 
-        $preferredUsername = $match['handle'];
-        $hostname = $match['server'];
+        $preferredUsername = $match['handle'];  // @phpstan-ignore offsetAccess.nonOffsetAccessible (the key comes from the regex)
+        $hostname = $match['server'];           // @phpstan-ignore offsetAccess.nonOffsetAccessible (the key comes from the regex)
 
         if ($request->getHost() !== $hostname) {
             return response()->json(['message' => 'Unknown host'], Response::HTTP_NOT_FOUND);

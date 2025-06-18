@@ -26,7 +26,7 @@ class NodeInfoController extends Controller
                 'nodeName' => config('app.name'),
                 'software' => [
                     'homepage' => config('federation.homepage'),
-                    'repo' => 'https://gitlab.com/j3j5/fedi-bots',
+                    'repo' => 'https://gitlab.com/j3j5/tacuruses',
                 ],
                 'config' => ['features' => []],
             ],
@@ -39,7 +39,7 @@ class NodeInfoController extends Controller
             ],
             'software' => [
                 'name' => config('federation.software_name'),
-                'version' => config('federation.software_version'),
+                'version' => config('instance.software_version'),
             ],
             'usage' => [
                 'localPosts' => Cache::remember('local-posts', $cacheTTL, function () {
@@ -77,7 +77,7 @@ class NodeInfoController extends Controller
         return response()->json([
             'links' => [
                 [
-                    'href' => config('federation.homepage', config('app.url')),
+                    'href' => config('federation.homepage'),
                     'rel' => 'http://nodeinfo.diaspora.software/ns/schema/2.0',
                 ],
             ],

@@ -90,7 +90,7 @@
         ],
         "phpstan": [
             "Composer\\Config::disableProcessTimeout",
-            "@php vendor/bin/phpstan"
+            "@php vendor/bin/phpstan -v"
         ],
         "phpunit": [
             "@php vendor/bin/phpunit"
@@ -104,6 +104,15 @@
         "rector": [
             "Composer\\Config::disableProcessTimeout",
             "@php vendor/bin/rector"
+        ],
+        "rector-fix": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/rector process",
+            "@php-cs-fixer"
+        ],
+        "model-docs": [
+            "@php artisan ide-helper:models -W --ansi -R",
+            "@php-cs-fixer"
         ]
     },
     "extra": {

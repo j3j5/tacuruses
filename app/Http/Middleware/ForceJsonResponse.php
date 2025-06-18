@@ -22,7 +22,7 @@ class ForceJsonResponse
         // on the SymfonyRequest, which then doesn't get modified again
         // if (!$request->wantsJson()) {
         $acceptable = explode(separator: ',', string: (string) $request->header('Accept'));
-        if (!isset($acceptable[0]) || !Str::contains(strtolower($acceptable[0]), ['/json', '+json'])) {
+        if (!Str::contains(strtolower($acceptable[0]), ['/json', '+json'])) {
             $request->headers->set('Accept', 'application/json,' . $request->header('Accept'));
         }
         return $next($request);

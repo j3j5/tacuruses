@@ -19,7 +19,7 @@ class ProfileController extends Controller
     {
         // manual wantsJson() to avoid messing with the request
         $acceptable = explode(separator: ',', string: (string) request()->header('Accept'));
-        if (isset($acceptable[0]) && Str::contains(strtolower($acceptable[0]), ['/json', '+json'])) {
+        if (Str::contains(strtolower($acceptable[0]), ['/json', '+json'])) {
             $this->middleware(NoCookies::class);
         }
 

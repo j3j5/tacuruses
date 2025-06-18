@@ -1,22 +1,23 @@
 <?php
 
 return [
-    'homepage' => env('FEDI_HOMEPAGE'),
-    'software_name' => env('FEDI_APP_NAME', 'j3j5-bots'),
-    'software_version' => env('FEDI_APP_VERSION', '1.0'),
-    'user-agent' => env('FEDI_UA', 'j3j5-bots'),
+    'homepage' => 'https://gitlab.com/j3j5/tacuruses/-/blob/main/README.md',
+    'software_name' => 'Tacuruses',
+    'user-agent' => env('FEDI_UA', 'tacuruses-instance | ' . env('APP_URL')),
     'contact_email' => env('FEDI_CONTACT_EMAIL', ''),
 
     'languages' => [
         'es',
         'en',
     ],
-    'max_characters' => 500,
+    'max_characters' => 5000,
     'max_media_attachments' => 4,
     'characters_reserved_per_url' => 23,
     'max_featured_tags' => 10,
+    'max_pinned_statuses' => 4,
     'media_attachments' => [
         'image_size_limit' => 10485760,
+        'description_limit' => 1500,
         'image_matrix_limit' => 16777216,
         'video_size_limit' => 41943040,
         'video_frame_rate_limit' => 60,

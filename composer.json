@@ -72,6 +72,10 @@
         }
     },
     "scripts": {
+        "model-docs": [
+            "@php artisan ide-helper:models -W --ansi -R",
+            "@php-cs-fixer"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
@@ -110,9 +114,8 @@
             "@php vendor/bin/rector process",
             "@php-cs-fixer"
         ],
-        "model-docs": [
-            "@php artisan ide-helper:models -W --ansi -R",
-            "@php-cs-fixer"
+        "test": [
+            "@phpunit"
         ]
     },
     "extra": {

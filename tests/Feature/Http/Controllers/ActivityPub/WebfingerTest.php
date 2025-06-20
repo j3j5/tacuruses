@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 
 use function Safe\parse_url;
@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class WebfingerTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     public function test_searching_existing_actor(): void
     {

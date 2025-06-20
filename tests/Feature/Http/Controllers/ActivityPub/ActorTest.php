@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ActorTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *

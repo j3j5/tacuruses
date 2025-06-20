@@ -6,12 +6,12 @@ namespace Tests\Unit\Events;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\TestCase;
 
 class LocalActorMentionedTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     /**
      * A basic unit test example.

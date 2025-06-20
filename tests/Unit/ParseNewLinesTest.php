@@ -9,12 +9,12 @@ use App\Jobs\Application\Posts\CreateNewPost;
 use App\Jobs\Application\Posts\ParseNewLines;
 use App\Models\ActivityPub\LocalActor;
 use App\Processes\Process;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ParseNewLinesTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     private object $process;
 

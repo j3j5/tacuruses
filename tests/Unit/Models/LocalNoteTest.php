@@ -8,13 +8,13 @@ use App\Events\LocalNotePublished;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote as ActivityPubLocalNote;
 use App\Services\ActivityPub\Context;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class LocalNoteTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     /**
      * A basic unit test example.

@@ -10,7 +10,7 @@ use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class SendNoteToFollowersTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     public function test_is_attached_to_event(): void
     {

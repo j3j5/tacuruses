@@ -10,7 +10,7 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use App\Services\ActivityPub\Context;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use phpseclib3\Crypt\RSA;
@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class DeleteActivityTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {

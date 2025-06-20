@@ -10,12 +10,12 @@ use App\Models\ActivityPub\Follow;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class FollowingTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     public function test_requests_accepting_html_get_404(): void
     {

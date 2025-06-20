@@ -6,12 +6,12 @@ namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class NoteTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     public function test_requests_accepting_html_get_html_note(): void
     {

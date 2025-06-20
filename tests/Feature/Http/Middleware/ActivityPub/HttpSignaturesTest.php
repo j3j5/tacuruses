@@ -8,7 +8,7 @@ use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Signer;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 class HttpSignaturesTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {

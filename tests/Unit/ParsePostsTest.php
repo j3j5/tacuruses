@@ -7,12 +7,12 @@ namespace Tests\Unit;
 use App\Domain\Application\Note;
 use App\Models\ActivityPub\LocalActor;
 use App\Processes\PublishPost;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ParsePostsTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     private PublishPost $process;
 

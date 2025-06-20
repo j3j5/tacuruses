@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Middleware\ActivityPub;
 
 use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
+use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Signer;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -17,6 +18,14 @@ use Tests\TestCase;
 class HttpSignaturesTest extends TestCase
 {
     use LazilyRefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a local actor for the instance to act as 'admin'
+        LocalActor::factory()->create();
+    }
 
     public function test_requests_without_signature_are_unauthorized(): void
     {

@@ -6,6 +6,7 @@ namespace Tests\Feature\Http\Controllers\ActivityPub;
 
 use ActivityPhp\Type;
 use App\Http\Middleware\ActivityPub\VerifyHttpSignature;
+use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\RemoteActor;
 use App\Models\ActivityPub\RemoteNote;
 use App\Services\ActivityPub\Context;
@@ -18,6 +19,14 @@ use Tests\TestCase;
 class DeleteActivityTest extends TestCase
 {
     use LazilyRefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a local actor for the instance to act as 'admin'
+        LocalActor::factory()->create();
+    }
 
     public function test_mastodon_delete_actor_activity_for_non_existent_user(): void
     {

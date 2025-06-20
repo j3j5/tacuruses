@@ -33,8 +33,6 @@ Route::middleware([NoCookies::class, ForceJsonResponse::class])->group(function 
     Route::get('/.well-known/host-meta/', HostMetaController::class);
     Route::get('/nodeinfo/2.0', [NodeInfoController::class, 'get']);
 
-    Route::get('/api/v1/instance', [InstanceController::class, 'apiV1']);
-
     Route::middleware([VerifyHttpSignature::class, Debug::class])->group(function () {
         Route::post('/f/sharedInbox', SharedInboxController::class)->name('shared-inbox');
         Route::post('/{actor}/inbox', InboxController::class)->name('actor.inbox');

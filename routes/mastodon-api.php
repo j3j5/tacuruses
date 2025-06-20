@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\API\Mastodon\Instance\InstanceController;
+use App\Http\Controllers\API\Mastodon\Instance\PeersController;
 use App\Http\Controllers\API\Mastodon\LookupAccount;
 use App\Http\Controllers\API\Mastodon\PostMedia;
 use App\Http\Controllers\API\Mastodon\PostStatus;
@@ -39,4 +41,8 @@ Route::prefix('/v1')->group(function () {
     Route::prefix('/accounts')->group(function () {
         Route::get('/lookup', LookupAccount::class)->name('mastodon.v1.accounts.lookup');
     });
+
+    Route::get('/instance', [InstanceController::class, 'apiV1']);
+
+    Route::get('/instance/peers', PeersController::class);
 });

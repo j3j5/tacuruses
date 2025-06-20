@@ -9,6 +9,7 @@ use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Scopes\Actors\IsActive;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -202,7 +203,11 @@ class InstanceController extends Controller
     private function getContactAccount() : array
     {
         // TODO: Create a way to mark who is or isn't an admin
-        return LocalActor::first()->getAPActor()->toArray();
+        try {
+            return LocalActor::firstOrFail()->getAPActor()->toArray();
+        } catch (ModelNotFoundException) {
+            return [];
+        }
     }
 
     private function getRules() : array

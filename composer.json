@@ -18,7 +18,7 @@
     "require": {
         "php": "^8.3",
         "godruoyi/php-snowflake": "^2.2",
-        "aaronfrancis/fast-paginate": "^2.0",
+        "hammerstone/fast-paginate": "^1.1",
         "itsgoingd/clockwork": "^5.2",
         "j3j5/hmac-bcrypt-laravel": "^0.2.0",
         "landrok/activitypub": "dev-master",

@@ -9,6 +9,7 @@ use ActivityPhp\Type\Core\Collection;
 use App\Domain\ActivityPub\Mastodon\Create;
 use App\Domain\ActivityPub\Mastodon\Note as ActivityNote;
 use App\Domain\Feed\FeedItem;
+use App\Enums\InteractionPolicy;
 use App\Enums\Visibility;
 use App\Events\LocalNotePublished;
 use App\Events\LocalNoteUpdated;
@@ -278,6 +279,14 @@ class LocalNote extends Note implements Feedable
     public function getAPNote() : ActivityNote
     {
         $note = parent::getAPNote();
+
+        // Add the interaction policy for quotes
+        $note->interactionPolicy = [
+            'canQuote' => [
+                InteractionPolicy::AUTOMATIC->value => Context::ACTIVITY_STREAMS_PUBLIC,
+            ],
+        ];
+
         $note->replies = $this->getAPReplies();
 
         return $note;

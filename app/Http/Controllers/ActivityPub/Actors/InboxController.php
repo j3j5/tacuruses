@@ -10,6 +10,7 @@ use ActivityPhp\Type\Extended\Activity\Follow;
 use ActivityPhp\Type\Extended\Activity\Like;
 use ActivityPhp\Type\Extended\Activity\Undo;
 use App\Domain\ActivityPub\Mastodon\Create;
+use App\Domain\ActivityPub\Mastodon\QuoteRequest;
 use App\Enums\ActivityTypes;
 use App\Exceptions\AppException;
 use App\Http\Controllers\Controller;
@@ -19,12 +20,14 @@ use App\Jobs\ActivityPub\ProcessAnnounceAction;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessFollowAction;
 use App\Jobs\ActivityPub\ProcessLikeAction;
+use App\Jobs\ActivityPub\ProcessQuoteRequestAction;
 use App\Jobs\ActivityPub\ProcessUndoAction;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\ActivityAccept;
 use App\Models\ActivityPub\ActivityAnnounce;
 use App\Models\ActivityPub\ActivityFollow;
 use App\Models\ActivityPub\ActivityLike;
+use App\Models\ActivityPub\ActivityQuoteRequest;
 use App\Models\ActivityPub\ActivityUndo;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
@@ -124,6 +127,11 @@ class InboxController extends Controller
                 Assert::isInstanceOf($activityModel, ActivityAccept::class);
                 ProcessAcceptAction::dispatch($activityModel);
                 break;
+            case ActivityTypes::QUOTE_REQUEST:
+                Assert::isInstanceOf($activityStream, QuoteRequest::class);
+                Assert::isInstanceOf($activityModel, ActivityQuoteRequest::class);
+                ProcessQuoteRequestAction::dispatch($activityStream, $activityModel);
+                break;
             case ActivityTypes::UPDATE:
             case ActivityTypes::DELETE:
             case ActivityTypes::REJECT:
@@ -146,11 +154,12 @@ class InboxController extends Controller
     private function tryToFindTarget(InputBag $action) : LocalActor|LocalNote
     {
         return match (ActivityTypes::tryFrom((string) $action->get('type'))) {
-            ActivityTypes::FOLLOW => $this->tryToFindActorTarget((string) $action->get('object')),
-            ActivityTypes::ANNOUNCE => $this->tryToFindNoteTarget((string) $action->get('object')),
-            ActivityTypes::LIKE => $this->tryToFindNoteTarget((string) $action->get('object')),
-            ActivityTypes::UNDO => $this->tryToFindUndoTarget(Arr::wrap($action->all('object'))),
             ActivityTypes::ACCEPT => $this->tryToFindAcceptTarget(Arr::wrap($action->all('object'))),
+            ActivityTypes::ANNOUNCE,
+            ActivityTypes::LIKE,
+            ActivityTypes::QUOTE_REQUEST => $this->tryToFindNoteTarget((string) $action->get('object')),
+            ActivityTypes::FOLLOW => $this->tryToFindActorTarget((string) $action->get('object')),
+            ActivityTypes::UNDO => $this->tryToFindUndoTarget(Arr::wrap($action->all('object'))),
             default => throw new AppException("Type '" . (string) $action->get('type') . "' is not implemented yet!"),
         };
     }

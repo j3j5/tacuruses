@@ -25,7 +25,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Parental\HasParent;
@@ -334,6 +333,7 @@ class LocalActor extends Actor implements
                 'mediaType' => 'image/jpeg',
                 'url' => $this->header,
             ],
+            // "featuredTags" => "https://mastodon.uy/users/j3j5/collections/tags",
         ];
 
         $metadata = [
@@ -342,6 +342,7 @@ class LocalActor extends Actor implements
             // TODO: move to properties
             'discoverable' => true,
             'indexable' => true,
+            'memorial' => false,
             // Crypto to sign messages
             'publicKey' => [
                 'id' => $this->publicKeyId,

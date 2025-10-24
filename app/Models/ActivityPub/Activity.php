@@ -61,6 +61,7 @@ class Activity extends Model
         ActivityTypes::CREATE->value => ActivityCreate::class,
         ActivityTypes::FOLLOW->value => ActivityFollow::class,
         ActivityTypes::LIKE->value => ActivityLike::class,
+        ActivityTypes::QUOTE_REQUEST->value => ActivityQuoteRequest::class,
         ActivityTypes::UNDO->value => ActivityUndo::class,
     ];
 

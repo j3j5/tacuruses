@@ -28,6 +28,7 @@ enum ActivityTypes:string
     case MOVE = 'Move';
     case OFFER = 'Offer';
     case QUESTION = 'Question';
+    case QUOTE_REQUEST = 'QuoteRequest';
     case REJECT = 'Reject';
     case READ = 'Read';
     case REMOVE = 'Remove';

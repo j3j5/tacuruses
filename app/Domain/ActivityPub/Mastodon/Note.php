@@ -16,4 +16,7 @@ class Note extends ObjectNote
     protected $inReplyToAtomUri;
     /** @var string */
     protected $conversation;
+    /** @var array */
+    protected $interactionPolicy;
+
 }

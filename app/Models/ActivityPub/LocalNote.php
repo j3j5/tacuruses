@@ -40,40 +40,44 @@ use Spatie\Feed\Feedable;
  * App\Models\ActivityPub\LocalNote
  *
  * @property int $id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string $activityId
- * @property-read string $activity_id
- * @property \Illuminate\Support\Carbon|null $published_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property int $actor_id
+ * @property string|null $replyTo_id id (PK) of the note is replying to, if any
+ * @property string|null $activityId
+ * @property Carbon|null $published_at
+ * @property string|null $original_content
  * @property string $content
- * @property array $contentMap
+ * @property string|null $contentMap
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
  * @property string|null $summaryMap
+ * @property string $type Type of object, Note, Article...
  * @property bool $sensitive Mastodon-specific; content warning
- * @property array $to array of recipients
- * @property array|null $bto array of recipients of the blind carbon copy
- * @property array|null $cc array of recipients of the carbon copy
- * @property array|null $bcc array of recipients of the blind carbon copy
+ * @property array<array-key, mixed> $to array of recipients
+ * @property array<array-key, mixed>|null $bto array of recipients of the blind carbon copy
+ * @property array<array-key, mixed>|null $cc array of recipients of the carbon copy
+ * @property array<array-key, mixed>|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
- * @property \Illuminate\Support\Carbon|null $startTime
- * @property \Illuminate\Support\Carbon|null $endTime
+ * @property Carbon|null $startTime
+ * @property Carbon|null $endTime
+ * @property Visibility $visibility visibility of the note, check enum Visibility
  * @property AnonymousResourceCollection $attachments
  * @property array $tags
  * @property string|null $repliesRaw
- * @property array|null $source original representation of the content
+ * @property array<array-key, mixed>|null $source original representation of the content
  * @property string|null $conversation
- * @property string $type
- * @property int|null $replyTo_id
  * @property string $note_type
- * @property int $actor_id
- * @property Visibility $visibility
+ * @property Carbon|null $deleted_at
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read string $activity_id
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\LocalActor $actor
- * @property-read array $content_map
+ * @property array $content_map
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $directReplies
  * @property-read int|null $direct_replies_count
+ * @property string|null $in_reply_to
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $likeActors
  * @property-read int|null $like_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
@@ -82,55 +86,51 @@ use Spatie\Feed\Feedable;
  * @property-read int|null $media_attachments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $peers
  * @property-read int|null $peers_count
+ * @property-read \App\Models\ActivityPub\Note|null $replyingTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $shareActors
  * @property-read int|null $share_actors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read int|null $shares_count
  * @property-read string $url
- * @method static Builder|LocalNote byActivityId(string $activityId)
- * @method static Builder|LocalNote newModelQuery()
- * @method static Builder|LocalNote newQuery()
- * @method static Builder|LocalNote query()
- * @method static Builder|LocalNote whereActivityId($value)
- * @method static Builder|LocalNote whereActorId($value)
- * @method static Builder|LocalNote whereAttachments($value)
- * @method static Builder|LocalNote whereBcc($value)
- * @method static Builder|LocalNote whereBto($value)
- * @method static Builder|LocalNote whereCc($value)
- * @method static Builder|LocalNote whereContent($value)
- * @method static Builder|LocalNote whereContentMap($value)
- * @method static Builder|LocalNote whereConversation($value)
- * @method static Builder|LocalNote whereCreatedAt($value)
- * @method static Builder|LocalNote whereEndTime($value)
- * @method static Builder|LocalNote whereGenerator($value)
- * @method static Builder|LocalNote whereId($value)
- * @method static Builder|LocalNote whereInReplyTo($value)
- * @method static Builder|LocalNote whereLocation($value)
- * @method static Builder|LocalNote whereNoteType($value)
- * @method static Builder|LocalNote wherePublishedAt($value)
- * @method static Builder|LocalNote whereRepliesRaw($value)
- * @method static Builder|LocalNote whereReplyToId($value)
- * @method static Builder|LocalNote whereSensitive($value)
- * @method static Builder|LocalNote whereSource($value)
- * @method static Builder|LocalNote whereStartTime($value)
- * @method static Builder|LocalNote whereSummary($value)
- * @method static Builder|LocalNote whereSummaryMap($value)
- * @method static Builder|LocalNote whereTags($value)
- * @method static Builder|LocalNote whereTo($value)
- * @method static Builder|LocalNote whereType($value)
- * @method static Builder|LocalNote whereUpdatedAt($value)
- * @method static Builder|LocalNote whereVisibility($value)
- * @property string|null $original_content
- * @property-read string|null $in_reply_to
- * @property-read \App\Models\ActivityPub\Note|null $replyingTo
+ * @method static Builder<static>|LocalNote byActivityId(string $activityId)
  * @method static \Database\Factories\ActivityPub\LocalNoteFactory factory($count = null, $state = [])
- * @method static Builder|LocalNote whereOriginalContent($value)
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\ActivityPub\Activity|null $activity
- * @method static Builder|LocalNote onlyTrashed()
- * @method static Builder|LocalNote whereDeletedAt($value)
- * @method static Builder|LocalNote withTrashed()
- * @method static Builder|LocalNote withoutTrashed()
+ * @method static Builder<static>|LocalNote newModelQuery()
+ * @method static Builder<static>|LocalNote newQuery()
+ * @method static Builder<static>|LocalNote onlyTrashed()
+ * @method static Builder<static>|LocalNote query()
+ * @method static Builder<static>|LocalNote whereActivityId($value)
+ * @method static Builder<static>|LocalNote whereActorId($value)
+ * @method static Builder<static>|LocalNote whereAttachments($value)
+ * @method static Builder<static>|LocalNote whereBcc($value)
+ * @method static Builder<static>|LocalNote whereBto($value)
+ * @method static Builder<static>|LocalNote whereCc($value)
+ * @method static Builder<static>|LocalNote whereContent($value)
+ * @method static Builder<static>|LocalNote whereContentMap($value)
+ * @method static Builder<static>|LocalNote whereConversation($value)
+ * @method static Builder<static>|LocalNote whereCreatedAt($value)
+ * @method static Builder<static>|LocalNote whereDeletedAt($value)
+ * @method static Builder<static>|LocalNote whereEndTime($value)
+ * @method static Builder<static>|LocalNote whereGenerator($value)
+ * @method static Builder<static>|LocalNote whereId($value)
+ * @method static Builder<static>|LocalNote whereInReplyTo($value)
+ * @method static Builder<static>|LocalNote whereLocation($value)
+ * @method static Builder<static>|LocalNote whereNoteType($value)
+ * @method static Builder<static>|LocalNote whereOriginalContent($value)
+ * @method static Builder<static>|LocalNote wherePublishedAt($value)
+ * @method static Builder<static>|LocalNote whereRepliesRaw($value)
+ * @method static Builder<static>|LocalNote whereReplyToId($value)
+ * @method static Builder<static>|LocalNote whereSensitive($value)
+ * @method static Builder<static>|LocalNote whereSource($value)
+ * @method static Builder<static>|LocalNote whereStartTime($value)
+ * @method static Builder<static>|LocalNote whereSummary($value)
+ * @method static Builder<static>|LocalNote whereSummaryMap($value)
+ * @method static Builder<static>|LocalNote whereTags($value)
+ * @method static Builder<static>|LocalNote whereTo($value)
+ * @method static Builder<static>|LocalNote whereType($value)
+ * @method static Builder<static>|LocalNote whereUpdatedAt($value)
+ * @method static Builder<static>|LocalNote whereVisibility($value)
+ * @method static Builder<static>|LocalNote withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|LocalNote withoutTrashed()
  * @mixin \Eloquent
  */
 class LocalNote extends Note implements Feedable

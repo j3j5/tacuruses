@@ -20,24 +20,24 @@ use Parental\HasParent;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array $object
+ * @property array<array-key, mixed> $object
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\LocalNote $target
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce query()
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ActivityAnnounce whereUpdatedAt($value)
+ * @property-read \App\Models\ActivityPub\LocalNote|null $target
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAnnounce whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityAnnounce extends Activity

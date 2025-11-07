@@ -15,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
- *
- *
  * @property int $id
  * @property int $actor_id
  * @property int $target_id
@@ -24,11 +22,11 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property array<array-key, mixed> $quote
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $activity_id
  * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read string $authorization_url
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\LocalNote $target
- * @property-read string $url
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Quote byActivityId(string $activityId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Quote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Quote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Quote query()

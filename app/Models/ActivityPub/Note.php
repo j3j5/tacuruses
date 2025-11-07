@@ -31,80 +31,84 @@ use Stevebauman\Purify\Facades\Purify;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $actor_id
+ * @property string|null $replyTo_id id (PK) of the note is replying to, if any
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
+ * @property string|null $original_content
  * @property string $content
- * @property array|null $contentMap
+ * @property string|null $contentMap
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
- * @property array|null $summaryMap
+ * @property array<array-key, mixed>|null $summaryMap
+ * @property string $type Type of object, Note, Article...
  * @property bool $sensitive Mastodon-specific; content warning
- * @property array $to array of recipients
- * @property array|null $bto array of recipients of the blind carbon copy
- * @property array|null $cc array of recipients of the carbon copy
- * @property array|null $bcc array of recipients of the blind carbon copy
+ * @property array<array-key, mixed> $to array of recipients
+ * @property array<array-key, mixed>|null $bto array of recipients of the blind carbon copy
+ * @property array<array-key, mixed>|null $cc array of recipients of the carbon copy
+ * @property array<array-key, mixed>|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
  * @property string|null $startTime
  * @property string|null $endTime
+ * @property Visibility $visibility visibility of the note, check enum Visibility
  * @property array $attachments
  * @property array $tags
  * @property string|null $repliesRaw
  * @property string|null $source original representation of the content
  * @property string|null $conversation
- * @property string $type
- * @property int|null $replyTo_id
  * @property string $note_type
- * @property int $actor_id
- * @property Visibility $visibility
- * @property-read string $activity_url
- * @property-read \App\Models\ActivityPub\Actor $actor
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
- * @property-read int|null $mentions_count
- * @property-read string $url
- * @method static \Illuminate\Database\Eloquent\Builder|Note newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Note newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Note query()
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereBcc($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereBto($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereCc($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereContentMap($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereConversation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereGenerator($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereInReplyTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereNoteType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note wherePublishedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereRepliesRaw($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereReplyToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSensitive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSource($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummary($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereSummaryMap($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereTags($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereVisibility($value)
- * @property string|null $original_content
- * @property-read array $content_map
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereOriginalContent($value)
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read string $activity_url
+ * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property array $content_map
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Note> $directReplies
+ * @property-read int|null $direct_replies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Media> $mediaAttachments
+ * @property-read int|null $media_attachments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalActor> $mentions
+ * @property-read int|null $mentions_count
  * @property-read Note|null $replyingTo
+ * @property-read string $url
  * @method static \Database\Factories\ActivityPub\NoteFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Note onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Note withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereBcc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereBto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereCc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereContentMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereConversation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereGenerator($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereInReplyTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereNoteType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereOriginalContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereRepliesRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereSummaryMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note whereVisibility($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Note withoutTrashed()
  * @mixin \Eloquent
  */
 class Note extends Model

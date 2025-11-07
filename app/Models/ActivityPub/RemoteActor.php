@@ -24,79 +24,78 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  *
  * @phpstan-type InstanceUser array{id: string, type: string, preferredUsername: string, name: string, summary: ?string, url: string, icon: array<string,string>, image: array<string,string>, inbox: string, outbox: string, following: string, followers: string, endpoints: array<string,string>, publicKey: array<string,string> }
  * @property int $id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string $name
  * @property string $username
  * @property string|null $avatar
  * @property string|null $header
- * @property string|null $bio
+ * @property string|array|null $bio
+ * @property array<array-key, mixed>|null $alsoKnownAs
+ * @property array<array-key, mixed>|null $properties
  * @property string $language
  * @property string|null $activityId
+ * @property ActorTypes|null $type
  * @property string|null $url
- * @property string $inbox
+ * @property string|null $followers_url
+ * @property string|null $following_url
+ * @property string|null $inbox
+ * @property string|null $outbox
  * @property string|null $sharedInbox
  * @property string|null $publicKeyId
  * @property string|null $publicKey
- * @property string $actor_type
- * @property string|null $followers_url
- * @property string|null $following_url
- * @property string|null $outbox
+ * @property string|null $actor_type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $allNotes
  * @property-read int|null $all_notes_count
+ * @property-read string $canonical_username
  * @property-read string $domain
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts
  * @property-read int|null $drafts_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $followers
+ * @property-read int|null $followers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $following
  * @property-read int|null $following_count
- * @property-read string $full_username
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
+ * @property-read int|null $follows_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
  * @property-read int|null $notes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
+ * @property-read int|null $notes_with_replies_count
+ * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
+ * @property-read int|null $received_follows_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read int|null $shares_count
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor query()
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereActorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAlsoKnownAs($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereBio($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereFollowersUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereFollowingUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereHeader($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereLanguage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereOutbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereProperties($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor wherePublicKeyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereSharedInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RemoteActor whereUsername($value)
- * @property-read string $canonical_username
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
- * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\RemoteActorFactory factory($count = null, $state = [])
- * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $followers
- * @property-read int|null $followers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
- * @property-read int|null $follows_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
- * @property-read int|null $received_follows_count
- * @property array|null $alsoKnownAs
- * @property array|null $properties
- * @property ActorTypes|null $type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereActorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereAlsoKnownAs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereBio($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereFollowersUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereFollowingUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereHeader($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereOutbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereProperties($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor wherePublicKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor wherePublicKeyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereSharedInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteActor whereUsername($value)
  * @mixin \Eloquent
  */
 class RemoteActor extends Actor

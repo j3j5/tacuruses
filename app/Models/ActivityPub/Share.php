@@ -16,22 +16,24 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property int $id
  * @property int $actor_id
  * @property int $target_id
- * @property string $activityId
+ * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $visibility visibility of the share, check enum Visibility
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\LocalNote $target
- * @method static \Illuminate\Database\Eloquent\Builder|Share newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Share newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Share query()
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Share whereUpdatedAt($value)
  * @method static \Database\Factories\ActivityPub\ShareFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Share whereVisibility($value)
  * @mixin \Eloquent
  */
 class Share extends Model

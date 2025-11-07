@@ -19,48 +19,37 @@ use Illuminate\Support\Str;
 use Spatie\Feed\Feedable;
 
 /**
- *
- *
  * @property int $id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $read_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $read_at
  * @property NotificationTypes $type
- * @property int $actor_id
- * @property int $from_actor_id
- * @property int $activity_id
- * @property-read LocalActor $actor
- * @property-read string $text
- * @method static \Illuminate\Database\Eloquent\Builder|Notification newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Notification newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Notification query()
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereFromActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereReadAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereUpdatedAt($value)
  * @property string $notifiable_type
  * @property int $notifiable_id
- * @property array $data
+ * @property array<array-key, mixed> $data
+ * @property int|null $from_actor_id The actor "generating" the notification
+ * @property int|null $activity_id The activity that generated the notification
  * @property-read Activity|null $activity
  * @property-read Actor|null $fromActor
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $notifiable
+ * @property-read \Illuminate\Database\Eloquent\Model $notifiable
+ * @property-read string $text
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
- * @method static \Illuminate\Database\Eloquent\Builder|DatabaseNotification read()
- * @method static \Illuminate\Database\Eloquent\Builder|DatabaseNotification unread()
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereNotifiableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Notification whereNotifiableType($value)
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
- * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification query()
+ * @method static Builder<static>|Notification read()
+ * @method static Builder<static>|Notification unread()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereFromActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereNotifiableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereNotifiableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Notification extends DatabaseNotification implements Feedable

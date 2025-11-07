@@ -22,21 +22,21 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string $activityId
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\Actor $target
- * @method static \Illuminate\Database\Eloquent\Builder|Follow newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Follow newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Follow query()
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereUpdatedAt($value)
  * @method static \Database\Factories\ActivityPub\FollowFactory factory($count = null, $state = [])
- * @property bool $accepted
- * @method static \Illuminate\Database\Eloquent\Builder|Follow whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Follow extends Model

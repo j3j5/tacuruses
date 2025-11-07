@@ -8,6 +8,7 @@ use ActivityPhp\Type;
 use App\Models\ActivityPub\ActivityQuoteRequest;
 use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
+use App\Models\ActivityPub\Quote;
 use App\Models\ActivityPub\RemoteActor;
 use App\Services\ActivityPub\Context as ActivityPubContext;
 use App\Services\ActivityPub\Signer;
@@ -32,7 +33,7 @@ final class SendQuoteRequestAcceptToActor extends BaseFederationJob implements S
     public function __construct(
         private readonly RemoteActor $actor,
         private readonly LocalNote $target,
-        private readonly ActivityQuoteRequest $quoteRequest
+        private readonly ActivityQuoteRequest $quoteRequestActivity
     ) {
         $this->targetActor = $this->target->actor;
 
@@ -48,22 +49,24 @@ final class SendQuoteRequestAcceptToActor extends BaseFederationJob implements S
      */
     public function handle(Signer $signer): void
     {
+        /** @var \App\Models\ActivityPub\Quote $quote */
+        $quote = Quote::byActivityId($this->quoteRequestActivity->activityId)->firstOrFail();
         $accept = Type::create('Accept', [
             '@context' => [
                 ActivityPubContext::ACTIVITY_STREAMS,
                 ActivityPubContext::$quoteRequest,
             ],
             'to' => $this->actor->activityId,
-            'id' => $this->target->activityId . '#accepts/quouteReq/' . $this->quoteRequest->slug,
+            'id' => $this->target->activityId . '#accepts/quouteReq/' . $this->quoteRequestActivity->slug,
             'actor' => $this->target->actor->activity_id,
             'object' => [
-                'id' => $this->quoteRequest->activityId,
+                'id' => $this->quoteRequestActivity->activityId,
                 'actor' => $this->actor->activityId,
                 'type' => 'QuoteRequest',
                 'object' => $this->target->activityId,
-                'instrument' => $this->quoteRequest->object['id'],
+                'instrument' => $this->quoteRequestActivity->object['id'],
             ],
-            'result' => route('actor.approved-quotes', [$this->target->actor, $this->quoteRequest]),
+            'result' => $quote->authorization_url,
         ])->toArray();
 
         $this->sendSignedPostRequest(
@@ -73,32 +76,8 @@ final class SendQuoteRequestAcceptToActor extends BaseFederationJob implements S
             data: $accept,
         );
 
-        $this->quoteRequest->markAsAccepted();
+        $this->quoteRequestActivity->markAsAccepted();
     }
-
-    /*
-{
-  "@context": [
-    "https://www.w3.org/ns/activitystreams",
-    {
-      "QuoteRequest": "https://w3id.org/fep/044f#QuoteRequest"
-    }
-  ],
-  "type": "Accept",
-  "to": "https://example.com/users/bob",
-  "id": "https://example.com/users/alice/activities/1234",
-  "actor": "https://example.com/users/alice",
-  "object": {
-    "type": "QuoteRequest",
-    "id": "https://example.com/users/bob/statuses/1/quote",
-    "actor": "https://example.com/users/bob",
-    "object": "https://example.com/users/alice/statuses/1",
-    "instrument": "https://example.org/users/bob/statuses/1"
-  },
-  "result": "https://example.com/users/alice/stamps/1"
-}
-
-    */
 
     /**
      * Get the tags that should be assigned to the job.

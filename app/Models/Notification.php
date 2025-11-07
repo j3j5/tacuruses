@@ -8,7 +8,6 @@ use App\Domain\Feed\FeedItem;
 use App\Enums\NotificationTypes;
 use App\Models\ActivityPub\Activity;
 use App\Models\ActivityPub\Actor;
-use App\Models\ActivityPub\LocalActor;
 use App\Traits\HasSnowflakePrimary;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;

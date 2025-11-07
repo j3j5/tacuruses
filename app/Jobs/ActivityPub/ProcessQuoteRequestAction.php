@@ -6,7 +6,6 @@ namespace App\Jobs\ActivityPub;
 
 use App\Domain\ActivityPub\Mastodon\QuoteRequest;
 use App\Models\ActivityPub\ActivityQuoteRequest;
-use App\Models\ActivityPub\LocalActor;
 use App\Models\ActivityPub\LocalNote;
 use App\Models\ActivityPub\Quote;
 use App\Models\ActivityPub\RemoteActor;
@@ -16,8 +15,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\Log;
-use RuntimeException;
 use Webmozart\Assert\Assert;
 
 final class ProcessQuoteRequestAction implements ShouldQueue
@@ -47,11 +44,6 @@ final class ProcessQuoteRequestAction implements ShouldQueue
     {
         $actor = $this->activity->actor;
         $target = $this->activity->target;
-        if (!$actor instanceof LocalActor) {
-            Log::notice('Accept activity looks wrong', [$this->activity]);
-            throw new RuntimeException('The ActivityQuoteRequest does not seem to have a valid actor');
-        }
-
         Assert::isInstanceOf($this->activity->target, LocalNote::class);
 
         $actor = $this->activity->actor;
@@ -65,16 +57,18 @@ final class ProcessQuoteRequestAction implements ShouldQueue
             [
                 'actor_id' => $actor->id,
                 'target_id' => $target->id,
-                'quote' => $this->action->instrument,
+                'quote' => $this->action->instrument->toArray(),
             ]
         );
-
-        $this->activity->markAsAccepted();
 
         if ($actor instanceof RemoteActor) {
             // Send the accept back
             SendQuoteRequestAcceptToActor::dispatch($actor, $target, $this->activity);
+            return;
         }
+
+        $this->activity->markAsAccepted();
+
     }
 
     /**

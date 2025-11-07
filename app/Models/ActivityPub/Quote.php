@@ -8,6 +8,7 @@ use ActivityPhp\Type;
 use App\Domain\ActivityPub\Mastodon\QuoteAuthorization;
 use App\Services\ActivityPub\Context;
 use App\Traits\HasSnowflakePrimary;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,17 +76,10 @@ class Quote extends Model
         );
     }
 
-    public function url() : Attribute
+    public function authorizationUrl() : Attribute
     {
         return Attribute::make(
             get: fn () : string => route('actor.approved-quotes', [$this->actor, $this])
-        );
-    }
-
-    public function activityId() : Attribute
-    {
-        return Attribute::make(
-            get: fn () : string => $this->url
         );
     }
 
@@ -104,5 +98,10 @@ class Quote extends Model
         ]);
 
         return $note;
+    }
+
+    protected function scopeByActivityId(Builder $query, string $activityId): void
+    {
+        $query->where('activityId', $activityId);
     }
 }

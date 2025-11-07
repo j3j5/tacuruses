@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\OnlyContentType;
 use App\Jobs\ActivityPub\ProcessCreateAction;
 use App\Jobs\ActivityPub\ProcessDeleteAction;
+use App\Jobs\ActivityPub\ProcessUpdateActivity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -68,7 +69,10 @@ class SharedInboxController extends Controller
                 $action->set('actorModel', $actor);
                 App::call(InboxController::class, [$request]);
                 break;
-                // case ActivityTypes::UPDATE:
+            case ActivityTypes::UPDATE:
+                // TODO: review, it's the same as ProcessCreateActivity
+                ProcessUpdateActivity::dispatch($actor, $activityStream);
+                break;
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();
                 // 	break;
                 // case ActivityTypes::UNDO:

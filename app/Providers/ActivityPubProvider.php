@@ -14,6 +14,8 @@ use App\Domain\ActivityPub\Mastodon\Note;
 use App\Domain\ActivityPub\Mastodon\Person;
 use App\Domain\ActivityPub\Mastodon\PropertyValue;
 use App\Domain\ActivityPub\Mastodon\Question;
+use App\Domain\ActivityPub\Mastodon\QuoteAuthorization;
+use App\Domain\ActivityPub\Mastodon\QuoteRequest;
 use App\Domain\ActivityPub\Mastodon\RsaSignature2017;
 use App\Domain\ActivityPub\Mastodon\Service;
 use Illuminate\Support\ServiceProvider;
@@ -50,5 +52,7 @@ class ActivityPubProvider extends ServiceProvider
         Type::add('Question', Question::class);
         Type::add('RsaSignature2017', RsaSignature2017::class); // new one
         Type::add('Service', Service::class);
+        Type::add('QuoteAuthorization', QuoteAuthorization::class);
+        Type::add('QuoteRequest', QuoteRequest::class);
     }
 }

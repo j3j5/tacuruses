@@ -27,6 +27,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property-read string $activity_id
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
+ * @property-read string $authorization_url
  * @property-read \App\Models\ActivityPub\LocalNote $target
  * @property-read string $url
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Quote newModelQuery()
@@ -69,14 +70,14 @@ class Quote extends Model
         return $this->belongsTo(LocalNote::class, 'target_id');
     }
 
-    public function slug() : Attribute
+    protected function slug() : Attribute
     {
         return Attribute::make(
             get: fn () : string => Hashids::encode($this->id)
         );
     }
 
-    public function authorizationUrl() : Attribute
+    protected function authorizationUrl() : Attribute
     {
         return Attribute::make(
             get: fn () : string => route('actor.approved-quotes', [$this->actor, $this])

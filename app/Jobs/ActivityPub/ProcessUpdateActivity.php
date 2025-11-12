@@ -96,12 +96,12 @@ final class ProcessUpdateActivity implements ShouldQueue, ShouldBeUnique
 
         $note->content = data_get($object, 'content');
         $note->contentMap = $object->contentMap;
-        $note->summary = is_string($object->summary) ? $object->summary : json_encode($object->summary);
+        $note->summary = is_string($object->summary) ? $object->summary : json_encode($object->summary, JSON_THROW_ON_ERROR);
         $note->sensitive = data_get($object, 'sensitive', false);
         $note->to = $object->to !== null ? Arr::wrap($object->to) : [];
         $note->cc = $object->cc !== null ? Arr::wrap($object->cc) : null;
         if (!empty($object->inReplyTo)) {
-            $note->inReplyTo = is_string($object->inReplyTo) ? $object->inReplyTo : json_encode($object->inReplyTo);
+            $note->inReplyTo = is_string($object->inReplyTo) ? $object->inReplyTo : json_encode($object->inReplyTo, JSON_THROW_ON_ERROR);
             // Store the id if available
             // TODO: add support for inReplyTo in array form
             if (is_string($object->inReplyTo)) {

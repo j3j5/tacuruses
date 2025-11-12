@@ -71,6 +71,7 @@ class SharedInboxController extends Controller
                 break;
             case ActivityTypes::UPDATE:
                 // TODO: review, it's the same as ProcessCreateActivity
+                /** @var \ActivityPhp\Type\Extended\Activity\Update $activityStream */
                 ProcessUpdateActivity::dispatch($actor, $activityStream);
                 break;
                 // 	(new UpdateActivity($this->payload, $this->profile))->handle();

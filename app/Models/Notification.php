@@ -25,11 +25,11 @@ use Spatie\Feed\Feedable;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $read_at
- * @property NotificationTypes $type
+ * @property \App\Enums\NotificationTypes $type
  * @property int $actor_id
  * @property int $from_actor_id
  * @property int $activity_id
- * @property-read LocalActor $actor
+ * @property-read \App\Models\ActivityPub\LocalActor $actor
  * @property-read string $text
  * @method static \Illuminate\Database\Eloquent\Builder|Notification newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Notification newQuery()
@@ -45,8 +45,8 @@ use Spatie\Feed\Feedable;
  * @property string $notifiable_type
  * @property int $notifiable_id
  * @property array $data
- * @property-read Activity|null $activity
- * @property-read Actor|null $fromActor
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read \App\Models\ActivityPub\Actor|null $fromActor
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $notifiable
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
  * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])

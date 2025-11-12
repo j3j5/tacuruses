@@ -80,7 +80,7 @@ class Quote extends Model
     protected function authorizationUrl() : Attribute
     {
         return Attribute::make(
-            get: fn () : string => route('actor.approved-quotes', [$this->actor, $this])
+            get: fn () : string => route('actor.approved-quotes', [$this->target->actor, $this])
         );
     }
 

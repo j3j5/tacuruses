@@ -57,7 +57,7 @@ final class ProcessQuoteRequestAction implements ShouldQueue
             [
                 'actor_id' => $actor->id,
                 'target_id' => $target->id,
-                'quote' => $this->action->get('instrument'),
+                'quote' => $this->action->get('instrument')->toArray(),
             ]
         );
 

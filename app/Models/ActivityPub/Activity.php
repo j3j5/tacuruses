@@ -23,24 +23,24 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property array $object
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @method static \Database\Factories\ActivityPub\ActivityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Activity extends Model

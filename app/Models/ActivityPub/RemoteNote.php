@@ -24,83 +24,79 @@ use function Safe\json_encode;
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $actor_id
- * @property string|null $replyTo_id id (PK) of the note is replying to, if any
  * @property string|null $activityId
  * @property \Illuminate\Support\Carbon|null $published_at
- * @property string|null $original_content
  * @property string $content
- * @property string|null $contentMap
+ * @property array|null $contentMap
  * @property string|null $summary On Mastodon, this field contains the visible way when sensitive is true
- * @property array<array-key, mixed>|null $summaryMap
- * @property string $type Type of object, Note, Article...
+ * @property array|null $summaryMap
  * @property bool $sensitive Mastodon-specific; content warning
- * @property array<array-key, mixed> $to array of recipients
- * @property array<array-key, mixed>|null $bto array of recipients of the blind carbon copy
- * @property array<array-key, mixed>|null $cc array of recipients of the carbon copy
- * @property array<array-key, mixed>|null $bcc array of recipients of the blind carbon copy
+ * @property array $to array of recipients
+ * @property array|null $bto array of recipients of the blind carbon copy
+ * @property array|null $cc array of recipients of the carbon copy
+ * @property array|null $bcc array of recipients of the blind carbon copy
  * @property string|null $inReplyTo activityId of the note is replying to, if any
  * @property string|null $generator the entity that generated the object
  * @property string|null $location
  * @property \Illuminate\Support\Carbon|null $startTime
  * @property \Illuminate\Support\Carbon|null $endTime
- * @property Visibility $visibility visibility of the note, check enum Visibility
  * @property array $attachments
  * @property array $tags
- * @property \Illuminate\Support\Collection<array-key, mixed>|null $repliesRaw
+ * @property \Illuminate\Support\Collection|null $repliesRaw
  * @property string|null $source original representation of the content
  * @property string|null $conversation
+ * @property string $type
+ * @property int|null $replyTo_id
  * @property string $note_type
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property int $actor_id
+ * @property Visibility $visibility
  * @property-read string $activity_url
  * @property-read \App\Models\ActivityPub\RemoteActor $actor
- * @property array $content_map
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $directReplies
- * @property-read int|null $direct_replies_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Media> $mediaAttachments
- * @property-read int|null $media_attachments_count
- * @property-read \App\Models\ActivityPub\Note|null $replyingTo
  * @property-read string $url
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereAttachments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereBcc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereBto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereCc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereContentMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereConversation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereGenerator($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereInReplyTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereNoteType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereRepliesRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereReplyToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSensitive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereSummaryMap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereVisibility($value)
+ * @property-read array $content_map
+ * @property string|null $original_content
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereOriginalContent($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\ActivityPub\Activity|null $activity
+ * @property-read \App\Models\ActivityPub\Note|null $replyingTo
  * @method static \Database\Factories\ActivityPub\RemoteNoteFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereBcc($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereBto($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereCc($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereContentMap($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereConversation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereGenerator($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereInReplyTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereNoteType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereOriginalContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote wherePublishedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereRepliesRaw($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereReplyToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereSensitive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereSource($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereSummary($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereSummaryMap($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereTags($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote whereVisibility($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RemoteNote withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RemoteNote withoutTrashed()
  * @mixin \Eloquent
  */
 class RemoteNote extends Note

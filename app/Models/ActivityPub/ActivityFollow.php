@@ -20,24 +20,24 @@ use Parental\HasParent;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property array $object
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\LocalActor|null $target
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityFollow whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityFollow whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityFollow extends Activity

@@ -38,92 +38,95 @@ use Stevebauman\Purify\Casts\PurifyHtmlOnGet;
  * App\Models\ActivityPub\LocalActor
  *
  * @property int $id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $name
  * @property string $username
  * @property string $avatar
  * @property string $header
- * @property string|array|null $bio
- * @property array<array-key, mixed>|null $alsoKnownAs
- * @property array<array-key, mixed>|null $properties
+ * @property string|null $bio
+ * @property array|null $alsoKnownAs
+ * @property array|null $properties
  * @property string $language
- * @property string|null $activityId
- * @property ActorTypes|null $type
+ * @property string $activityId
  * @property string $url
+ * @property string $inbox
+ * @property string|null $sharedInbox
+ * @property string $publicKeyId
+ * @property string $publicKey
+ * @property string $actor_type
  * @property string $followers_url
  * @property string $following_url
- * @property string $inbox
  * @property string $outbox
- * @property string|null $sharedInbox
- * @property string|null $publicKeyId
- * @property string|null $publicKey
- * @property string|null $actor_type
  * @property-read string $activity_id
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $allNotes
+ * @property ActorTypes|null $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $allNotes
  * @property-read int|null $all_notes_count
- * @property-read string $canonical_username
  * @property-read string $domain
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $drafts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $drafts
  * @property-read int|null $drafts_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $followers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $followers
  * @property-read int|null $followers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Actor> $following
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Actor> $following
  * @property-read int|null $following_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
- * @property-read int|null $follows_count
+ * @property-read string $key_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $liked
  * @property-read int|null $liked_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Like> $likes
  * @property-read int|null $likes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $mentions
  * @property-read int|null $mentions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\LocalNote> $notes
  * @property-read int|null $notes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
- * @property-read int|null $notes_with_replies_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, Notification> $notifications
- * @property-read int|null $notifications_count
+ * @property-read string $privateKey
  * @property-read string $private_key
+ * @property-read string $publicKey
  * @property-read string $public_key
- * @property-read string $public_key_id
- * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
- * @property-read int|null $received_follows_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shared
  * @property-read int|null $shared_count
- * @property-read string $shared_inbox
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Share> $shares
  * @property-read int|null $shares_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor byActivityId(string $activityId)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereActorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereAlsoKnownAs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereBio($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereFollowersUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereFollowingUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereHeader($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereOutbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereProperties($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor wherePublicKeyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereSharedInbox($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LocalActor whereUsername($value)
+ * @property-read string $canonical_username
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Note> $notesWithReplies
+ * @property-read int|null $notes_with_replies_count
  * @method static \Database\Factories\ActivityPub\LocalActorFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereActorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereAlsoKnownAs($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereBio($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereFollowersUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereFollowingUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereHeader($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereLanguage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereOutbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereProperties($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor wherePublicKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor wherePublicKeyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereSharedInbox($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LocalActor whereUsername($value)
+ * @property-read \phpseclib3\Crypt\Common\PublicKey $public_key_object
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Notification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $follows
+ * @property-read int|null $follows_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ActivityPub\Follow> $receivedFollows
+ * @property-read int|null $received_follows_count
+ * @property-read string $shared_inbox
+ * @property-read string $public_key_id
  * @mixin \Eloquent
  */
 class LocalActor extends Actor implements

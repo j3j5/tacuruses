@@ -20,24 +20,24 @@ use Parental\HasParent;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property array $object
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\LocalNote|null $target
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLike whereUpdatedAt($value)
+ * @property-read \App\Models\ActivityPub\LocalNote $target
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityLike whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityLike extends Activity

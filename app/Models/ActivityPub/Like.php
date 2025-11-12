@@ -22,16 +22,16 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
  * @property-read \App\Models\ActivityPub\Actor $target
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Like whereUpdatedAt($value)
  * @method static \Database\Factories\ActivityPub\LikeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Like extends Model

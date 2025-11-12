@@ -26,7 +26,7 @@ use function Safe\getimagesize;
  * @property string|null $filesize
  * @property \Illuminate\Support\Carbon|null $file_updated_at last datetime the file was updated
  * @property string|null $remote_url
- * @property array<array-key, mixed>|null $meta
+ * @property array|null $meta
  * @property string $hash
  * @property bool $processed
  * @property string|null $thumb_filename local filename
@@ -34,30 +34,30 @@ use function Safe\getimagesize;
  * @property string|null $thumb_filesize
  * @property string|null $thumb_updated_at last datetime the file was updated
  * @property string|null $thumb_remote_url
- * @property-read string $height
- * @property-read string $width
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereContentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereFileUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereFilename($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereFilesize($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereMeta($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereNoteId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereProcessed($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereRemoteUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereThumbContentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereThumbFilename($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereThumbFilesize($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereThumbRemoteUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereThumbUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Media whereUpdatedAt($value)
+ * @property-read string|int $height
+ * @property-read string|int $width
+ * @method static \Illuminate\Database\Eloquent\Builder|Media newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereContentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereFileUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereFilename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereFilesize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereMeta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereNoteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereProcessed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereRemoteUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereThumbContentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereThumbFilename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereThumbFilesize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereThumbRemoteUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereThumbUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Media extends Model

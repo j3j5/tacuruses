@@ -20,23 +20,23 @@ use RuntimeException;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property array $object
  * @property int $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityAccept whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityAccept whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityAccept extends Activity

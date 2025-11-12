@@ -21,24 +21,25 @@ use Parental\HasParent;
  * @property string $type
  * @property int $actor_id
  * @property int $target_id
- * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property string $object_type
+ * @property array $object
  * @property int $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
+ * @property-read \App\Models\ActivityPub\LocalActor|\App\Models\ActivityPub\LocalNote|null $target
  * @property-read string $slug
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityUndo whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityUndo whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityUndo extends Activity

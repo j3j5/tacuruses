@@ -19,24 +19,24 @@ use Parental\HasParent;
  * @property int $actor_id
  * @property int $target_id
  * @property string|null $object_type
- * @property array<array-key, mixed> $object
+ * @property array $object
  * @property bool $accepted
  * @property-read \App\Models\ActivityPub\Actor $actor
  * @property-read string $slug
- * @property-read \App\Models\ActivityPub\RemoteNote|null $target
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereAccepted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereObject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereObjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityCreate whereUpdatedAt($value)
+ * @property-read \App\Models\ActivityPub\RemoteNote $target
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereTargetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ActivityCreate whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ActivityCreate extends Activity
